@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Super Trunfo — Copa do Mundo 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/@dicebear/core@9/dist/index.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@dicebear/collection@9/dist/index.umd.min.js"></script>
 <style>
 /* ============================================================
    TOKENS & RESET
@@ -1514,7 +1516,7 @@ const PAISES = [
 // SISTEMA DE AVATAR — DiceBear Avataaars (busto cartoon)
 // API: https://api.dicebear.com/9.x/avataaars/svg
 // ================================================================
-const AVATAR_BASE = 'https://api.dicebear.com/10.x/avataaars/svg';
+// Avatar gerado localmente via biblioteca DiceBear — sem chamadas de rede
 
 // Na v10 do DiceBear, cores são passadas como hex sem '#'
 // e os parâmetros mudaram de nome
@@ -1601,33 +1603,47 @@ const avatarEstado = {
   mouth:      'smile',
 };
 
+function gerarSVGAvatar(cfg, paisCor1 = null) {
+  const c = cfg || avatarEstado;
+  try {
+    const DiceBear = window.DiceBear || window['@dicebear/core'];
+    const Col      = window.DiceBearCollection || window['@dicebear/collection'];
+    if (!DiceBear || !Col) return null;
+
+    let uniformColor = '929598';
+    if (paisCor1) {
+      uniformColor = paisCor1.replace('#','').toLowerCase();
+    } else if (estado?.cartaCriacao?.pais?.cor1) {
+      uniformColor = estado.cartaCriacao.pais.cor1.replace('#','').toLowerCase();
+    }
+
+    const seed = (c.topType||'shortHairShortFlat') + (c.hairColor||'090806') + (c.skinColor||'ffdbb4');
+    const avatar = DiceBear.createAvatar(Col.avataaars, {
+      seed,
+      top:          [c.topType     || 'shortHairShortFlat'],
+      hairColor:    [c.hairColor   || '090806'],
+      skinColor:    [c.skinColor   || 'ffdbb4'],
+      facialHair:   [c.facialHair  || 'blank'],
+      accessories:  [c.accessories || 'blank'],
+      eyes:         [c.eyes        || 'default'],
+      eyebrows:     [c.eyebrow     || 'default'],
+      mouth:        [c.mouth       || 'smile'],
+      clothes:      ['shirtCrewNeck'],
+      clothesColor: [uniformColor],
+      size: 160,
+    });
+    return avatar.toString();
+  } catch(e) {
+    console.warn('DiceBear local falhou:', e);
+    return null;
+  }
+}
+
+// Mantém compatibilidade — retorna URL de fallback se biblioteca não carregou
 function gerarURLAvatar(cfg, paisCor1 = null) {
   const c = cfg || avatarEstado;
-  // v10: parâmetros em camelCase, seed necessário, cores como hex sem '#'
-  const seed = (c.topType || 'shortHairShortFlat') + (c.hairColor || '090806') + (c.skinColor || 'ffdbb4');
-  // Cor do uniforme: usar cor do país se disponível, senão cinza
-  let uniformColor = '929598'; // cinza padrão
-  if (paisCor1) {
-    uniformColor = paisCor1.replace('#','').toLowerCase();
-  } else if (estado.cartaCriacao?.pais?.cor1) {
-    uniformColor = estado.cartaCriacao.pais.cor1.replace('#','').toLowerCase();
-  }
-  const params = new URLSearchParams({
-    seed,
-    top:          c.topType     || 'shortHairShortFlat',
-    hairColor:    c.hairColor   || '090806',
-    skinColor:    c.skinColor   || 'ffdbb4',
-    facialHair:   c.facialHair  || 'blank',
-    accessories:  c.accessories || 'blank',
-    eyes:         c.eyes        || 'default',
-    eyebrows:     c.eyebrow     || 'default',
-    mouth:        c.mouth       || 'smile',
-    clothes:      'shirtCrewNeck',
-    clothesColor: uniformColor,
-    size:         160,
-    radius:       50,
-  });
-  return `${AVATAR_BASE}?${params}`;
+  const seed = encodeURIComponent((c.topType||'a') + (c.skinColor||'b') + (c.hairColor||'c'));
+  return `https://api.dicebear.com/9.x/avataaars/svg?seed=${seed}&topType=${c.topType||'ShortHairShortFlat'}&skinColor=${c.skinColor||'Light'}&hairColor=${c.hairColor||'Black'}`;
 }
 
 // ================================================================
@@ -1799,15 +1815,13 @@ function setAvatarOpcao(prop, val) {
 
 async function atualizarPreviewAvatar() {
   estado.cartaCriacao.avatar = { ...avatarEstado };
-  const url = gerarURLAvatar();
   const wrap = document.getElementById('avatar-preview-wrap');
   if (!wrap) return;
-  wrap.innerHTML = '<div style="font-size:24px">⏳</div>';
-  try {
-    const r = await fetch(url);
-    const svg = await r.text();
-    wrap.innerHTML = svg;
-    // Garante que o SVG preenche o container
+
+  // Tenta gerar SVG localmente (sem rede)
+  const svgLocal = gerarSVGAvatar();
+  if (svgLocal) {
+    wrap.innerHTML = svgLocal;
     const svgEl = wrap.querySelector('svg');
     if (svgEl) {
       svgEl.style.width = '100%';
@@ -1815,9 +1829,24 @@ async function atualizarPreviewAvatar() {
       svgEl.removeAttribute('width');
       svgEl.removeAttribute('height');
     }
+    return;
+  }
+
+  // Fallback: busca via API
+  wrap.innerHTML = '<div style="font-size:24px">⏳</div>';
+  try {
+    const url = gerarURLAvatar();
+    const r = await fetch(url);
+    const svg = await r.text();
+    if (svg.includes('<svg')) {
+      wrap.innerHTML = svg;
+      const svgEl = wrap.querySelector('svg');
+      if (svgEl) { svgEl.style.width='100%'; svgEl.style.height='100%'; svgEl.removeAttribute('width'); svgEl.removeAttribute('height'); }
+    } else {
+      wrap.innerHTML = '<div style="font-size:32px">😊</div>';
+    }
   } catch(e) {
     wrap.innerHTML = '<div style="font-size:32px">😊</div>';
-    console.warn('Avatar não carregou:', e);
   }
 }
 
@@ -2010,7 +2039,7 @@ function gerarCartaEl(carta, grande = false) {
   div.className = 'carta-visual';
   if (grande) div.style.width = '240px';
 
-  const avatarUrl = carta.avatar_config ? gerarURLAvatar(carta.avatar_config, pais.cor1) : gerarURLAvatar(null, pais.cor1);
+  // avatar gerado localmente via gerarSVGAvatar
   const totalPts = carta.chute + carta.passe + carta.desarme + carta.tecnica + carta.visao;
 
   // Fundo com gradiente das cores do país
@@ -2022,7 +2051,7 @@ function gerarCartaEl(carta, grande = false) {
       <span class="carta-bandeira-topo">${pais.e}</span>
     </div>
     <div class="carta-avatar-area">
-      <div class="carta-avatar-svg-wrap" data-avatar-url="${avatarUrl}" style="width:134px;height:148px;display:flex;align-items:center;justify-content:center">
+      <div class="carta-avatar-svg-wrap" data-avatar-cfg='${JSON.stringify(carta.avatar_config||{})}' data-pais-cor1="${pais.cor1}" style="width:134px;height:148px;display:flex;align-items:center;justify-content:center">
         <div style="font-size:28px;opacity:0.4">⚽</div>
       </div>
     </div>
@@ -2393,26 +2422,25 @@ async function carregarPartidasAdmin() {
 // Carrega SVGs inline para cartas já no DOM
 // ================================================================
 async function carregarAvataresSVG(container = document) {
-  const wraps = container.querySelectorAll('.carta-avatar-svg-wrap[data-avatar-url]');
-  await Promise.all([...wraps].map(async wrap => {
-    const url = wrap.dataset.avatarUrl;
-    if (!url || wrap.dataset.loaded) return;
+  const wraps = container.querySelectorAll('.carta-avatar-svg-wrap[data-avatar-cfg]');
+  wraps.forEach(wrap => {
+    if (wrap.dataset.loaded) return;
     try {
-      const r = await fetch(url);
-      const svg = await r.text();
-      wrap.innerHTML = svg;
-      const svgEl = wrap.querySelector('svg');
-      if (svgEl) {
-        svgEl.style.width = '100%';
-        svgEl.style.height = '100%';
-        svgEl.removeAttribute('width');
-        svgEl.removeAttribute('height');
+      const cfg = JSON.parse(wrap.dataset.avatarCfg || '{}');
+      const paisCor1 = wrap.dataset.paisCor1 || null;
+      const svgLocal = gerarSVGAvatar(cfg, paisCor1);
+      if (svgLocal) {
+        wrap.innerHTML = svgLocal;
+        const svgEl = wrap.querySelector('svg');
+        if (svgEl) { svgEl.style.width='100%'; svgEl.style.height='100%'; svgEl.removeAttribute('width'); svgEl.removeAttribute('height'); }
+        wrap.dataset.loaded = '1';
+      } else {
+        wrap.innerHTML = '<div style="font-size:28px;opacity:0.3">⚽</div>';
       }
-      wrap.dataset.loaded = '1';
     } catch(e) {
       wrap.innerHTML = '<div style="font-size:28px;opacity:0.3">⚽</div>';
     }
-  }));
+  });
 }
 
 // ================================================================
