@@ -412,91 +412,124 @@ input, select { font-family: var(--font); }
 }
 
 /* ============================================================
-   CARTA VISUAL (componente)
+   CARTA VISUAL — ESTILO FIFA CARD
    ============================================================ */
 .carta-visual {
   width: 200px;
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.12);
   position: relative;
   user-select: none;
   flex-shrink: 0;
+  background: #1a1d24;
 }
-.carta-topo {
-  height: 160px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-.carta-bandeira-bg {
-  position: absolute;
-  inset: 0;
-  opacity: 0.18;
-  font-size: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.carta-avatar-svg {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  border: 4px solid rgba(255,255,255,0.8);
-  background: rgba(255,255,255,0.2);
+.carta-faixa-topo {
   position: relative;
   z-index: 1;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+.carta-total-pts {
+  font-size: 11px;
+  font-weight: 900;
+  color: rgba(255,255,255,0.95);
+  letter-spacing: 0.5px;
+  background: rgba(0,0,0,0.3);
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+.carta-bandeira-topo { font-size: 20px; }
+.carta-avatar-area {
+  position: relative;
+  z-index: 1;
+  height: 148px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
   overflow: hidden;
 }
-.carta-pais-badge {
-  position: absolute;
-  bottom: 8px;
-  right: 10px;
-  font-size: 20px;
-  z-index: 2;
+.carta-avatar-img {
+  width: 134px;
+  height: 148px;
+  object-fit: contain;
+  object-position: top center;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.5));
 }
 .carta-corpo {
-  background: var(--branco);
-  padding: 12px 14px 14px;
+  position: relative;
+  z-index: 1;
+  background: rgba(10,12,18,0.94);
+  padding: 10px 12px 12px;
+  border-top: 1px solid rgba(255,255,255,0.08);
 }
 .carta-apelido {
-  font-size: 16px;
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 900;
   text-align: center;
-  color: var(--preto);
-  margin-bottom: 2px;
+  color: #fff;
+  margin-bottom: 1px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
 }
 .carta-pais-nome {
-  font-size: 11px;
-  color: var(--cinza4);
+  font-size: 9px;
+  color: rgba(255,255,255,0.4);
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.carta-divisor {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  margin-bottom: 8px;
 }
 .carta-attrs {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 8px;
 }
 .carta-attr-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
-.carta-attr-label { font-size: 10px; color: var(--cinza5); font-weight: 600; width: 52px; }
+.carta-attr-num {
+  font-size: 13px;
+  font-weight: 900;
+  color: #fff;
+  min-width: 24px;
+  text-align: right;
+  line-height: 1;
+}
+.carta-attr-info { flex: 1; }
+.carta-attr-label {
+  font-size: 8px;
+  color: rgba(255,255,255,0.4);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  line-height: 1;
+  margin-bottom: 2px;
+}
 .carta-attr-bar-wrap {
-  flex: 1;
-  height: 5px;
-  background: var(--cinza2);
-  border-radius: 3px;
+  height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
   overflow: hidden;
 }
-.carta-attr-bar { height: 100%; border-radius: 3px; }
-.carta-attr-val { font-size: 11px; font-weight: 800; color: var(--preto); min-width: 28px; text-align: right; }
+.carta-attr-bar { height: 100%; border-radius: 2px; }
+.carta-attr-row.destaque .carta-attr-num { color: #fbbf24; }
+.carta-attr-row.destaque .carta-attr-label { color: #fbbf24; }
+.carta-attr-row.vencedor .carta-attr-num { color: #4ade80; }
+.carta-attr-row.vencedor .carta-attr-label { color: #4ade80; }
 
 /* ============================================================
    MENU PRINCIPAL DO ALUNO
@@ -957,7 +990,7 @@ input, select { font-family: var(--font); }
     <p>Monte como você vai aparecer na carta</p>
   </div>
   <div class="card-criador">
-    <div style="display:flex;gap:12px;flex-wrap:wrap">
+    <div style="display:flex;gap:20px;flex-wrap:wrap">
       <!-- Painel construtor -->
       <div style="flex:1;min-width:260px">
         <div class="opcoes-linha">
@@ -965,7 +998,7 @@ input, select { font-family: var(--font); }
           <div class="cor-grid" id="op-pele"></div>
         </div>
         <div class="opcoes-linha">
-          <label>Tipo de cabelo</label>
+          <label>Cabelo</label>
           <div class="opcoes-grid" id="op-cabelo-tipo"></div>
         </div>
         <div class="opcoes-linha">
@@ -977,8 +1010,16 @@ input, select { font-family: var(--font); }
           <div class="opcoes-grid" id="op-olhos"></div>
         </div>
         <div class="opcoes-linha">
-          <label>Boca / expressão</label>
+          <label>Sobrancelhas</label>
+          <div class="opcoes-grid" id="op-sobrancelha"></div>
+        </div>
+        <div class="opcoes-linha">
+          <label>Boca</label>
           <div class="opcoes-grid" id="op-boca"></div>
+        </div>
+        <div class="opcoes-linha">
+          <label>Barba / bigode</label>
+          <div class="opcoes-grid" id="op-barba"></div>
         </div>
         <div class="opcoes-linha">
           <label>Acessório</label>
@@ -986,12 +1027,12 @@ input, select { font-family: var(--font); }
         </div>
       </div>
       <!-- Preview ao vivo -->
-      <div style="display:flex;flex-direction:column;align-items:center;gap:16px">
-        <div style="font-size:12px;font-weight:700;color:var(--cinza4);text-transform:uppercase;letter-spacing:0.5px">Preview</div>
-        <div class="avatar-preview-wrap">
-          <svg class="avatar-preview" id="avatar-svg-preview" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:12px;flex-shrink:0">
+        <div style="font-size:11px;font-weight:700;color:var(--cinza4);text-transform:uppercase;letter-spacing:0.5px">Seu avatar</div>
+        <div style="width:140px;height:140px;border-radius:50%;overflow:hidden;border:4px solid var(--verde);background:var(--cinza2);box-shadow:var(--sombra)">
+          <img id="avatar-preview-img" src="" alt="Avatar" style="width:100%;height:100%;object-fit:cover;object-position:top">
         </div>
-        <div id="carta-preview-mini"></div>
+        <button class="btn-secundario" onclick="randomizarAvatar()" style="font-size:12px">🎲 Aleatório</button>
       </div>
     </div>
     <div style="margin-top:20px;display:flex;justify-content:flex-end">
@@ -1341,6 +1382,7 @@ input, select { font-family: var(--font); }
 // CONFIGURAÇÃO — COLOQUE SEUS DADOS DO SUPABASE AQUI
 // ================================================================
 const SUPABASE_URL  = 'https://rcloedydvfzjjageaokp.supabase.co';
+
 const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjbG9lZHlkdmZ6amphZ2Vhb2twIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzY2NDAsImV4cCI6MjA5ODc1MjY0MH0.vczPxpO-WJ-yIhlUYu-ebNx64pHCQxyI-tPJmJANXNc';
 const ADMIN_PASSWORD = 'copa2026admin'; // Troque por uma senha segura!
 
@@ -1464,16 +1506,111 @@ const PAISES = [
 ];
 
 // ================================================================
-// OPÇÕES DO AVATAR
+// SISTEMA DE AVATAR — DiceBear Avataaars (busto cartoon)
+// API: https://api.dicebear.com/9.x/avataaars/svg
 // ================================================================
-const OPCOES_AVATAR = {
-  pele:  ['#FDDBB4','#F5C89A','#E8A96A','#C47B3B','#8B4513','#4A2C0A'],
-  cabeloTipo: ['Liso','Crespo','Ondulado','Careca','Trança','Curto'],
-  cabeloCor:  ['#1a0a00','#3d2b1f','#7d4e24','#c8940a','#d4a853','#e8d5a3','#cc2200','#555'],
-  olhos: ['Normal','Expressivo','Pequeno','Grande'],
-  boca:  ['Sorriso','Sério','Animado','Focado'],
-  acessorio: ['Nenhum','Headband','Óculos','Brinco','Capacete'],
+const AVATAR_BASE = 'https://api.dicebear.com/9.x/avataaars/svg';
+
+const AVATAR_OPCOES = {
+  topType: [
+    { val: 'ShortHairShortFlat',   label: 'Curto liso' },
+    { val: 'ShortHairShortWaved',  label: 'Curto ondulado' },
+    { val: 'ShortHairDreads01',    label: 'Dreads curto' },
+    { val: 'LongHairStraight',     label: 'Liso comprido' },
+    { val: 'LongHairCurly',        label: 'Cacheado' },
+    { val: 'LongHairBun',          label: 'Coque' },
+    { val: 'LongHairBob',          label: 'Chanel' },
+    { val: 'WinterHat1',           label: 'Gorro' },
+    { val: 'Hat',                  label: 'Boné' },
+    { val: 'Hijab',                label: 'Hijab' },
+    { val: 'NoHair',               label: 'Careca' },
+  ],
+  hairColor: [
+    { val: 'Black',      label: 'Preto',     hex: '#090806' },
+    { val: 'BrownDark',  label: 'Castanho',  hex: '#4a312c' },
+    { val: 'Brown',      label: 'Marrom',    hex: '#724133' },
+    { val: 'Blonde',     label: 'Loiro',     hex: '#b58143' },
+    { val: 'BlondeGolden',label: 'Loiro ouro',hex: '#d6b370' },
+    { val: 'Red',        label: 'Ruivo',     hex: '#c93305' },
+    { val: 'SilverGray', label: 'Grisalho',  hex: '#e8e1e1' },
+    { val: 'PastelPink', label: 'Rosa',      hex: '#f59797' },
+    { val: 'Blue01',     label: 'Azul',      hex: '#65c9ff' },
+  ],
+  skinColor: [
+    { val: 'Light',      label: 'Clara',     hex: '#ffdbb4' },
+    { val: 'Pale',       label: 'Pálida',    hex: '#fce5d4' },
+    { val: 'Tanned',     label: 'Morena',    hex: '#fd9841' },
+    { val: 'Yellow',     label: 'Amarela',   hex: '#f8d25c' },
+    { val: 'Brown',      label: 'Parda',     hex: '#d08b5b' },
+    { val: 'DarkBrown',  label: 'Negra',     hex: '#ae5d29' },
+    { val: 'Black',      label: 'Retinta',   hex: '#614335' },
+  ],
+  facialHair: [
+    { val: 'Blank',          label: 'Nenhum' },
+    { val: 'BeardMedium',    label: 'Barba média' },
+    { val: 'BeardLight',     label: 'Barba leve' },
+    { val: 'MoustacheFancy', label: 'Bigode' },
+  ],
+  accessories: [
+    { val: 'Blank',       label: 'Nenhum' },
+    { val: 'Round',       label: 'Óculos' },
+    { val: 'Sunglasses',  label: 'Óculos sol' },
+    { val: 'Prescription02', label: 'Óculos quadrado' },
+    { val: 'Wayfarers',   label: 'Óculos retrô' },
+  ],
+  eyes: [
+    { val: 'Default',    label: 'Normal' },
+    { val: 'Happy',      label: 'Feliz' },
+    { val: 'Wink',       label: 'Piscando' },
+    { val: 'Hearts',     label: 'Apaixonado' },
+    { val: 'Surprised',  label: 'Surpreso' },
+    { val: 'Side',       label: 'De lado' },
+  ],
+  eyebrow: [
+    { val: 'Default',          label: 'Normal' },
+    { val: 'RaisedExcited',    label: 'Animado' },
+    { val: 'FlatNatural',      label: 'Reto' },
+    { val: 'AngryNatural',     label: 'Bravo' },
+  ],
+  mouth: [
+    { val: 'Default',    label: 'Normal' },
+    { val: 'Smile',      label: 'Sorriso' },
+    { val: 'Serious',    label: 'Sério' },
+    { val: 'Tongue',     label: 'Língua' },
+    { val: 'Twinkle',    label: 'Animado' },
+  ],
 };
+
+// Estado do avatar em criação
+const avatarEstado = {
+  topType: 'ShortHairShortFlat',
+  hairColor: 'Black',
+  skinColor: 'Light',
+  facialHair: 'Blank',
+  accessories: 'Blank',
+  eyes: 'Default',
+  eyebrow: 'Default',
+  mouth: 'Smile',
+};
+
+function gerarURLAvatar(cfg) {
+  const c = cfg || avatarEstado;
+  const params = new URLSearchParams({
+    topType: c.topType,
+    hairColor: c.hairColor,
+    skinColor: c.skinColor,
+    facialHairType: c.facialHair,
+    accessoriesType: c.accessories,
+    eyeType: c.eyes,
+    eyebrowType: c.eyebrow,
+    mouthType: c.mouth,
+    clotheType: 'ShirtCrewNeck',
+    clotheColor: 'Gray01',
+    size: 160,
+    backgroundColor: 'transparent',
+  });
+  return `${AVATAR_BASE}?${params}`;
+}
 
 // ================================================================
 // ESTADO GLOBAL
@@ -1586,119 +1723,79 @@ function selecionarPais(codigo) {
 }
 
 // ================================================================
-// PASSO 2 — AVATAR
+// PASSO 2 — AVATAR (DiceBear Avataaars)
 // ================================================================
 function iniciarAvatar() {
-  renderizarOpcoes();
-  renderizarAvatarSVG();
+  renderizarOpcoesAvatar();
+  atualizarPreviewAvatar();
 }
 
-function renderizarOpcoes() {
+function renderizarOpcoesAvatar() {
   // Pele
-  document.getElementById('op-pele').innerHTML = OPCOES_AVATAR.pele.map((c,i) =>
-    `<div class="cor-btn ${estado.cartaCriacao.avatar.pele===i?'ativo':''}"
-          style="background:${c}" onclick="setAvatar('pele',${i})"></div>`).join('');
+  document.getElementById('op-pele').innerHTML = AVATAR_OPCOES.skinColor.map(o =>
+    `<div class="cor-btn ${avatarEstado.skinColor===o.val?'ativo':''}"
+          style="background:${o.hex}" title="${o.label}"
+          onclick="setAvatarOpcao('skinColor','${o.val}')"></div>`).join('');
   // Cabelo tipo
-  document.getElementById('op-cabelo-tipo').innerHTML = OPCOES_AVATAR.cabeloTipo.map((t,i) =>
-    `<button class="opcao-btn ${estado.cartaCriacao.avatar.cabeloTipo===i?'ativo':''}"
-             onclick="setAvatar('cabeloTipo',${i})">${t}</button>`).join('');
-  // Cabelo cor
-  document.getElementById('op-cabelo-cor').innerHTML = OPCOES_AVATAR.cabeloCor.map((c,i) =>
-    `<div class="cor-btn ${estado.cartaCriacao.avatar.cabeloCor===i?'ativo':''}"
-          style="background:${c}" onclick="setAvatar('cabeloCor',${i})"></div>`).join('');
+  document.getElementById('op-cabelo-tipo').innerHTML = AVATAR_OPCOES.topType.map(o =>
+    `<button class="opcao-btn ${avatarEstado.topType===o.val?'ativo':''}"
+             onclick="setAvatarOpcao('topType','${o.val}')">${o.label}</button>`).join('');
+  // Cor do cabelo
+  document.getElementById('op-cabelo-cor').innerHTML = AVATAR_OPCOES.hairColor.map(o =>
+    `<div class="cor-btn ${avatarEstado.hairColor===o.val?'ativo':''}"
+          style="background:${o.hex}" title="${o.label}"
+          onclick="setAvatarOpcao('hairColor','${o.val}')"></div>`).join('');
   // Olhos
-  document.getElementById('op-olhos').innerHTML = OPCOES_AVATAR.olhos.map((o,i) =>
-    `<button class="opcao-btn ${estado.cartaCriacao.avatar.olhos===i?'ativo':''}"
-             onclick="setAvatar('olhos',${i})">${o}</button>`).join('');
+  document.getElementById('op-olhos').innerHTML = AVATAR_OPCOES.eyes.map(o =>
+    `<button class="opcao-btn ${avatarEstado.eyes===o.val?'ativo':''}"
+             onclick="setAvatarOpcao('eyes','${o.val}')">${o.label}</button>`).join('');
+  // Sobrancelhas
+  document.getElementById('op-sobrancelha').innerHTML = AVATAR_OPCOES.eyebrow.map(o =>
+    `<button class="opcao-btn ${avatarEstado.eyebrow===o.val?'ativo':''}"
+             onclick="setAvatarOpcao('eyebrow','${o.val}')">${o.label}</button>`).join('');
   // Boca
-  document.getElementById('op-boca').innerHTML = OPCOES_AVATAR.boca.map((b,i) =>
-    `<button class="opcao-btn ${estado.cartaCriacao.avatar.boca===i?'ativo':''}"
-             onclick="setAvatar('boca',${i})">${b}</button>`).join('');
+  document.getElementById('op-boca').innerHTML = AVATAR_OPCOES.mouth.map(o =>
+    `<button class="opcao-btn ${avatarEstado.mouth===o.val?'ativo':''}"
+             onclick="setAvatarOpcao('mouth','${o.val}')">${o.label}</button>`).join('');
+  // Barba
+  document.getElementById('op-barba').innerHTML = AVATAR_OPCOES.facialHair.map(o =>
+    `<button class="opcao-btn ${avatarEstado.facialHair===o.val?'ativo':''}"
+             onclick="setAvatarOpcao('facialHair','${o.val}')">${o.label}</button>`).join('');
   // Acessório
-  document.getElementById('op-acessorio').innerHTML = OPCOES_AVATAR.acessorio.map((a,i) =>
-    `<button class="opcao-btn ${estado.cartaCriacao.avatar.acessorio===i?'ativo':''}"
-             onclick="setAvatar('acessorio',${i})">${a}</button>`).join('');
+  document.getElementById('op-acessorio').innerHTML = AVATAR_OPCOES.accessories.map(o =>
+    `<button class="opcao-btn ${avatarEstado.accessories===o.val?'ativo':''}"
+             onclick="setAvatarOpcao('accessories','${o.val}')">${o.label}</button>`).join('');
 }
 
-function setAvatar(prop, val) {
-  estado.cartaCriacao.avatar[prop] = val;
-  renderizarOpcoes();
-  renderizarAvatarSVG();
+function setAvatarOpcao(prop, val) {
+  avatarEstado[prop] = val;
+  // Salva no estado de criação
+  estado.cartaCriacao.avatar = { ...avatarEstado };
+  renderizarOpcoesAvatar();
+  atualizarPreviewAvatar();
 }
 
-function renderizarAvatarSVG(cfg = null, target = null) {
-  const av = cfg || estado.cartaCriacao.avatar;
-  const pele = OPCOES_AVATAR.pele[av.pele];
-  const corCabelo = OPCOES_AVATAR.cabeloCor[av.cabeloCor];
-  const tipoCabelo = OPCOES_AVATAR.cabeloTipo[av.cabeloTipo];
+function atualizarPreviewAvatar() {
+  const url = gerarURLAvatar();
+  const img = document.getElementById('avatar-preview-img');
+  if (img) img.src = url;
+  // Salva no estado
+  estado.cartaCriacao.avatar = { ...avatarEstado };
+}
 
-  // Olhos baseado na opção
-  const olhoW = [14,16,10,18][av.olhos];
-  const olhoH = [8,10,6,12][av.olhos];
-  // Boca
-  const bocaPaths = [
-    'M48,82 Q60,92 72,82',  // Sorriso
-    'M48,84 L72,84',         // Sério
-    'M46,80 Q60,95 74,80',  // Animado
-    'M50,83 Q60,88 70,83',  // Focado
-  ];
-  // Cabelo
-  const cabeloShapes = {
-    'Liso':    `<rect x="28" y="18" width="64" height="22" rx="8" fill="${corCabelo}"/>`,
-    'Crespo':  `<ellipse cx="60" cy="22" rx="34" ry="18" fill="${corCabelo}"/>`,
-    'Ondulado':`<path d="M28,30 Q36,14 44,26 Q52,12 60,24 Q68,12 76,26 Q84,14 92,30 L92,22 Q84,8 76,16 Q68,4 60,16 Q52,4 44,16 Q36,8 28,22 Z" fill="${corCabelo}"/>`,
-    'Careca':  '',
-    'Trança':  `<rect x="28" y="18" width="64" height="20" rx="6" fill="${corCabelo}"/><rect x="52" y="14" width="16" height="6" rx="3" fill="${corCabelo}"/>`,
-    'Curto':   `<rect x="30" y="20" width="60" height="16" rx="10" fill="${corCabelo}"/>`,
-  };
-  // Acessório
-  const acessorios = [
-    '',
-    `<rect x="38" y="36" width="44" height="8" rx="4" fill="#fff" opacity="0.8"/>`,
-    `<ellipse cx="48" cy="66" rx="8" ry="5" fill="none" stroke="#333" stroke-width="2"/>
-     <ellipse cx="72" cy="66" rx="8" ry="5" fill="none" stroke="#333" stroke-width="2"/>
-     <line x1="56" y1="66" x2="64" y2="66" stroke="#333" stroke-width="2"/>`,
-    `<circle cx="82" cy="54" r="4" fill="#f4d03f"/>`,
-    `<rect x="26" y="16" width="68" height="20" rx="6" fill="#cc2200"/>`,
-  ];
-
-  const paisCor = estado.cartaCriacao.pais;
-  const uniformeCor = paisCor ? paisCor.cor1 : '#1a9e4a';
-
-  const svg = `
-    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <!-- Fundo/uniforme -->
-      <circle cx="60" cy="100" r="50" fill="${uniformeCor}" opacity="0.3"/>
-      <!-- Corpo/uniforme -->
-      <path d="M32,95 Q32,78 60,78 Q88,78 88,95 L88,120 L32,120 Z" fill="${uniformeCor}"/>
-      <!-- Pescoço -->
-      <rect x="52" y="72" width="16" height="12" rx="4" fill="${pele}"/>
-      <!-- Cabeça -->
-      <ellipse cx="60" cy="56" rx="28" ry="30" fill="${pele}"/>
-      <!-- Cabelo -->
-      ${cabeloShapes[tipoCabelo] || ''}
-      <!-- Sobrancelhas -->
-      <path d="M44,47 Q50,44 56,47" stroke="#5a3a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M64,47 Q70,44 76,47" stroke="#5a3a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <!-- Olhos -->
-      <ellipse cx="49" cy="57" rx="${olhoW/2}" ry="${olhoH/2}" fill="#333"/>
-      <ellipse cx="71" cy="57" rx="${olhoW/2}" ry="${olhoH/2}" fill="#333"/>
-      <circle cx="51" cy="55" r="2" fill="white"/>
-      <circle cx="73" cy="55" r="2" fill="white"/>
-      <!-- Nariz -->
-      <path d="M58,62 Q60,68 62,62" stroke="#c0845a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <!-- Boca -->
-      <path d="${bocaPaths[av.boca]}" stroke="#c0403a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-      <!-- Acessório -->
-      ${acessorios[av.acessorio] || ''}
-    </svg>
-  `;
-
-  if (target) {
-    target.innerHTML = svg;
-  } else {
-    document.getElementById('avatar-svg-preview').innerHTML = svg.replace('<svg viewBox','<svg style="width:100%;height:100%" viewBox');
-  }
+function randomizarAvatar() {
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)].val;
+  avatarEstado.topType      = pick(AVATAR_OPCOES.topType);
+  avatarEstado.hairColor    = pick(AVATAR_OPCOES.hairColor);
+  avatarEstado.skinColor    = pick(AVATAR_OPCOES.skinColor);
+  avatarEstado.facialHair   = pick(AVATAR_OPCOES.facialHair);
+  avatarEstado.accessories  = pick(AVATAR_OPCOES.accessories);
+  avatarEstado.eyes         = pick(AVATAR_OPCOES.eyes);
+  avatarEstado.eyebrow      = pick(AVATAR_OPCOES.eyebrow);
+  avatarEstado.mouth        = pick(AVATAR_OPCOES.mouth);
+  estado.cartaCriacao.avatar = { ...avatarEstado };
+  renderizarOpcoesAvatar();
+  atualizarPreviewAvatar();
 }
 
 // ================================================================
@@ -1864,84 +1961,48 @@ async function carregarBaralho() {
 }
 
 // ================================================================
-// GERAR ELEMENTO HTML DA CARTA
+// GERAR ELEMENTO HTML DA CARTA (visual FIFA card)
 // ================================================================
 function gerarCartaEl(carta, grande = false) {
-  const pais = PAISES.find(p => p.c === carta.pais_codigo) || {cor1:'#1a9e4a',cor2:'#ffdf00',e:'🌍'};
+  const pais = PAISES.find(p => p.c === carta.pais_codigo) || {cor1:'#1a9e4a',cor2:'#ffdf00',e:'🌍',n:'—'};
   const div = document.createElement('div');
   div.className = 'carta-visual';
   if (grande) div.style.width = '240px';
 
-  // Gerar SVG do avatar
-  const avatarSVG = gerarAvatarSVGString(carta.avatar_config, pais.cor1);
+  const avatarUrl = carta.avatar_config ? gerarURLAvatar(carta.avatar_config) : gerarURLAvatar();
+  const totalPts = carta.chute + carta.passe + carta.desarme + carta.tecnica + carta.visao;
+
+  // Fundo com gradiente das cores do país
+  div.style.background = `linear-gradient(160deg, ${pais.cor1}dd 0%, ${pais.cor2}88 50%, #0d0f14 100%)`;
 
   div.innerHTML = `
-    <div class="carta-topo" style="background:linear-gradient(135deg,${pais.cor1},${pais.cor2})">
-      <div class="carta-bandeira-bg">${pais.e}</div>
-      <div class="carta-avatar-svg">${avatarSVG}</div>
-      <div class="carta-pais-badge">${pais.e}</div>
+    <div class="carta-faixa-topo" style="background:linear-gradient(90deg,${pais.cor1},${pais.cor2})">
+      <span class="carta-total-pts">⭐ ${totalPts}</span>
+      <span class="carta-bandeira-topo">${pais.e}</span>
+    </div>
+    <div class="carta-avatar-area">
+      <img class="carta-avatar-img" src="${avatarUrl}" alt="${carta.apelido}" loading="lazy">
     </div>
     <div class="carta-corpo">
       <div class="carta-apelido">${carta.apelido}</div>
-      <div class="carta-pais-nome">${carta.pais_nome}</div>
+      <div class="carta-pais-nome">${pais.n}</div>
+      <div class="carta-divisor"></div>
       <div class="carta-attrs">
         ${ATRIBUTOS.map(a => `
           <div class="carta-attr-row" data-attr="${a.k}">
-            <span class="carta-attr-label">${a.icone} ${a.label.split(' ')[0]}</span>
-            <div class="carta-attr-bar-wrap">
-              <div class="carta-attr-bar" style="width:${(carta[a.k]/200)*100}%;background:${a.cor}"></div>
+            <span class="carta-attr-num">${carta[a.k]}</span>
+            <div class="carta-attr-info">
+              <div class="carta-attr-label">${a.label.split(' ')[0]}</div>
+              <div class="carta-attr-bar-wrap">
+                <div class="carta-attr-bar" style="width:${(carta[a.k]/200)*100}%;background:${a.cor}"></div>
+              </div>
             </div>
-            <span class="carta-attr-val">${carta[a.k]}</span>
           </div>
         `).join('')}
       </div>
     </div>
   `;
   return div;
-}
-
-function gerarAvatarSVGString(av, uniformeCor = '#1a9e4a') {
-  if (!av) return '<text x="50%" y="50%" text-anchor="middle" dy=".3em" font-size="40">⚽</text>';
-  const pele = OPCOES_AVATAR.pele[av.pele] || '#FDDBB4';
-  const corCabelo = OPCOES_AVATAR.cabeloCor[av.cabeloCor] || '#1a0a00';
-  const tipoCabelo = OPCOES_AVATAR.cabeloTipo[av.cabeloTipo] || 'Liso';
-  const olhoW = [14,16,10,18][av.olhos] || 14;
-  const olhoH = [8,10,6,12][av.olhos] || 8;
-  const bocaPaths = ['M48,82 Q60,92 72,82','M48,84 L72,84','M46,80 Q60,95 74,80','M50,83 Q60,88 70,83'];
-  const cabeloShapes = {
-    'Liso':    `<rect x="28" y="18" width="64" height="22" rx="8" fill="${corCabelo}"/>`,
-    'Crespo':  `<ellipse cx="60" cy="22" rx="34" ry="18" fill="${corCabelo}"/>`,
-    'Ondulado':`<path d="M28,30 Q36,14 44,26 Q52,12 60,24 Q68,12 76,26 Q84,14 92,30 L92,22 Q84,8 76,16 Q68,4 60,16 Q52,4 44,16 Q36,8 28,22 Z" fill="${corCabelo}"/>`,
-    'Careca':  '',
-    'Trança':  `<rect x="28" y="18" width="64" height="20" rx="6" fill="${corCabelo}"/>`,
-    'Curto':   `<rect x="30" y="20" width="60" height="16" rx="10" fill="${corCabelo}"/>`,
-  };
-  const acessorios = [
-    '',
-    `<rect x="38" y="36" width="44" height="8" rx="4" fill="#fff" opacity="0.8"/>`,
-    `<ellipse cx="48" cy="66" rx="8" ry="5" fill="none" stroke="#333" stroke-width="2"/>
-     <ellipse cx="72" cy="66" rx="8" ry="5" fill="none" stroke="#333" stroke-width="2"/>
-     <line x1="56" y1="66" x2="64" y2="66" stroke="#333" stroke-width="2"/>`,
-    `<circle cx="82" cy="54" r="4" fill="#f4d03f"/>`,
-    `<rect x="26" y="16" width="68" height="20" rx="6" fill="#cc2200"/>`,
-  ];
-  return `
-    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
-      <circle cx="60" cy="100" r="50" fill="${uniformeCor}" opacity="0.25"/>
-      <path d="M32,95 Q32,78 60,78 Q88,78 88,95 L88,120 L32,120 Z" fill="${uniformeCor}"/>
-      <rect x="52" y="72" width="16" height="12" rx="4" fill="${pele}"/>
-      <ellipse cx="60" cy="56" rx="28" ry="30" fill="${pele}"/>
-      ${cabeloShapes[tipoCabelo]||''}
-      <path d="M44,47 Q50,44 56,47" stroke="#5a3a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M64,47 Q70,44 76,47" stroke="#5a3a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <ellipse cx="49" cy="57" rx="${olhoW/2}" ry="${olhoH/2}" fill="#333"/>
-      <ellipse cx="71" cy="57" rx="${olhoW/2}" ry="${olhoH/2}" fill="#333"/>
-      <circle cx="51" cy="55" r="2" fill="white"/>
-      <circle cx="73" cy="55" r="2" fill="white"/>
-      <path d="M58,62 Q60,68 62,62" stroke="#c0845a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      <path d="${bocaPaths[av.boca]||bocaPaths[0]}" stroke="#c0403a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-      ${acessorios[av.acessorio]||''}
-    </svg>`;
 }
 
 // ================================================================
@@ -2006,14 +2067,25 @@ function atualizarJogoUI() {
 }
 
 function gerarCartaJogoCPU(carta) {
-  // Carta virada para baixo (mostra só as costas)
   const div = document.createElement('div');
   div.className = 'carta-visual';
-  div.style.background = 'linear-gradient(135deg, #1565c0, #0d47a1)';
+  div.style.background = 'linear-gradient(160deg, #1a3a6e, #0d1f3c)';
   div.innerHTML = `
-    <div style="height:100%;min-height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px">
-      <div style="font-size:48px;margin-bottom:12px">⚽</div>
-      <div style="color:rgba(255,255,255,0.7);font-size:13px;font-weight:700">Carta do adversário</div>
+    <div style="height:100%;min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:12px">
+      <div style="width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:32px">⚽</div>
+      <div style="color:rgba(255,255,255,0.5);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px">Adversário</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;width:100%;padding:0 8px;margin-top:8px">
+        ${['CHU','PAS','DES','TÉC','VIS'].map(a => `
+          <div style="background:rgba(255,255,255,0.05);border-radius:6px;padding:6px;text-align:center">
+            <div style="font-size:16px;font-weight:900;color:rgba(255,255,255,0.2)">?</div>
+            <div style="font-size:8px;color:rgba(255,255,255,0.2);text-transform:uppercase">${a}</div>
+          </div>
+        `).join('')}
+        <div style="background:rgba(255,255,255,0.05);border-radius:6px;padding:6px;text-align:center">
+          <div style="font-size:16px;font-weight:900;color:rgba(255,255,255,0.2)">?</div>
+          <div style="font-size:8px;color:rgba(255,255,255,0.2);text-transform:uppercase">VIS</div>
+        </div>
+      </div>
     </div>`;
   return div;
 }
@@ -2031,7 +2103,12 @@ function jogarAtributo(atributo) {
   document.getElementById('jogo-carta-j2').appendChild(gerarCartaEl(c2, false));
 
   // Destaca atributo jogado em ambas as cartas
-  document.querySelectorAll(`[data-attr="${atributo}"]`).forEach(el => el.classList.add('destaque'));
+  document.querySelectorAll(`[data-attr="${atributo}"]`).forEach(el => {
+    el.classList.add('destaque');
+    if ((el.closest('#jogo-carta-j1') && v1 > v2) || (el.closest('#jogo-carta-j2') && v2 > v1)) {
+      el.classList.add('vencedor');
+    }
+  });
 
   document.getElementById('escolha-wrap').classList.add('hidden');
   document.getElementById('resultado-rodada-wrap').classList.remove('hidden');
