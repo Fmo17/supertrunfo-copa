@@ -459,6 +459,11 @@ input, select { font-family: var(--font); }
   object-position: top center;
   filter: drop-shadow(0 4px 16px rgba(0,0,0,0.5));
 }
+.carta-avatar-svg-wrap svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.5));
+}
 .carta-corpo {
   position: relative;
   z-index: 1;
@@ -1029,8 +1034,8 @@ input, select { font-family: var(--font); }
       <!-- Preview ao vivo -->
       <div style="display:flex;flex-direction:column;align-items:center;gap:12px;flex-shrink:0">
         <div style="font-size:11px;font-weight:700;color:var(--cinza4);text-transform:uppercase;letter-spacing:0.5px">Seu avatar</div>
-        <div style="width:140px;height:140px;border-radius:50%;overflow:hidden;border:4px solid var(--verde);background:var(--cinza2);box-shadow:var(--sombra)">
-          <img id="avatar-preview-img" src="" alt="Avatar" style="width:100%;height:100%;object-fit:cover;object-position:top">
+        <div id="avatar-preview-wrap" style="width:140px;height:140px;border-radius:50%;overflow:hidden;border:4px solid var(--verde);background:var(--cinza2);box-shadow:var(--sombra);display:flex;align-items:center;justify-content:center">
+          <div style="font-size:32px">⏳</div>
         </div>
         <button class="btn-secundario" onclick="randomizarAvatar()" style="font-size:12px">🎲 Aleatório</button>
       </div>
@@ -1509,7 +1514,7 @@ const PAISES = [
 // SISTEMA DE AVATAR — DiceBear Avataaars (busto cartoon)
 // API: https://api.dicebear.com/9.x/avataaars/svg
 // ================================================================
-const AVATAR_BASE = 'https://api.dicebear.com/9.x/avataaars/svg';
+const AVATAR_BASE = 'https://api.dicebear.com/10.x/avataaars/svg';
 
 const AVATAR_OPCOES = {
   topType: [
@@ -1775,12 +1780,28 @@ function setAvatarOpcao(prop, val) {
   atualizarPreviewAvatar();
 }
 
-function atualizarPreviewAvatar() {
-  const url = gerarURLAvatar();
-  const img = document.getElementById('avatar-preview-img');
-  if (img) img.src = url;
-  // Salva no estado
+async function atualizarPreviewAvatar() {
   estado.cartaCriacao.avatar = { ...avatarEstado };
+  const url = gerarURLAvatar();
+  const wrap = document.getElementById('avatar-preview-wrap');
+  if (!wrap) return;
+  wrap.innerHTML = '<div style="font-size:24px">⏳</div>';
+  try {
+    const r = await fetch(url);
+    const svg = await r.text();
+    wrap.innerHTML = svg;
+    // Garante que o SVG preenche o container
+    const svgEl = wrap.querySelector('svg');
+    if (svgEl) {
+      svgEl.style.width = '100%';
+      svgEl.style.height = '100%';
+      svgEl.removeAttribute('width');
+      svgEl.removeAttribute('height');
+    }
+  } catch(e) {
+    wrap.innerHTML = '<div style="font-size:32px">😊</div>';
+    console.warn('Avatar não carregou:', e);
+  }
 }
 
 function randomizarAvatar() {
@@ -1939,7 +1960,9 @@ async function verMinhaCarta() {
   }
   const carta = cartas[0];
   container.innerHTML = '';
-  container.appendChild(gerarCartaEl(carta, true));
+  const el = gerarCartaEl(carta, true);
+  container.appendChild(el);
+  await carregarAvataresSVG(container);
 }
 
 // ================================================================
@@ -1958,6 +1981,7 @@ async function carregarBaralho() {
   }
   grid.innerHTML = '';
   cartas.forEach(c => grid.appendChild(gerarCartaEl(c, false)));
+  await carregarAvataresSVG(grid);
 }
 
 // ================================================================
@@ -1981,7 +2005,9 @@ function gerarCartaEl(carta, grande = false) {
       <span class="carta-bandeira-topo">${pais.e}</span>
     </div>
     <div class="carta-avatar-area">
-      <img class="carta-avatar-img" src="${avatarUrl}" alt="${carta.apelido}" loading="lazy">
+      <div class="carta-avatar-svg-wrap" data-avatar-url="${avatarUrl}" style="width:134px;height:148px;display:flex;align-items:center;justify-content:center">
+        <div style="font-size:28px;opacity:0.4">⚽</div>
+      </div>
     </div>
     <div class="carta-corpo">
       <div class="carta-apelido">${carta.apelido}</div>
@@ -2057,9 +2083,10 @@ function atualizarJogoUI() {
 
   document.getElementById('jogo-carta-j1').innerHTML = '';
   document.getElementById('jogo-carta-j2').innerHTML = '';
-  document.getElementById('jogo-carta-j1').appendChild(gerarCartaEl(c1, false));
-  // Carta do CPU fica virada para baixo inicialmente
+  const elJ1 = gerarCartaEl(c1, false);
+  document.getElementById('jogo-carta-j1').appendChild(elJ1);
   document.getElementById('jogo-carta-j2').appendChild(gerarCartaJogoCPU(c2));
+  carregarAvataresSVG(document.getElementById('jogo-carta-j1'));
 
   document.getElementById('escolha-wrap').classList.remove('hidden');
   document.getElementById('resultado-rodada-wrap').classList.add('hidden');
@@ -2325,6 +2352,7 @@ async function carregarCartasAdmin() {
   const cartas = await sb.select('cartas', 'ativa=eq.true&order=created_at.asc');
   grid.innerHTML = '';
   (cartas||[]).forEach(c => grid.appendChild(gerarCartaEl(c, false)));
+  await carregarAvataresSVG(grid);
 }
 
 async function carregarPartidasAdmin() {
@@ -2342,6 +2370,32 @@ async function carregarPartidasAdmin() {
       <td>${new Date(p.created_at).toLocaleDateString('pt-BR')}</td>
     </tr>
   `).join('');
+}
+
+// ================================================================
+// Carrega SVGs inline para cartas já no DOM
+// ================================================================
+async function carregarAvataresSVG(container = document) {
+  const wraps = container.querySelectorAll('.carta-avatar-svg-wrap[data-avatar-url]');
+  await Promise.all([...wraps].map(async wrap => {
+    const url = wrap.dataset.avatarUrl;
+    if (!url || wrap.dataset.loaded) return;
+    try {
+      const r = await fetch(url);
+      const svg = await r.text();
+      wrap.innerHTML = svg;
+      const svgEl = wrap.querySelector('svg');
+      if (svgEl) {
+        svgEl.style.width = '100%';
+        svgEl.style.height = '100%';
+        svgEl.removeAttribute('width');
+        svgEl.removeAttribute('height');
+      }
+      wrap.dataset.loaded = '1';
+    } catch(e) {
+      wrap.innerHTML = '<div style="font-size:28px;opacity:0.3">⚽</div>';
+    }
+  }));
 }
 
 // ================================================================
