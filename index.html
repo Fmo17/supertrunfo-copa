@@ -1516,103 +1516,116 @@ const PAISES = [
 // ================================================================
 const AVATAR_BASE = 'https://api.dicebear.com/10.x/avataaars/svg';
 
+// Na v10 do DiceBear, cores são passadas como hex sem '#'
+// e os parâmetros mudaram de nome
 const AVATAR_OPCOES = {
   topType: [
-    { val: 'ShortHairShortFlat',   label: 'Curto liso' },
-    { val: 'ShortHairShortWaved',  label: 'Curto ondulado' },
-    { val: 'ShortHairDreads01',    label: 'Dreads curto' },
-    { val: 'LongHairStraight',     label: 'Liso comprido' },
-    { val: 'LongHairCurly',        label: 'Cacheado' },
-    { val: 'LongHairBun',          label: 'Coque' },
-    { val: 'LongHairBob',          label: 'Chanel' },
-    { val: 'WinterHat1',           label: 'Gorro' },
-    { val: 'Hat',                  label: 'Boné' },
-    { val: 'Hijab',                label: 'Hijab' },
-    { val: 'NoHair',               label: 'Careca' },
+    { val: 'shortHairShortFlat',   label: 'Curto liso' },
+    { val: 'shortHairShortWaved',  label: 'Curto ondulado' },
+    { val: 'shortHairDreads01',    label: 'Dreads curto' },
+    { val: 'longHairStraight',     label: 'Liso longo' },
+    { val: 'longHairCurly',        label: 'Cacheado longo' },
+    { val: 'longHairBun',          label: 'Coque' },
+    { val: 'longHairBob',          label: 'Chanel' },
+    { val: 'winterHat1',           label: 'Gorro' },
+    { val: 'hat',                  label: 'Chapéu' },
+    { val: 'hijab',                label: 'Hijab' },
+    { val: 'noHair',               label: 'Careca' },
   ],
+  // Cores como hex sem '#' (padrão v10)
   hairColor: [
-    { val: 'Black',      label: 'Preto',     hex: '#090806' },
-    { val: 'BrownDark',  label: 'Castanho',  hex: '#4a312c' },
-    { val: 'Brown',      label: 'Marrom',    hex: '#724133' },
-    { val: 'Blonde',     label: 'Loiro',     hex: '#b58143' },
-    { val: 'BlondeGolden',label: 'Loiro ouro',hex: '#d6b370' },
-    { val: 'Red',        label: 'Ruivo',     hex: '#c93305' },
-    { val: 'SilverGray', label: 'Grisalho',  hex: '#e8e1e1' },
-    { val: 'PastelPink', label: 'Rosa',      hex: '#f59797' },
-    { val: 'Blue01',     label: 'Azul',      hex: '#65c9ff' },
+    { val: '090806', label: 'Preto',      hex: '#090806' },
+    { val: '4a312c', label: 'Castanho',   hex: '#4a312c' },
+    { val: '724133', label: 'Marrom',     hex: '#724133' },
+    { val: 'b58143', label: 'Loiro',      hex: '#b58143' },
+    { val: 'd6b370', label: 'Loiro ouro', hex: '#d6b370' },
+    { val: 'c93305', label: 'Ruivo',      hex: '#c93305' },
+    { val: 'e8e1e1', label: 'Grisalho',   hex: '#e8e1e1' },
+    { val: 'f59797', label: 'Rosa',       hex: '#f59797' },
+    { val: '65c9ff', label: 'Azul',       hex: '#65c9ff' },
   ],
   skinColor: [
-    { val: 'Light',      label: 'Clara',     hex: '#ffdbb4' },
-    { val: 'Pale',       label: 'Pálida',    hex: '#fce5d4' },
-    { val: 'Tanned',     label: 'Morena',    hex: '#fd9841' },
-    { val: 'Yellow',     label: 'Amarela',   hex: '#f8d25c' },
-    { val: 'Brown',      label: 'Parda',     hex: '#d08b5b' },
-    { val: 'DarkBrown',  label: 'Negra',     hex: '#ae5d29' },
-    { val: 'Black',      label: 'Retinta',   hex: '#614335' },
+    { val: 'ffdbb4', label: 'Clara',   hex: '#ffdbb4' },
+    { val: 'fce5d4', label: 'Pálida',  hex: '#fce5d4' },
+    { val: 'fd9841', label: 'Morena',  hex: '#fd9841' },
+    { val: 'f8d25c', label: 'Amarela', hex: '#f8d25c' },
+    { val: 'd08b5b', label: 'Parda',   hex: '#d08b5b' },
+    { val: 'ae5d29', label: 'Negra',   hex: '#ae5d29' },
+    { val: '614335', label: 'Retinta', hex: '#614335' },
   ],
   facialHair: [
-    { val: 'Blank',          label: 'Nenhum' },
-    { val: 'BeardMedium',    label: 'Barba média' },
-    { val: 'BeardLight',     label: 'Barba leve' },
-    { val: 'MoustacheFancy', label: 'Bigode' },
+    { val: 'blank',          label: 'Nenhum' },
+    { val: 'beardMedium',    label: 'Barba média' },
+    { val: 'beardLight',     label: 'Barba leve' },
+    { val: 'moustacheFancy', label: 'Bigode' },
   ],
   accessories: [
-    { val: 'Blank',       label: 'Nenhum' },
-    { val: 'Round',       label: 'Óculos' },
-    { val: 'Sunglasses',  label: 'Óculos sol' },
-    { val: 'Prescription02', label: 'Óculos quadrado' },
-    { val: 'Wayfarers',   label: 'Óculos retrô' },
+    { val: 'blank',          label: 'Nenhum' },
+    { val: 'round',          label: 'Óculos' },
+    { val: 'sunglasses',     label: 'Óculos sol' },
+    { val: 'prescription02', label: 'Óculos quadrado' },
+    { val: 'wayfarers',      label: 'Óculos retrô' },
   ],
   eyes: [
-    { val: 'Default',    label: 'Normal' },
-    { val: 'Happy',      label: 'Feliz' },
-    { val: 'Wink',       label: 'Piscando' },
-    { val: 'Hearts',     label: 'Apaixonado' },
-    { val: 'Surprised',  label: 'Surpreso' },
-    { val: 'Side',       label: 'De lado' },
+    { val: 'default',    label: 'Normal' },
+    { val: 'happy',      label: 'Feliz' },
+    { val: 'wink',       label: 'Piscando' },
+    { val: 'hearts',     label: 'Apaixonado' },
+    { val: 'surprised',  label: 'Surpreso' },
+    { val: 'side',       label: 'De lado' },
   ],
   eyebrow: [
-    { val: 'Default',          label: 'Normal' },
-    { val: 'RaisedExcited',    label: 'Animado' },
-    { val: 'FlatNatural',      label: 'Reto' },
-    { val: 'AngryNatural',     label: 'Bravo' },
+    { val: 'default',          label: 'Normal' },
+    { val: 'raisedExcited',    label: 'Animado' },
+    { val: 'flatNatural',      label: 'Reto' },
+    { val: 'angryNatural',     label: 'Bravo' },
   ],
   mouth: [
-    { val: 'Default',    label: 'Normal' },
-    { val: 'Smile',      label: 'Sorriso' },
-    { val: 'Serious',    label: 'Sério' },
-    { val: 'Tongue',     label: 'Língua' },
-    { val: 'Twinkle',    label: 'Animado' },
+    { val: 'default',    label: 'Normal' },
+    { val: 'smile',      label: 'Sorriso' },
+    { val: 'serious',    label: 'Sério' },
+    { val: 'tongue',     label: 'Língua' },
+    { val: 'twinkle',    label: 'Animado' },
   ],
 };
 
 // Estado do avatar em criação
 const avatarEstado = {
-  topType: 'ShortHairShortFlat',
-  hairColor: 'Black',
-  skinColor: 'Light',
-  facialHair: 'Blank',
-  accessories: 'Blank',
-  eyes: 'Default',
-  eyebrow: 'Default',
-  mouth: 'Smile',
+  topType:    'shortHairShortFlat',
+  hairColor:  '090806',
+  skinColor:  'ffdbb4',
+  facialHair: 'blank',
+  accessories:'blank',
+  eyes:       'default',
+  eyebrow:    'default',
+  mouth:      'smile',
 };
 
-function gerarURLAvatar(cfg) {
+function gerarURLAvatar(cfg, paisCor1 = null) {
   const c = cfg || avatarEstado;
+  // v10: parâmetros em camelCase, seed necessário, cores como hex sem '#'
+  const seed = (c.topType || 'shortHairShortFlat') + (c.hairColor || '090806') + (c.skinColor || 'ffdbb4');
+  // Cor do uniforme: usar cor do país se disponível, senão cinza
+  let uniformColor = '929598'; // cinza padrão
+  if (paisCor1) {
+    uniformColor = paisCor1.replace('#','').toLowerCase();
+  } else if (estado.cartaCriacao?.pais?.cor1) {
+    uniformColor = estado.cartaCriacao.pais.cor1.replace('#','').toLowerCase();
+  }
   const params = new URLSearchParams({
-    topType: c.topType,
-    hairColor: c.hairColor,
-    skinColor: c.skinColor,
-    facialHairType: c.facialHair,
-    accessoriesType: c.accessories,
-    eyeType: c.eyes,
-    eyebrowType: c.eyebrow,
-    mouthType: c.mouth,
-    clotheType: 'ShirtCrewNeck',
-    clotheColor: 'Gray01',
-    size: 160,
-    backgroundColor: 'transparent',
+    seed,
+    top:          c.topType     || 'shortHairShortFlat',
+    hairColor:    c.hairColor   || '090806',
+    skinColor:    c.skinColor   || 'ffdbb4',
+    facialHair:   c.facialHair  || 'blank',
+    accessories:  c.accessories || 'blank',
+    eyes:         c.eyes        || 'default',
+    eyebrows:     c.eyebrow     || 'default',
+    mouth:        c.mouth       || 'smile',
+    clothes:      'shirtCrewNeck',
+    clothesColor: uniformColor,
+    size:         160,
+    radius:       50,
   });
   return `${AVATAR_BASE}?${params}`;
 }
@@ -1725,6 +1738,10 @@ function filtrarPaises() {
 function selecionarPais(codigo) {
   estado.cartaCriacao.pais = PAISES.find(p => p.c === codigo);
   renderizarPaises(document.getElementById('busca-pais').value);
+  // Atualiza preview do avatar se já estiver na tela de avatar
+  if (document.getElementById('avatar-preview-wrap')) {
+    atualizarPreviewAvatar();
+  }
 }
 
 // ================================================================
@@ -1993,7 +2010,7 @@ function gerarCartaEl(carta, grande = false) {
   div.className = 'carta-visual';
   if (grande) div.style.width = '240px';
 
-  const avatarUrl = carta.avatar_config ? gerarURLAvatar(carta.avatar_config) : gerarURLAvatar();
+  const avatarUrl = carta.avatar_config ? gerarURLAvatar(carta.avatar_config, pais.cor1) : gerarURLAvatar(null, pais.cor1);
   const totalPts = carta.chute + carta.passe + carta.desarme + carta.tecnica + carta.visao;
 
   // Fundo com gradiente das cores do país
