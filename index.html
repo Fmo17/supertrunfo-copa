@@ -1,0 +1,2278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super Trunfo — Copa do Mundo 2026</title>
+<style>
+/* ============================================================
+   TOKENS & RESET
+   ============================================================ */
+:root {
+  --verde:    #1a9e4a;
+  --verde2:   #0d7a38;
+  --amarelo:  #f5c800;
+  --amarelo2: #e0b400;
+  --azul:     #1565c0;
+  --vermelho: #d32f2f;
+  --cinza1:   #f7f8fa;
+  --cinza2:   #eef0f4;
+  --cinza3:   #d0d4dc;
+  --cinza4:   #9aa0ad;
+  --cinza5:   #5a6070;
+  --preto:    #1a1d24;
+  --branco:   #ffffff;
+  --sombra:   0 4px 24px rgba(0,0,0,0.10);
+  --sombra2:  0 2px 8px rgba(0,0,0,0.08);
+  --radius:   16px;
+  --radius2:  10px;
+  --font:     'Segoe UI', system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font);
+  background: var(--cinza1);
+  color: var(--preto);
+  min-height: 100vh;
+}
+button { font-family: var(--font); cursor: pointer; border: none; }
+input, select { font-family: var(--font); }
+.hidden { display: none !important; }
+
+/* ============================================================
+   TELA BASE (overlay)
+   ============================================================ */
+.tela {
+  display: none;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 24px 16px 48px;
+}
+.tela.ativa { display: flex; }
+
+/* ============================================================
+   TELA DE ENTRADA (login)
+   ============================================================ */
+#tela-login {
+  background: linear-gradient(160deg, #0d7a38 0%, #1a9e4a 40%, #1565c0 100%);
+  justify-content: center;
+}
+.login-card {
+  background: var(--branco);
+  border-radius: 24px;
+  padding: 40px 32px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.18);
+  text-align: center;
+}
+.login-logo { font-size: 56px; margin-bottom: 8px; }
+.login-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--verde2);
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+.login-sub {
+  font-size: 13px;
+  color: var(--cinza4);
+  margin-bottom: 28px;
+}
+.campo {
+  text-align: left;
+  margin-bottom: 16px;
+}
+.campo label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cinza5);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.campo input, .campo select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--cinza3);
+  border-radius: var(--radius2);
+  font-size: 15px;
+  color: var(--preto);
+  background: var(--cinza1);
+  transition: border-color 0.2s;
+}
+.campo input:focus, .campo select:focus {
+  outline: none;
+  border-color: var(--verde);
+  background: var(--branco);
+}
+.btn-primario {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--verde), var(--verde2));
+  color: var(--branco);
+  border-radius: var(--radius2);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  transition: transform 0.1s, opacity 0.2s;
+  margin-top: 4px;
+}
+.btn-primario:hover { opacity: 0.92; transform: translateY(-1px); }
+.btn-primario:active { transform: translateY(0); }
+.btn-secundario {
+  padding: 10px 20px;
+  background: var(--cinza2);
+  color: var(--cinza5);
+  border-radius: var(--radius2);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.btn-secundario:hover { background: var(--cinza3); }
+.login-admin-link {
+  margin-top: 20px;
+  font-size: 12px;
+  color: var(--cinza4);
+  cursor: pointer;
+  text-decoration: underline;
+}
+.msg-erro {
+  background: #fff0f0;
+  color: var(--vermelho);
+  border-radius: var(--radius2);
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 12px;
+  display: none;
+}
+
+/* ============================================================
+   HEADER ALUNO
+   ============================================================ */
+.header-aluno {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--branco);
+  border-radius: var(--radius);
+  padding: 12px 20px;
+  box-shadow: var(--sombra2);
+  margin-bottom: 24px;
+}
+.header-aluno .logo { font-size: 24px; }
+.header-aluno .nome-usuario {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--verde2);
+}
+.header-aluno .pontos-badge {
+  background: linear-gradient(135deg, var(--amarelo), var(--amarelo2));
+  color: var(--preto);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.btn-sair {
+  background: none;
+  color: var(--cinza4);
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--cinza3);
+}
+.btn-sair:hover { background: var(--cinza2); }
+
+/* ============================================================
+   SEÇÃO TÍTULO
+   ============================================================ */
+.secao-titulo {
+  width: 100%;
+  max-width: 720px;
+  margin-bottom: 20px;
+}
+.secao-titulo h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--preto);
+}
+.secao-titulo p {
+  font-size: 14px;
+  color: var(--cinza4);
+  margin-top: 4px;
+}
+.step-indicador {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.step {
+  flex: 1;
+  height: 5px;
+  background: var(--cinza3);
+  border-radius: 3px;
+  transition: background 0.3s;
+}
+.step.ativo { background: var(--verde); }
+.step.completo { background: var(--verde2); }
+
+/* ============================================================
+   CRIADOR DE CARTA — PASSOS
+   ============================================================ */
+.card-criador {
+  width: 100%;
+  max-width: 720px;
+  background: var(--branco);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  box-shadow: var(--sombra);
+}
+
+/* PASSO 1 — Nome e país */
+.pais-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 4px;
+  margin-top: 8px;
+}
+.pais-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 2px solid var(--cinza2);
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--cinza1);
+}
+.pais-item:hover { border-color: var(--verde); background: #f0faf4; }
+.pais-item.selecionado { border-color: var(--verde); background: #e8f7ee; box-shadow: 0 0 0 3px rgba(26,158,74,0.15); }
+.pais-bandeira { font-size: 28px; margin-bottom: 4px; }
+.pais-nome { font-size: 10px; font-weight: 600; color: var(--cinza5); text-align: center; }
+
+/* PASSO 2 — Avatar */
+.avatar-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.avatar-tab {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--cinza2);
+  color: var(--cinza5);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 2px solid transparent;
+}
+.avatar-tab.ativo { background: #e8f7ee; color: var(--verde2); border-color: var(--verde); }
+
+.avatar-construtor { display: none; }
+.avatar-construtor.ativo { display: block; }
+
+.opcoes-linha {
+  margin-bottom: 16px;
+}
+.opcoes-linha label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cinza5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 8px;
+}
+.opcoes-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.opcao-btn {
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 2px solid var(--cinza3);
+  background: var(--cinza1);
+  font-size: 13px;
+  color: var(--cinza5);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 600;
+}
+.opcao-btn:hover { border-color: var(--verde); color: var(--verde2); }
+.opcao-btn.ativo { background: var(--verde); color: var(--branco); border-color: var(--verde); }
+
+.cor-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cor-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: transform 0.1s, border-color 0.15s;
+}
+.cor-btn:hover { transform: scale(1.15); }
+.cor-btn.ativo { border-color: var(--preto); transform: scale(1.1); }
+
+/* Preview avatar em tempo real */
+.avatar-preview-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+.avatar-preview {
+  width: 120px;
+  height: 120px;
+}
+
+/* PASSO 3 — Atributos */
+.pontos-restantes-bar {
+  background: var(--cinza2);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pontos-restantes-bar .label { font-size: 13px; color: var(--cinza5); font-weight: 600; }
+.pontos-restantes-bar .valor {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--verde2);
+  transition: color 0.3s;
+}
+.pontos-restantes-bar .valor.zerado { color: var(--verde); }
+.pontos-restantes-bar .valor.negativo { color: var(--vermelho); }
+
+.atributo-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.atributo-icone { font-size: 22px; width: 32px; text-align: center; }
+.atributo-info { flex: 1; }
+.atributo-nome { font-size: 13px; font-weight: 700; color: var(--preto); }
+.atributo-barra-wrap {
+  height: 8px;
+  background: var(--cinza2);
+  border-radius: 4px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+.atributo-barra { height: 100%; border-radius: 4px; transition: width 0.2s; }
+.atributo-controles {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-attr {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--cinza2);
+  color: var(--cinza5);
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
+.btn-attr:hover { background: var(--verde); color: var(--branco); }
+.attr-valor {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--preto);
+  min-width: 40px;
+  text-align: center;
+}
+
+/* ============================================================
+   CARTA VISUAL (componente)
+   ============================================================ */
+.carta-visual {
+  width: 200px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  position: relative;
+  user-select: none;
+  flex-shrink: 0;
+}
+.carta-topo {
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.carta-bandeira-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.18;
+  font-size: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carta-avatar-svg {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 4px solid rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.2);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+.carta-pais-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  font-size: 20px;
+  z-index: 2;
+}
+.carta-corpo {
+  background: var(--branco);
+  padding: 12px 14px 14px;
+}
+.carta-apelido {
+  font-size: 16px;
+  font-weight: 800;
+  text-align: center;
+  color: var(--preto);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.carta-pais-nome {
+  font-size: 11px;
+  color: var(--cinza4);
+  text-align: center;
+  margin-bottom: 10px;
+}
+.carta-attrs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.carta-attr-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.carta-attr-label { font-size: 10px; color: var(--cinza5); font-weight: 600; width: 52px; }
+.carta-attr-bar-wrap {
+  flex: 1;
+  height: 5px;
+  background: var(--cinza2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.carta-attr-bar { height: 100%; border-radius: 3px; }
+.carta-attr-val { font-size: 11px; font-weight: 800; color: var(--preto); min-width: 28px; text-align: right; }
+
+/* ============================================================
+   MENU PRINCIPAL DO ALUNO
+   ============================================================ */
+.menu-grid {
+  width: 100%;
+  max-width: 500px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 8px;
+}
+.menu-item {
+  background: var(--branco);
+  border-radius: var(--radius);
+  padding: 24px 16px;
+  text-align: center;
+  box-shadow: var(--sombra2);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  border: 2px solid transparent;
+}
+.menu-item:hover { transform: translateY(-3px); box-shadow: var(--sombra); border-color: var(--verde); }
+.menu-item .icone { font-size: 40px; margin-bottom: 10px; }
+.menu-item .titulo { font-size: 14px; font-weight: 700; color: var(--preto); }
+.menu-item .desc { font-size: 11px; color: var(--cinza4); margin-top: 4px; }
+.menu-item.desabilitado { opacity: 0.45; pointer-events: none; }
+
+/* ============================================================
+   BARALHO / GALERIA DE CARTAS
+   ============================================================ */
+.cartas-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  width: 100%;
+  max-width: 720px;
+}
+
+/* ============================================================
+   TELA DE JOGO
+   ============================================================ */
+#tela-jogo {
+  background: linear-gradient(160deg, #0d7a38 0%, #1a9e4a 50%, #0d5c28 100%);
+  min-height: 100vh;
+}
+.jogo-placar {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius);
+  padding: 12px 20px;
+  margin-bottom: 20px;
+  color: var(--branco);
+}
+.jogo-placar .jogador-info { text-align: center; }
+.jogo-placar .jogador-info .nome { font-size: 13px; font-weight: 700; opacity: 0.9; }
+.jogo-placar .jogador-info .cartas-qtd { font-size: 28px; font-weight: 900; }
+.jogo-vs { font-size: 18px; font-weight: 800; opacity: 0.6; }
+.jogo-status {
+  text-align: center;
+  color: var(--branco);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  min-height: 22px;
+  opacity: 0.9;
+}
+.jogo-area {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+}
+.carta-jogo-wrap {
+  position: relative;
+}
+.carta-jogo-wrap .carta-visual { cursor: default; }
+.attr-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+/* Atributo destacado no jogo */
+.carta-attr-row.destaque .carta-attr-label { color: var(--verde2); font-weight: 800; }
+.carta-attr-row.destaque .carta-attr-bar { box-shadow: 0 0 0 1px var(--verde); }
+.carta-attr-row.destaque .carta-attr-val { color: var(--verde2); }
+.carta-attr-row.vencedor .carta-attr-label { color: #b8860b; font-weight: 800; }
+.carta-attr-row.vencedor .carta-attr-bar-wrap { background: #fff3cc; }
+.carta-attr-row.vencedor .carta-attr-val { color: #b8860b; }
+
+/* Botões de atributo para escolher */
+.escolha-wrap {
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+}
+.escolha-titulo {
+  color: var(--branco);
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.escolha-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.btn-escolha-attr {
+  padding: 10px 18px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(4px);
+  color: var(--branco);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 2px solid rgba(255,255,255,0.3);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-escolha-attr:hover { background: rgba(255,255,255,0.3); border-color: var(--amarelo); color: var(--amarelo); }
+
+.resultado-rodada {
+  background: rgba(255,255,255,0.95);
+  border-radius: var(--radius);
+  padding: 20px 28px;
+  text-align: center;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: var(--sombra);
+}
+.resultado-rodada .emoji { font-size: 40px; margin-bottom: 8px; }
+.resultado-rodada .msg { font-size: 18px; font-weight: 800; color: var(--preto); }
+.resultado-rodada .sub { font-size: 13px; color: var(--cinza5); margin-top: 4px; }
+
+/* ============================================================
+   SALA ONLINE
+   ============================================================ */
+.sala-card {
+  background: var(--branco);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--sombra);
+  text-align: center;
+}
+.sala-codigo {
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 10px;
+  color: var(--verde2);
+  margin: 12px 0;
+}
+.sala-aguardando {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--cinza4);
+  font-size: 14px;
+  margin-top: 12px;
+}
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--cinza3);
+  border-top-color: var(--verde);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   PAINEL ADMIN
+   ============================================================ */
+#tela-admin {
+  background: linear-gradient(160deg, #1565c0 0%, #1a237e 100%);
+}
+.admin-header {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius);
+  padding: 14px 22px;
+  margin-bottom: 20px;
+  color: var(--branco);
+}
+.admin-header h1 { font-size: 18px; font-weight: 800; }
+.admin-nav {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.admin-nav-btn {
+  padding: 8px 18px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 2px solid transparent;
+}
+.admin-nav-btn:hover, .admin-nav-btn.ativo {
+  background: rgba(255,255,255,0.22);
+  color: var(--branco);
+  border-color: rgba(255,255,255,0.3);
+}
+.admin-painel {
+  width: 100%;
+  max-width: 900px;
+  display: none;
+}
+.admin-painel.ativo { display: block; }
+.admin-card {
+  background: var(--branco);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--sombra);
+  margin-bottom: 16px;
+}
+.admin-card h3 {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: var(--preto);
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.stat-box {
+  background: var(--cinza1);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+.stat-box .numero { font-size: 32px; font-weight: 900; color: var(--verde2); }
+.stat-box .rotulo { font-size: 11px; color: var(--cinza4); font-weight: 600; text-transform: uppercase; margin-top: 2px; }
+
+.tabela-admin {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.tabela-admin th {
+  text-align: left;
+  padding: 10px 12px;
+  background: var(--cinza1);
+  color: var(--cinza5);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.tabela-admin td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--cinza2);
+  color: var(--preto);
+}
+.tabela-admin tr:hover td { background: var(--cinza1); }
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.badge-sim { background: #e8f7ee; color: var(--verde2); }
+.badge-nao { background: #fff0f0; color: var(--vermelho); }
+.badge-azul { background: #e8f0fe; color: var(--azul); }
+
+.form-admin {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 500px) { .form-admin { grid-template-columns: 1fr; } }
+.form-admin .campo-full { grid-column: 1 / -1; }
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal-overlay.ativo { display: flex; }
+.modal {
+  background: var(--branco);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 16px 64px rgba(0,0,0,0.2);
+  text-align: center;
+}
+.modal h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+.modal p { font-size: 14px; color: var(--cinza5); margin-bottom: 20px; }
+.modal-btns { display: flex; gap: 10px; justify-content: center; }
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+@media (max-width: 480px) {
+  .carta-visual { width: 160px; }
+  .carta-topo { height: 130px; }
+  .carta-avatar-svg { width: 70px; height: 70px; }
+  .jogo-area { gap: 8px; }
+  .pais-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+  .menu-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     TELA LOGIN
+     ============================================================ -->
+<div id="tela-login" class="tela ativa">
+  <div class="login-card">
+    <div class="login-logo">⚽</div>
+    <div class="login-title">Super Trunfo</div>
+    <div class="login-sub">Copa do Mundo 2026</div>
+
+    <div class="campo">
+      <label>Seu nome completo</label>
+      <input type="text" id="login-nome" placeholder="Ex: João Pedro Silva" autocomplete="name">
+    </div>
+    <div class="campo">
+      <label>Data de nascimento</label>
+      <input type="date" id="login-data">
+    </div>
+    <button class="btn-primario" onclick="fazerLogin()">Entrar no jogo ⚡</button>
+    <div id="login-erro" class="msg-erro">Nome ou data de nascimento não encontrados.</div>
+    <div class="login-admin-link" onclick="mostrarModalAdmin()">🔐 Acesso do professor</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TELA MENU ALUNO
+     ============================================================ -->
+<div id="tela-menu" class="tela">
+  <div class="header-aluno">
+    <div class="logo">⚽</div>
+    <div>
+      <div class="nome-usuario" id="menu-nome-aluno">—</div>
+      <div style="font-size:11px;color:var(--cinza4)" id="menu-pontos-info">— pontos para distribuir</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="pontos-badge" id="menu-pontos-badge">—</span>
+      <button class="btn-sair" onclick="sair()">Sair</button>
+    </div>
+  </div>
+  <div class="menu-grid">
+    <div class="menu-item" id="menu-criar-carta" onclick="irPara('tela-criar')">
+      <div class="icone">🃏</div>
+      <div class="titulo">Criar Carta</div>
+      <div class="desc">Monte sua carta de jogador</div>
+    </div>
+    <div class="menu-item" id="menu-minha-carta" onclick="verMinhaCarta()">
+      <div class="icone">👁️</div>
+      <div class="titulo">Minha Carta</div>
+      <div class="desc">Ver a carta que criei</div>
+    </div>
+    <div class="menu-item" onclick="irPara('tela-baralho')">
+      <div class="icone">📚</div>
+      <div class="titulo">Baralho</div>
+      <div class="desc">Todas as cartas da turma</div>
+    </div>
+    <div class="menu-item" onclick="irPara('tela-jogar-menu')">
+      <div class="icone">🎮</div>
+      <div class="titulo">Jogar</div>
+      <div class="desc">Desafie colegas ou a CPU</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TELA CRIAR CARTA — PASSO 1: Nome e País
+     ============================================================ -->
+<div id="tela-criar" class="tela">
+  <div class="header-aluno">
+    <button class="btn-secundario" onclick="irPara('tela-menu')">← Voltar</button>
+    <div class="nome-usuario">Criar Carta</div>
+    <div></div>
+  </div>
+  <div class="step-indicador" style="width:100%;max-width:720px">
+    <div class="step ativo" id="step1"></div>
+    <div class="step" id="step2"></div>
+    <div class="step" id="step3"></div>
+  </div>
+  <div class="secao-titulo">
+    <h2>1. Nome e País 🌍</h2>
+    <p>Escolha como quer aparecer na carta e qual seleção vai representar</p>
+  </div>
+  <div class="card-criador">
+    <div class="campo">
+      <label>Nome ou apelido na carta</label>
+      <input type="text" id="carta-apelido" placeholder="Ex: Neymar Jr, Rainha, Trovão..." maxlength="20">
+    </div>
+    <div class="campo">
+      <label>Escolha sua seleção (48 times da Copa 2026)</label>
+      <input type="text" id="busca-pais" placeholder="🔍 Buscar país..." style="margin-bottom:8px"
+             oninput="filtrarPaises()">
+      <div class="pais-grid" id="pais-grid"></div>
+    </div>
+    <div style="margin-top:20px;display:flex;justify-content:flex-end">
+      <button class="btn-primario" style="width:auto;padding:12px 28px" onclick="proximoPasso(2)">
+        Próximo: Avatar →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TELA CRIAR CARTA — PASSO 2: Avatar
+     ============================================================ -->
+<div id="tela-avatar" class="tela">
+  <div class="header-aluno">
+    <button class="btn-secundario" onclick="irPara('tela-criar')">← Voltar</button>
+    <div class="nome-usuario">Criar Avatar</div>
+    <div></div>
+  </div>
+  <div class="step-indicador" style="width:100%;max-width:720px">
+    <div class="step completo" id="step1b"></div>
+    <div class="step ativo" id="step2b"></div>
+    <div class="step" id="step3b"></div>
+  </div>
+  <div class="secao-titulo">
+    <h2>2. Seu Avatar 🎨</h2>
+    <p>Monte como você vai aparecer na carta</p>
+  </div>
+  <div class="card-criador">
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <!-- Painel construtor -->
+      <div style="flex:1;min-width:260px">
+        <div class="opcoes-linha">
+          <label>Tom de pele</label>
+          <div class="cor-grid" id="op-pele"></div>
+        </div>
+        <div class="opcoes-linha">
+          <label>Tipo de cabelo</label>
+          <div class="opcoes-grid" id="op-cabelo-tipo"></div>
+        </div>
+        <div class="opcoes-linha">
+          <label>Cor do cabelo</label>
+          <div class="cor-grid" id="op-cabelo-cor"></div>
+        </div>
+        <div class="opcoes-linha">
+          <label>Olhos</label>
+          <div class="opcoes-grid" id="op-olhos"></div>
+        </div>
+        <div class="opcoes-linha">
+          <label>Boca / expressão</label>
+          <div class="opcoes-grid" id="op-boca"></div>
+        </div>
+        <div class="opcoes-linha">
+          <label>Acessório</label>
+          <div class="opcoes-grid" id="op-acessorio"></div>
+        </div>
+      </div>
+      <!-- Preview ao vivo -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--cinza4);text-transform:uppercase;letter-spacing:0.5px">Preview</div>
+        <div class="avatar-preview-wrap">
+          <svg class="avatar-preview" id="avatar-svg-preview" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div id="carta-preview-mini"></div>
+      </div>
+    </div>
+    <div style="margin-top:20px;display:flex;justify-content:flex-end">
+      <button class="btn-primario" style="width:auto;padding:12px 28px" onclick="proximoPasso(3)">
+        Próximo: Atributos →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TELA CRIAR CARTA — PASSO 3: Atributos
+     ============================================================ -->
+<div id="tela-atributos" class="tela">
+  <div class="header-aluno">
+    <button class="btn-secundario" onclick="irPara('tela-avatar')">← Voltar</button>
+    <div class="nome-usuario">Distribuir Pontos</div>
+    <div></div>
+  </div>
+  <div class="step-indicador" style="width:100%;max-width:720px">
+    <div class="step completo"></div>
+    <div class="step completo"></div>
+    <div class="step ativo"></div>
+  </div>
+  <div class="secao-titulo">
+    <h2>3. Distribuir Pontos ⚡</h2>
+    <p>Você tem <strong id="titulo-pontos-total">—</strong> pontos para distribuir. Cada atributo: mín. 40, máx. 200.</p>
+  </div>
+  <div class="card-criador">
+    <div class="pontos-restantes-bar">
+      <span class="label">Pontos restantes</span>
+      <span class="valor" id="pontos-restantes-val">—</span>
+    </div>
+    <div id="atributos-lista"></div>
+    <div style="margin-top:20px;display:flex;justify-content:flex-end">
+      <button class="btn-primario" style="width:auto;padding:12px 28px" onclick="salvarCarta()">
+        ✅ Criar minha carta!
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TELA MINHA CARTA
+     ============================================================ -->
+<div id="tela-minha-carta" class="tela">
+  <div class="header-aluno">
+    <button class="btn-secundario" onclick="irPara('tela-menu')">← Voltar</button>
+    <div class="nome-usuario">Minha Carta</div>
+    <div></div>
+  </div>
+  <div id="minha-carta-container" style="width:100%;max-width:720px;display:flex;flex-direction:column;align-items:center;gap:20px">
+  </div>
+</div>
+
+<!-- ============================================================
+     TELA BARALHO
+     ============================================================ -->
+<div id="tela-baralho" class="tela">
+  <div class="header-aluno">
+    <button class="btn-secundario" onclick="irPara('tela-menu')">← Voltar</button>
+    <div class="nome-usuario">Baralho da Turma</div>
+    <div></div>
+  </div>
+  <div class="secao-titulo">
+    <h2>🃏 Todas as cartas</h2>
+    <p id="baralho-subtitulo">Carregando...</p>
+  </div>
+  <div id="baralho-grid" class="cartas-grid"></div>
+</div>
+
+<!-- ============================================================
+     TELA JOGAR MENU
+     ============================================================ -->
+<div id="tela-jogar-menu" class="tela">
+  <div class="header-aluno">
+    <button class="btn-secundario" onclick="irPara('tela-menu')">← Voltar</button>
+    <div class="nome-usuario">Jogar</div>
+    <div></div>
+  </div>
+  <div class="menu-grid" style="max-width:400px">
+    <div class="menu-item" onclick="iniciarJogoCPU()">
+      <div class="icone">🤖</div>
+      <div class="titulo">vs Computador</div>
+      <div class="desc">Jogue sozinho contra a CPU</div>
+    </div>
+    <div class="menu-item" onclick="irPara('tela-online')">
+      <div class="icone">👥</div>
+      <div class="titulo">Online</div>
+      <div class="desc">Desafie um colega</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TELA ONLINE (criar/entrar sala)
+     ============================================================ -->
+<div id="tela-online" class="tela">
+  <div class="header-aluno">
+    <button class="btn-secundario" onclick="irPara('tela-jogar-menu')">← Voltar</button>
+    <div class="nome-usuario">Jogo Online</div>
+    <div></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px;width:100%;max-width:420px">
+    <div class="sala-card">
+      <div style="font-size:28px;margin-bottom:8px">🏟️</div>
+      <div style="font-size:16px;font-weight:800;margin-bottom:4px">Criar sala</div>
+      <div style="font-size:13px;color:var(--cinza4);margin-bottom:16px">Crie uma sala e mande o código para um colega</div>
+      <button class="btn-primario" onclick="criarSalaOnline()">Criar sala de jogo</button>
+    </div>
+    <div class="sala-card">
+      <div style="font-size:28px;margin-bottom:8px">🔑</div>
+      <div style="font-size:16px;font-weight:800;margin-bottom:4px">Entrar em sala</div>
+      <div style="font-size:13px;color:var(--cinza4);margin-bottom:12px">Digite o código da sala do seu colega</div>
+      <div class="campo" style="text-align:left">
+        <input type="text" id="codigo-sala-input" placeholder="Ex: AB12" maxlength="4"
+               style="text-align:center;font-size:28px;font-weight:800;letter-spacing:8px;text-transform:uppercase">
+      </div>
+      <button class="btn-primario" onclick="entrarSalaOnline()">Entrar na sala</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TELA AGUARDANDO SALA
+     ============================================================ -->
+<div id="tela-sala-aguardando" class="tela" style="justify-content:center">
+  <div class="sala-card">
+    <div style="font-size:36px;margin-bottom:8px">🏟️</div>
+    <div style="font-size:14px;color:var(--cinza5);font-weight:600">Código da sala</div>
+    <div class="sala-codigo" id="sala-codigo-display">—</div>
+    <div style="font-size:13px;color:var(--cinza4)">Passe esse código para seu colega entrar</div>
+    <div class="sala-aguardando" style="margin-top:16px">
+      <div class="spinner"></div>
+      Aguardando o colega entrar...
+    </div>
+    <button class="btn-secundario" style="margin-top:20px;width:100%" onclick="cancelarSala()">Cancelar</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     TELA JOGO (partida em si)
+     ============================================================ -->
+<div id="tela-jogo" class="tela">
+  <div class="jogo-placar">
+    <div class="jogador-info">
+      <div class="nome" id="placar-nome1">Você</div>
+      <div class="cartas-qtd" id="placar-cartas1">0</div>
+      <div style="font-size:10px;opacity:0.7">cartas</div>
+    </div>
+    <div class="jogo-vs">VS</div>
+    <div class="jogador-info">
+      <div class="nome" id="placar-nome2">CPU</div>
+      <div class="cartas-qtd" id="placar-cartas2">0</div>
+      <div style="font-size:10px;opacity:0.7">cartas</div>
+    </div>
+  </div>
+  <div class="jogo-status" id="jogo-status-msg">Sua vez! Escolha um atributo.</div>
+
+  <div class="jogo-area">
+    <div class="carta-jogo-wrap">
+      <div id="jogo-carta-j1"></div>
+    </div>
+    <div class="carta-jogo-wrap">
+      <div id="jogo-carta-j2"></div>
+    </div>
+  </div>
+
+  <div class="escolha-wrap" id="escolha-wrap">
+    <div class="escolha-titulo">Qual atributo você quer jogar?</div>
+    <div class="escolha-btns">
+      <button class="btn-escolha-attr" onclick="jogarAtributo('chute')">⚽ Chute</button>
+      <button class="btn-escolha-attr" onclick="jogarAtributo('passe')">🎯 Passe</button>
+      <button class="btn-escolha-attr" onclick="jogarAtributo('desarme')">🛡️ Desarme</button>
+      <button class="btn-escolha-attr" onclick="jogarAtributo('tecnica')">✨ Técnica</button>
+      <button class="btn-escolha-attr" onclick="jogarAtributo('visao')">👁️ Visão</button>
+    </div>
+  </div>
+
+  <div id="resultado-rodada-wrap" class="hidden" style="width:100%;max-width:600px;display:flex;justify-content:center;margin-top:8px">
+    <div class="resultado-rodada">
+      <div class="emoji" id="resultado-emoji">🏆</div>
+      <div class="msg" id="resultado-msg">—</div>
+      <div class="sub" id="resultado-sub">—</div>
+      <button class="btn-primario" style="margin-top:16px" onclick="proximaRodada()">Próxima rodada →</button>
+    </div>
+  </div>
+
+  <div style="margin-top:16px">
+    <button class="btn-secundario" onclick="confirmarSairJogo()">🚪 Sair do jogo</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     TELA ADMIN
+     ============================================================ -->
+<div id="tela-admin" class="tela">
+  <div class="admin-header">
+    <div>
+      <div style="font-size:11px;opacity:0.6;margin-bottom:2px">PAINEL DO PROFESSOR</div>
+      <h1>⚽ Super Trunfo Copa 2026</h1>
+    </div>
+    <button class="btn-secundario" onclick="sairAdmin()">Sair</button>
+  </div>
+
+  <div class="admin-nav">
+    <button class="admin-nav-btn ativo" onclick="adminAba('visao-geral')">📊 Visão Geral</button>
+    <button class="admin-nav-btn" onclick="adminAba('alunos')">👥 Alunos</button>
+    <button class="admin-nav-btn" onclick="adminAba('cartas')">🃏 Cartas</button>
+    <button class="admin-nav-btn" onclick="adminAba('partidas')">🎮 Partidas</button>
+  </div>
+
+  <!-- Visão Geral -->
+  <div class="admin-painel ativo" id="painel-visao-geral">
+    <div class="admin-card">
+      <h3>📊 Resumo da turma</h3>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="numero" id="stat-total-alunos">—</div>
+          <div class="rotulo">Alunos cadastrados</div>
+        </div>
+        <div class="stat-box">
+          <div class="numero" id="stat-cartas-criadas">—</div>
+          <div class="rotulo">Cartas criadas</div>
+        </div>
+        <div class="stat-box">
+          <div class="numero" id="stat-sem-carta">—</div>
+          <div class="rotulo">Sem carta ainda</div>
+        </div>
+        <div class="stat-box">
+          <div class="numero" id="stat-partidas">—</div>
+          <div class="rotulo">Partidas jogadas</div>
+        </div>
+      </div>
+    </div>
+    <div class="admin-card">
+      <h3>⏳ Alunos que ainda não criaram a carta</h3>
+      <div id="lista-sem-carta"></div>
+    </div>
+  </div>
+
+  <!-- Alunos -->
+  <div class="admin-painel" id="painel-alunos">
+    <div class="admin-card">
+      <h3>➕ Cadastrar novo aluno</h3>
+      <div class="form-admin">
+        <div class="campo">
+          <label>Nome completo</label>
+          <input type="text" id="admin-aluno-nome" placeholder="Nome completo do aluno">
+        </div>
+        <div class="campo">
+          <label>Data de nascimento</label>
+          <input type="date" id="admin-aluno-data">
+        </div>
+        <div class="campo">
+          <label>Pontuação total (360–600)</label>
+          <input type="number" id="admin-aluno-pontos" min="360" max="600" placeholder="Ex: 480">
+        </div>
+        <div class="campo" style="display:flex;align-items:flex-end">
+          <button class="btn-primario" style="width:100%" onclick="cadastrarAluno()">Cadastrar aluno</button>
+        </div>
+      </div>
+      <div id="admin-aluno-msg" class="msg-erro" style="display:none;margin-top:8px"></div>
+    </div>
+    <div class="admin-card">
+      <h3>👥 Alunos cadastrados</h3>
+      <div style="overflow-x:auto">
+        <table class="tabela-admin" id="tabela-alunos">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Nascimento</th>
+              <th>Pontos</th>
+              <th>Carta criada?</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-alunos-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cartas -->
+  <div class="admin-painel" id="painel-cartas">
+    <div class="admin-card">
+      <h3>🃏 Cartas criadas pelos alunos</h3>
+      <div id="admin-cartas-grid" class="cartas-grid"></div>
+    </div>
+  </div>
+
+  <!-- Partidas -->
+  <div class="admin-painel" id="painel-partidas">
+    <div class="admin-card">
+      <h3>🎮 Histórico de partidas</h3>
+      <div style="overflow-x:auto">
+        <table class="tabela-admin">
+          <thead>
+            <tr>
+              <th>Jogador 1</th>
+              <th>Jogador 2</th>
+              <th>Modo</th>
+              <th>Vencedor</th>
+              <th>Rodadas</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-partidas-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL ADMIN LOGIN
+     ============================================================ -->
+<div class="modal-overlay" id="modal-admin">
+  <div class="modal">
+    <h3>🔐 Acesso do Professor</h3>
+    <p>Digite a senha para entrar no painel de administração</p>
+    <div class="campo" style="text-align:left">
+      <input type="password" id="admin-senha-input" placeholder="Senha do professor">
+    </div>
+    <div id="admin-senha-erro" class="msg-erro">Senha incorreta.</div>
+    <div class="modal-btns">
+      <button class="btn-secundario" onclick="fecharModalAdmin()">Cancelar</button>
+      <button class="btn-primario" style="flex:1" onclick="loginAdmin()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal confirmação sair jogo -->
+<div class="modal-overlay" id="modal-sair-jogo">
+  <div class="modal">
+    <h3>🚪 Sair do jogo?</h3>
+    <p>A partida atual será cancelada e você voltará ao menu.</p>
+    <div class="modal-btns">
+      <button class="btn-secundario" onclick="fecharModal('modal-sair-jogo')">Continuar jogando</button>
+      <button class="btn-primario" style="background:var(--vermelho)" onclick="sairJogo()">Sair</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// CONFIGURAÇÃO — COLOQUE SEUS DADOS DO SUPABASE AQUI
+// ================================================================
+const SUPABASE_URL  = 'https://rcloedydvfzjjageaokp.supabase.co';
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjbG9lZHlkdmZ6amphZ2Vhb2twIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxNzY2NDAsImV4cCI6MjA5ODc1MjY0MH0.vczPxpO-WJ-yIhlUYu-ebNx64pHCQxyI-tPJmJANXNc';
+const ADMIN_PASSWORD = 'copa2026admin'; // Troque por uma senha segura!
+
+// ================================================================
+// SUPABASE CLIENT (sem biblioteca — fetch puro)
+// ================================================================
+const sb = {
+  async select(table, query = '') {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+    });
+    return r.json();
+  },
+  async insert(table, data) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=representation'
+      },
+      body: JSON.stringify(data)
+    });
+    return r.json();
+  },
+  async update(table, data, query) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+      method: 'PATCH',
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=representation'
+      },
+      body: JSON.stringify(data)
+    });
+    return r.json();
+  },
+  async delete(table, query) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
+      method: 'DELETE',
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+    });
+    return r.ok;
+  },
+  // Realtime via WebSocket
+  channel(table, filter, callback) {
+    const wsUrl = SUPABASE_URL.replace('https', 'wss') + '/realtime/v1/websocket?apikey=' + SUPABASE_KEY;
+    const ws = new WebSocket(wsUrl);
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ topic: `realtime:public:${table}:${filter}`, event: 'phx_join', payload: {}, ref: '1' }));
+    };
+    ws.onmessage = (e) => {
+      const msg = JSON.parse(e.data);
+      if (msg.event === 'UPDATE' || msg.event === 'INSERT') callback(msg.payload.record);
+    };
+    return ws;
+  }
+};
+
+// ================================================================
+// DADOS — 48 SELEÇÕES COPA 2026
+// ================================================================
+const PAISES = [
+  // CONMEBOL
+  {c:'BR',n:'Brasil',e:'🇧🇷',cor1:'#009C3B',cor2:'#FFDF00'},
+  {c:'AR',n:'Argentina',e:'🇦🇷',cor1:'#74ACDF',cor2:'#FFFFFF'},
+  {c:'UY',n:'Uruguai',e:'🇺🇾',cor1:'#5EB6E4',cor2:'#FFFFFF'},
+  {c:'CO',n:'Colômbia',e:'🇨🇴',cor1:'#FCD116',cor2:'#003087'},
+  {c:'EC',n:'Equador',e:'🇪🇨',cor1:'#FFD100',cor2:'#003087'},
+  {c:'PE',n:'Peru',e:'🇵🇪',cor1:'#D91023',cor2:'#FFFFFF'},
+  {c:'VE',n:'Venezuela',e:'🇻🇪',cor1:'#CF142B',cor2:'#002B7F'},
+  {c:'PY',n:'Paraguai',e:'🇵🇾',cor1:'#D52B1E',cor2:'#FFFFFF'},
+  {c:'BO',n:'Bolívia',e:'🇧🇴',cor1:'#D52B1E',cor2:'#007A3D'},
+  {c:'CL',n:'Chile',e:'🇨🇱',cor1:'#D52B1E',cor2:'#FFFFFF'},
+  // CONCACAF
+  {c:'US',n:'Estados Unidos',e:'🇺🇸',cor1:'#002868',cor2:'#BF0A30'},
+  {c:'MX',n:'México',e:'🇲🇽',cor1:'#006847',cor2:'#FFFFFF'},
+  {c:'CA',n:'Canadá',e:'🇨🇦',cor1:'#FF0000',cor2:'#FFFFFF'},
+  {c:'CR',n:'Costa Rica',e:'🇨🇷',cor1:'#002B7F',cor2:'#CE1126'},
+  {c:'JM',n:'Jamaica',e:'🇯🇲',cor1:'#000000',cor2:'#FED100'},
+  {c:'HN',n:'Honduras',e:'🇭🇳',cor1:'#0073CF',cor2:'#FFFFFF'},
+  {c:'PA',n:'Panamá',e:'🇵🇦',cor1:'#DA121A',cor2:'#003580'},
+  {c:'SV',n:'El Salvador',e:'🇸🇻',cor1:'#0F47AF',cor2:'#FFFFFF'},
+  // UEFA
+  {c:'DE',n:'Alemanha',e:'🇩🇪',cor1:'#000000',cor2:'#DD0000'},
+  {c:'FR',n:'França',e:'🇫🇷',cor1:'#002395',cor2:'#ED2939'},
+  {c:'ES',n:'Espanha',e:'🇪🇸',cor1:'#AA151B',cor2:'#F1BF00'},
+  {c:'PT',n:'Portugal',e:'🇵🇹',cor1:'#006600',cor2:'#FF0000'},
+  {c:'NL',n:'Holanda',e:'🇳🇱',cor1:'#FF4F00',cor2:'#FFFFFF'},
+  {c:'EN',n:'Inglaterra',e:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',cor1:'#CF142B',cor2:'#FFFFFF'},
+  {c:'BE',n:'Bélgica',e:'🇧🇪',cor1:'#000000',cor2:'#EF3340'},
+  {c:'IT',n:'Itália',e:'🇮🇹',cor1:'#003D92',cor2:'#FFFFFF'},
+  {c:'HR',n:'Croácia',e:'🇭🇷',cor1:'#FF0000',cor2:'#FFFFFF'},
+  {c:'CH',n:'Suíça',e:'🇨🇭',cor1:'#FF0000',cor2:'#FFFFFF'},
+  {c:'DK',n:'Dinamarca',e:'🇩🇰',cor1:'#C60C30',cor2:'#FFFFFF'},
+  {c:'AT',n:'Áustria',e:'🇦🇹',cor1:'#ED2939',cor2:'#FFFFFF'},
+  {c:'HU',n:'Hungria',e:'🇭🇺',cor1:'#CE2939',cor2:'#436F4D'},
+  {c:'SK',n:'Eslováquia',e:'🇸🇰',cor1:'#0B4EA2',cor2:'#FFFFFF'},
+  {c:'RS',n:'Sérvia',e:'🇷🇸',cor1:'#C6363C',cor2:'#0C4076'},
+  {c:'RO',n:'Romênia',e:'🇷🇴',cor1:'#002B7F',cor2:'#FCD116'},
+  {c:'AL',n:'Albânia',e:'🇦🇱',cor1:'#E41E20',cor2:'#000000'},
+  {c:'GE',n:'Geórgia',e:'🇬🇪',cor1:'#FF0000',cor2:'#FFFFFF'},
+  {c:'SI',n:'Eslovênia',e:'🇸🇮',cor1:'#003DA5',cor2:'#FFFFFF'},
+  {c:'UA',n:'Ucrânia',e:'🇺🇦',cor1:'#005BBB',cor2:'#FFD500'},
+  // AFC
+  {c:'JP',n:'Japão',e:'🇯🇵',cor1:'#BC002D',cor2:'#FFFFFF'},
+  {c:'KR',n:'Coreia do Sul',e:'🇰🇷',cor1:'#CD2E3A',cor2:'#003478'},
+  {c:'AU',n:'Austrália',e:'🇦🇺',cor1:'#00843D',cor2:'#FFCD00'},
+  {c:'IR',n:'Irã',e:'🇮🇷',cor1:'#239F40',cor2:'#FFFFFF'},
+  {c:'SA',n:'Arábia Saudita',e:'🇸🇦',cor1:'#006C35',cor2:'#FFFFFF'},
+  {c:'UZ',n:'Uzbequistão',e:'🇺🇿',cor1:'#1EB53A',cor2:'#FFFFFF'},
+  // CAF
+  {c:'MA',n:'Marrocos',e:'🇲🇦',cor1:'#C1272D',cor2:'#006233'},
+  {c:'SN',n:'Senegal',e:'🇸🇳',cor1:'#00853F',cor2:'#FDEF42'},
+  {c:'EG',n:'Egito',e:'🇪🇬',cor1:'#CE1126',cor2:'#FFFFFF'},
+  {c:'NG',n:'Nigéria',e:'🇳🇬',cor1:'#008751',cor2:'#FFFFFF'},
+  // OFC
+  {c:'NZ',n:'Nova Zelândia',e:'🇳🇿',cor1:'#00247D',cor2:'#FFFFFF'},
+];
+
+// ================================================================
+// OPÇÕES DO AVATAR
+// ================================================================
+const OPCOES_AVATAR = {
+  pele:  ['#FDDBB4','#F5C89A','#E8A96A','#C47B3B','#8B4513','#4A2C0A'],
+  cabeloTipo: ['Liso','Crespo','Ondulado','Careca','Trança','Curto'],
+  cabeloCor:  ['#1a0a00','#3d2b1f','#7d4e24','#c8940a','#d4a853','#e8d5a3','#cc2200','#555'],
+  olhos: ['Normal','Expressivo','Pequeno','Grande'],
+  boca:  ['Sorriso','Sério','Animado','Focado'],
+  acessorio: ['Nenhum','Headband','Óculos','Brinco','Capacete'],
+};
+
+// ================================================================
+// ESTADO GLOBAL
+// ================================================================
+let estado = {
+  alunoLogado: null,  // objeto do aluno
+  cartaCriacao: {     // dados em criação
+    apelido: '', pais: null,
+    avatar: { pele: 0, cabeloTipo: 0, cabeloCor: 0, olhos: 0, boca: 0, acessorio: 0 },
+    chute: 40, passe: 40, desarme: 40, tecnica: 40, visao: 40
+  },
+  jogo: {
+    modo: 'cpu',     // 'cpu' ou 'online'
+    cartasJ1: [],    // array de cartas (objetos)
+    cartasJ2: [],
+    monteCentral: [],
+    atributoEscolhido: null,
+    faseResultado: false,
+    partidaId: null,
+    ws: null,
+  }
+};
+
+// ================================================================
+// NAVEGAÇÃO
+// ================================================================
+function irPara(telaId) {
+  document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+  document.getElementById(telaId).classList.add('ativa');
+  window.scrollTo(0,0);
+
+  if (telaId === 'tela-baralho') carregarBaralho();
+  if (telaId === 'tela-menu') atualizarMenu();
+}
+
+function mostrarModal(id) { document.getElementById(id).classList.add('ativo'); }
+function fecharModal(id)  { document.getElementById(id).classList.remove('ativo'); }
+
+// ================================================================
+// LOGIN ALUNO
+// ================================================================
+async function fazerLogin() {
+  const nome = document.getElementById('login-nome').value.trim();
+  const data = document.getElementById('login-data').value;
+  const erro = document.getElementById('login-erro');
+  erro.style.display = 'none';
+
+  if (!nome || !data) { erro.textContent = 'Preencha o nome e a data de nascimento.'; erro.style.display = 'block'; return; }
+
+  // Busca por nome completo + data (case-insensitive)
+  const alunos = await sb.select('alunos', `nome_completo=ilike.${encodeURIComponent(nome)}&data_nascimento=eq.${data}`);
+
+  if (!alunos || alunos.length === 0) {
+    erro.textContent = 'Nome ou data de nascimento não encontrados. Verifique com o professor.';
+    erro.style.display = 'block';
+    return;
+  }
+
+  estado.alunoLogado = alunos[0];
+  atualizarMenu();
+  irPara('tela-menu');
+}
+
+function sair() {
+  estado.alunoLogado = null;
+  irPara('tela-login');
+}
+
+function atualizarMenu() {
+  const a = estado.alunoLogado;
+  if (!a) return;
+  document.getElementById('menu-nome-aluno').textContent = a.nome_completo.split(' ')[0];
+  document.getElementById('menu-pontos-info').textContent = `${a.pontuacao_total} pontos para distribuir`;
+  document.getElementById('menu-pontos-badge').textContent = `⭐ ${a.pontuacao_total}`;
+  // Se já tem carta, muda o botão criar
+  const btnCriar = document.getElementById('menu-criar-carta');
+  if (a.carta_criada) {
+    btnCriar.querySelector('.titulo').textContent = 'Criar carta';
+    btnCriar.querySelector('.desc').textContent = 'Carta já criada! Recrie se quiser.';
+  }
+}
+
+// ================================================================
+// PASSO 1 — PAÍS
+// ================================================================
+function iniciarCriacao() {
+  renderizarPaises('');
+  irPara('tela-criar');
+}
+
+function renderizarPaises(filtro) {
+  const grid = document.getElementById('pais-grid');
+  const lista = PAISES.filter(p => p.n.toLowerCase().includes(filtro.toLowerCase()));
+  grid.innerHTML = lista.map(p => `
+    <div class="pais-item ${estado.cartaCriacao.pais?.c === p.c ? 'selecionado' : ''}"
+         onclick="selecionarPais('${p.c}')">
+      <div class="pais-bandeira">${p.e}</div>
+      <div class="pais-nome">${p.n}</div>
+    </div>
+  `).join('');
+}
+
+function filtrarPaises() {
+  renderizarPaises(document.getElementById('busca-pais').value);
+}
+
+function selecionarPais(codigo) {
+  estado.cartaCriacao.pais = PAISES.find(p => p.c === codigo);
+  renderizarPaises(document.getElementById('busca-pais').value);
+}
+
+// ================================================================
+// PASSO 2 — AVATAR
+// ================================================================
+function iniciarAvatar() {
+  renderizarOpcoes();
+  renderizarAvatarSVG();
+}
+
+function renderizarOpcoes() {
+  // Pele
+  document.getElementById('op-pele').innerHTML = OPCOES_AVATAR.pele.map((c,i) =>
+    `<div class="cor-btn ${estado.cartaCriacao.avatar.pele===i?'ativo':''}"
+          style="background:${c}" onclick="setAvatar('pele',${i})"></div>`).join('');
+  // Cabelo tipo
+  document.getElementById('op-cabelo-tipo').innerHTML = OPCOES_AVATAR.cabeloTipo.map((t,i) =>
+    `<button class="opcao-btn ${estado.cartaCriacao.avatar.cabeloTipo===i?'ativo':''}"
+             onclick="setAvatar('cabeloTipo',${i})">${t}</button>`).join('');
+  // Cabelo cor
+  document.getElementById('op-cabelo-cor').innerHTML = OPCOES_AVATAR.cabeloCor.map((c,i) =>
+    `<div class="cor-btn ${estado.cartaCriacao.avatar.cabeloCor===i?'ativo':''}"
+          style="background:${c}" onclick="setAvatar('cabeloCor',${i})"></div>`).join('');
+  // Olhos
+  document.getElementById('op-olhos').innerHTML = OPCOES_AVATAR.olhos.map((o,i) =>
+    `<button class="opcao-btn ${estado.cartaCriacao.avatar.olhos===i?'ativo':''}"
+             onclick="setAvatar('olhos',${i})">${o}</button>`).join('');
+  // Boca
+  document.getElementById('op-boca').innerHTML = OPCOES_AVATAR.boca.map((b,i) =>
+    `<button class="opcao-btn ${estado.cartaCriacao.avatar.boca===i?'ativo':''}"
+             onclick="setAvatar('boca',${i})">${b}</button>`).join('');
+  // Acessório
+  document.getElementById('op-acessorio').innerHTML = OPCOES_AVATAR.acessorio.map((a,i) =>
+    `<button class="opcao-btn ${estado.cartaCriacao.avatar.acessorio===i?'ativo':''}"
+             onclick="setAvatar('acessorio',${i})">${a}</button>`).join('');
+}
+
+function setAvatar(prop, val) {
+  estado.cartaCriacao.avatar[prop] = val;
+  renderizarOpcoes();
+  renderizarAvatarSVG();
+}
+
+function renderizarAvatarSVG(cfg = null, target = null) {
+  const av = cfg || estado.cartaCriacao.avatar;
+  const pele = OPCOES_AVATAR.pele[av.pele];
+  const corCabelo = OPCOES_AVATAR.cabeloCor[av.cabeloCor];
+  const tipoCabelo = OPCOES_AVATAR.cabeloTipo[av.cabeloTipo];
+
+  // Olhos baseado na opção
+  const olhoW = [14,16,10,18][av.olhos];
+  const olhoH = [8,10,6,12][av.olhos];
+  // Boca
+  const bocaPaths = [
+    'M48,82 Q60,92 72,82',  // Sorriso
+    'M48,84 L72,84',         // Sério
+    'M46,80 Q60,95 74,80',  // Animado
+    'M50,83 Q60,88 70,83',  // Focado
+  ];
+  // Cabelo
+  const cabeloShapes = {
+    'Liso':    `<rect x="28" y="18" width="64" height="22" rx="8" fill="${corCabelo}"/>`,
+    'Crespo':  `<ellipse cx="60" cy="22" rx="34" ry="18" fill="${corCabelo}"/>`,
+    'Ondulado':`<path d="M28,30 Q36,14 44,26 Q52,12 60,24 Q68,12 76,26 Q84,14 92,30 L92,22 Q84,8 76,16 Q68,4 60,16 Q52,4 44,16 Q36,8 28,22 Z" fill="${corCabelo}"/>`,
+    'Careca':  '',
+    'Trança':  `<rect x="28" y="18" width="64" height="20" rx="6" fill="${corCabelo}"/><rect x="52" y="14" width="16" height="6" rx="3" fill="${corCabelo}"/>`,
+    'Curto':   `<rect x="30" y="20" width="60" height="16" rx="10" fill="${corCabelo}"/>`,
+  };
+  // Acessório
+  const acessorios = [
+    '',
+    `<rect x="38" y="36" width="44" height="8" rx="4" fill="#fff" opacity="0.8"/>`,
+    `<ellipse cx="48" cy="66" rx="8" ry="5" fill="none" stroke="#333" stroke-width="2"/>
+     <ellipse cx="72" cy="66" rx="8" ry="5" fill="none" stroke="#333" stroke-width="2"/>
+     <line x1="56" y1="66" x2="64" y2="66" stroke="#333" stroke-width="2"/>`,
+    `<circle cx="82" cy="54" r="4" fill="#f4d03f"/>`,
+    `<rect x="26" y="16" width="68" height="20" rx="6" fill="#cc2200"/>`,
+  ];
+
+  const paisCor = estado.cartaCriacao.pais;
+  const uniformeCor = paisCor ? paisCor.cor1 : '#1a9e4a';
+
+  const svg = `
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <!-- Fundo/uniforme -->
+      <circle cx="60" cy="100" r="50" fill="${uniformeCor}" opacity="0.3"/>
+      <!-- Corpo/uniforme -->
+      <path d="M32,95 Q32,78 60,78 Q88,78 88,95 L88,120 L32,120 Z" fill="${uniformeCor}"/>
+      <!-- Pescoço -->
+      <rect x="52" y="72" width="16" height="12" rx="4" fill="${pele}"/>
+      <!-- Cabeça -->
+      <ellipse cx="60" cy="56" rx="28" ry="30" fill="${pele}"/>
+      <!-- Cabelo -->
+      ${cabeloShapes[tipoCabelo] || ''}
+      <!-- Sobrancelhas -->
+      <path d="M44,47 Q50,44 56,47" stroke="#5a3a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M64,47 Q70,44 76,47" stroke="#5a3a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- Olhos -->
+      <ellipse cx="49" cy="57" rx="${olhoW/2}" ry="${olhoH/2}" fill="#333"/>
+      <ellipse cx="71" cy="57" rx="${olhoW/2}" ry="${olhoH/2}" fill="#333"/>
+      <circle cx="51" cy="55" r="2" fill="white"/>
+      <circle cx="73" cy="55" r="2" fill="white"/>
+      <!-- Nariz -->
+      <path d="M58,62 Q60,68 62,62" stroke="#c0845a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <!-- Boca -->
+      <path d="${bocaPaths[av.boca]}" stroke="#c0403a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- Acessório -->
+      ${acessorios[av.acessorio] || ''}
+    </svg>
+  `;
+
+  if (target) {
+    target.innerHTML = svg;
+  } else {
+    document.getElementById('avatar-svg-preview').innerHTML = svg.replace('<svg viewBox','<svg style="width:100%;height:100%" viewBox');
+  }
+}
+
+// ================================================================
+// PASSO 3 — ATRIBUTOS
+// ================================================================
+const ATRIBUTOS = [
+  { k:'chute',   label:'Chute',         icone:'⚽', cor:'#d32f2f' },
+  { k:'passe',   label:'Passe',         icone:'🎯', cor:'#1565c0' },
+  { k:'desarme', label:'Desarme',       icone:'🛡️', cor:'#558b2f' },
+  { k:'tecnica', label:'Técnica',       icone:'✨', cor:'#f57c00' },
+  { k:'visao',   label:'Visão de Jogo', icone:'👁️', cor:'#7b1fa2' },
+];
+
+function iniciarAtributos() {
+  const total = estado.alunoLogado.pontuacao_total;
+  document.getElementById('titulo-pontos-total').textContent = total;
+  document.getElementById('pontos-restantes-val').textContent = total - 200; // 5 * 40
+
+  // Inicializa todos em 40
+  ATRIBUTOS.forEach(a => estado.cartaCriacao[a.k] = 40);
+  renderizarAtributos();
+}
+
+function renderizarAtributos() {
+  const total = estado.alunoLogado.pontuacao_total;
+  const usado = ATRIBUTOS.reduce((s,a) => s + estado.cartaCriacao[a.k], 0);
+  const restante = total - usado;
+
+  const val = document.getElementById('pontos-restantes-val');
+  val.textContent = restante;
+  val.className = 'valor' + (restante === 0 ? ' zerado' : restante < 0 ? ' negativo' : '');
+
+  const lista = document.getElementById('atributos-lista');
+  lista.innerHTML = ATRIBUTOS.map(a => {
+    const v = estado.cartaCriacao[a.k];
+    return `
+      <div class="atributo-row">
+        <div class="atributo-icone">${a.icone}</div>
+        <div class="atributo-info">
+          <div class="atributo-nome">${a.label}</div>
+          <div class="atributo-barra-wrap">
+            <div class="atributo-barra" style="width:${(v/200)*100}%;background:${a.cor}"></div>
+          </div>
+        </div>
+        <div class="atributo-controles">
+          <button class="btn-attr" onclick="ajustarAttr('${a.k}',-10)">−</button>
+          <span class="attr-valor">${v}</span>
+          <button class="btn-attr" onclick="ajustarAttr('${a.k}',+10)">+</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function ajustarAttr(k, delta) {
+  const total = estado.alunoLogado.pontuacao_total;
+  const atual = estado.cartaCriacao[k];
+  const novo = atual + delta;
+  if (novo < 40 || novo > 200) return;
+
+  const usado = ATRIBUTOS.reduce((s,a) => s + estado.cartaCriacao[a.k], 0);
+  const novoUsado = usado - atual + novo;
+  if (novoUsado > total) return;
+
+  estado.cartaCriacao[k] = novo;
+  renderizarAtributos();
+}
+
+// ================================================================
+// PRÓXIMO PASSO (validação)
+// ================================================================
+function proximoPasso(passo) {
+  if (passo === 2) {
+    const apelido = document.getElementById('carta-apelido').value.trim();
+    if (!apelido) { alert('Digite seu nome ou apelido para a carta!'); return; }
+    if (!estado.cartaCriacao.pais) { alert('Selecione um país!'); return; }
+    estado.cartaCriacao.apelido = apelido;
+    irPara('tela-avatar');
+    iniciarAvatar();
+  } else if (passo === 3) {
+    irPara('tela-atributos');
+    iniciarAtributos();
+  }
+}
+
+// ================================================================
+// SALVAR CARTA
+// ================================================================
+async function salvarCarta() {
+  const total = estado.alunoLogado.pontuacao_total;
+  const usado = ATRIBUTOS.reduce((s,a) => s + estado.cartaCriacao[a.k], 0);
+  if (usado !== total) {
+    alert(`Você usou ${usado} de ${total} pontos. Distribua exatamente ${total} pontos!`);
+    return;
+  }
+
+  const carta = {
+    aluno_id:     estado.alunoLogado.id,
+    apelido:      estado.cartaCriacao.apelido,
+    pais_codigo:  estado.cartaCriacao.pais.c,
+    pais_nome:    estado.cartaCriacao.pais.n,
+    avatar_config: estado.cartaCriacao.avatar,
+    chute:        estado.cartaCriacao.chute,
+    passe:        estado.cartaCriacao.passe,
+    desarme:      estado.cartaCriacao.desarme,
+    tecnica:      estado.cartaCriacao.tecnica,
+    visao:        estado.cartaCriacao.visao,
+  };
+
+  const res = await sb.insert('cartas', carta);
+  if (res && res[0]?.id) {
+    // Marca carta como criada
+    await sb.update('alunos', { carta_criada: true }, `id=eq.${estado.alunoLogado.id}`);
+    estado.alunoLogado.carta_criada = true;
+
+    alert('🎉 Sua carta foi criada! Boa sorte nos jogos!');
+    irPara('tela-menu');
+  } else {
+    alert('Erro ao salvar a carta. Tente novamente.');
+    console.error(res);
+  }
+}
+
+// ================================================================
+// VER MINHA CARTA
+// ================================================================
+async function verMinhaCarta() {
+  irPara('tela-minha-carta');
+  const container = document.getElementById('minha-carta-container');
+  container.innerHTML = '<div style="color:var(--cinza4);padding:20px">Carregando...</div>';
+
+  const cartas = await sb.select('cartas', `aluno_id=eq.${estado.alunoLogado.id}&ativa=eq.true`);
+  if (!cartas || cartas.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:40px">
+        <div style="font-size:48px;margin-bottom:12px">🃏</div>
+        <div style="font-size:16px;font-weight:700;color:var(--preto)">Você ainda não criou sua carta</div>
+        <button class="btn-primario" style="margin-top:20px;width:auto;padding:12px 28px" onclick="irPara('tela-criar')">Criar agora →</button>
+      </div>`;
+    return;
+  }
+  const carta = cartas[0];
+  container.innerHTML = '';
+  container.appendChild(gerarCartaEl(carta, true));
+}
+
+// ================================================================
+// BARALHO (todas as cartas)
+// ================================================================
+async function carregarBaralho() {
+  const grid = document.getElementById('baralho-grid');
+  grid.innerHTML = '<div style="color:var(--cinza4);padding:20px">Carregando cartas...</div>';
+
+  const cartas = await sb.select('cartas', 'ativa=eq.true&order=created_at.asc');
+  document.getElementById('baralho-subtitulo').textContent = `${cartas?.length || 0} cartas disponíveis`;
+
+  if (!cartas || cartas.length === 0) {
+    grid.innerHTML = '<div style="color:var(--cinza4);padding:20px">Nenhuma carta criada ainda.</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  cartas.forEach(c => grid.appendChild(gerarCartaEl(c, false)));
+}
+
+// ================================================================
+// GERAR ELEMENTO HTML DA CARTA
+// ================================================================
+function gerarCartaEl(carta, grande = false) {
+  const pais = PAISES.find(p => p.c === carta.pais_codigo) || {cor1:'#1a9e4a',cor2:'#ffdf00',e:'🌍'};
+  const div = document.createElement('div');
+  div.className = 'carta-visual';
+  if (grande) div.style.width = '240px';
+
+  // Gerar SVG do avatar
+  const avatarSVG = gerarAvatarSVGString(carta.avatar_config, pais.cor1);
+
+  div.innerHTML = `
+    <div class="carta-topo" style="background:linear-gradient(135deg,${pais.cor1},${pais.cor2})">
+      <div class="carta-bandeira-bg">${pais.e}</div>
+      <div class="carta-avatar-svg">${avatarSVG}</div>
+      <div class="carta-pais-badge">${pais.e}</div>
+    </div>
+    <div class="carta-corpo">
+      <div class="carta-apelido">${carta.apelido}</div>
+      <div class="carta-pais-nome">${carta.pais_nome}</div>
+      <div class="carta-attrs">
+        ${ATRIBUTOS.map(a => `
+          <div class="carta-attr-row" data-attr="${a.k}">
+            <span class="carta-attr-label">${a.icone} ${a.label.split(' ')[0]}</span>
+            <div class="carta-attr-bar-wrap">
+              <div class="carta-attr-bar" style="width:${(carta[a.k]/200)*100}%;background:${a.cor}"></div>
+            </div>
+            <span class="carta-attr-val">${carta[a.k]}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  return div;
+}
+
+function gerarAvatarSVGString(av, uniformeCor = '#1a9e4a') {
+  if (!av) return '<text x="50%" y="50%" text-anchor="middle" dy=".3em" font-size="40">⚽</text>';
+  const pele = OPCOES_AVATAR.pele[av.pele] || '#FDDBB4';
+  const corCabelo = OPCOES_AVATAR.cabeloCor[av.cabeloCor] || '#1a0a00';
+  const tipoCabelo = OPCOES_AVATAR.cabeloTipo[av.cabeloTipo] || 'Liso';
+  const olhoW = [14,16,10,18][av.olhos] || 14;
+  const olhoH = [8,10,6,12][av.olhos] || 8;
+  const bocaPaths = ['M48,82 Q60,92 72,82','M48,84 L72,84','M46,80 Q60,95 74,80','M50,83 Q60,88 70,83'];
+  const cabeloShapes = {
+    'Liso':    `<rect x="28" y="18" width="64" height="22" rx="8" fill="${corCabelo}"/>`,
+    'Crespo':  `<ellipse cx="60" cy="22" rx="34" ry="18" fill="${corCabelo}"/>`,
+    'Ondulado':`<path d="M28,30 Q36,14 44,26 Q52,12 60,24 Q68,12 76,26 Q84,14 92,30 L92,22 Q84,8 76,16 Q68,4 60,16 Q52,4 44,16 Q36,8 28,22 Z" fill="${corCabelo}"/>`,
+    'Careca':  '',
+    'Trança':  `<rect x="28" y="18" width="64" height="20" rx="6" fill="${corCabelo}"/>`,
+    'Curto':   `<rect x="30" y="20" width="60" height="16" rx="10" fill="${corCabelo}"/>`,
+  };
+  const acessorios = [
+    '',
+    `<rect x="38" y="36" width="44" height="8" rx="4" fill="#fff" opacity="0.8"/>`,
+    `<ellipse cx="48" cy="66" rx="8" ry="5" fill="none" stroke="#333" stroke-width="2"/>
+     <ellipse cx="72" cy="66" rx="8" ry="5" fill="none" stroke="#333" stroke-width="2"/>
+     <line x1="56" y1="66" x2="64" y2="66" stroke="#333" stroke-width="2"/>`,
+    `<circle cx="82" cy="54" r="4" fill="#f4d03f"/>`,
+    `<rect x="26" y="16" width="68" height="20" rx="6" fill="#cc2200"/>`,
+  ];
+  return `
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+      <circle cx="60" cy="100" r="50" fill="${uniformeCor}" opacity="0.25"/>
+      <path d="M32,95 Q32,78 60,78 Q88,78 88,95 L88,120 L32,120 Z" fill="${uniformeCor}"/>
+      <rect x="52" y="72" width="16" height="12" rx="4" fill="${pele}"/>
+      <ellipse cx="60" cy="56" rx="28" ry="30" fill="${pele}"/>
+      ${cabeloShapes[tipoCabelo]||''}
+      <path d="M44,47 Q50,44 56,47" stroke="#5a3a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M64,47 Q70,44 76,47" stroke="#5a3a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <ellipse cx="49" cy="57" rx="${olhoW/2}" ry="${olhoH/2}" fill="#333"/>
+      <ellipse cx="71" cy="57" rx="${olhoW/2}" ry="${olhoH/2}" fill="#333"/>
+      <circle cx="51" cy="55" r="2" fill="white"/>
+      <circle cx="73" cy="55" r="2" fill="white"/>
+      <path d="M58,62 Q60,68 62,62" stroke="#c0845a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="${bocaPaths[av.boca]||bocaPaths[0]}" stroke="#c0403a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      ${acessorios[av.acessorio]||''}
+    </svg>`;
+}
+
+// ================================================================
+// JOGO vs CPU
+// ================================================================
+async function iniciarJogoCPU() {
+  if (!estado.alunoLogado.carta_criada) {
+    alert('Você precisa criar sua carta antes de jogar!'); return;
+  }
+
+  // Carrega todas as cartas
+  const todasCartas = await sb.select('cartas', 'ativa=eq.true');
+  if (!todasCartas || todasCartas.length < 2) {
+    alert('São necessárias pelo menos 2 cartas para jogar. Aguarde mais colegas criarem as cartas!'); return;
+  }
+
+  // Embaralha
+  const baralho = [...todasCartas].sort(() => Math.random() - 0.5);
+  const metade = Math.floor(baralho.length / 2);
+
+  estado.jogo.modo = 'cpu';
+  estado.jogo.cartasJ1 = baralho.slice(0, metade);
+  estado.jogo.cartasJ2 = baralho.slice(metade);
+  estado.jogo.monteCentral = [];
+  estado.jogo.faseResultado = false;
+
+  // Jogador 1 começa (quem tem a carta do aluno logado fica como J1)
+  const minhaCarta = estado.jogo.cartasJ1.find(c => c.aluno_id === estado.alunoLogado.id)
+                  || estado.jogo.cartasJ2.find(c => c.aluno_id === estado.alunoLogado.id);
+
+  document.getElementById('placar-nome1').textContent = estado.alunoLogado.nome_completo.split(' ')[0];
+  document.getElementById('placar-nome2').textContent = '🤖 CPU';
+
+  irPara('tela-jogo');
+  atualizarJogoUI();
+}
+
+function atualizarJogoUI() {
+  const j = estado.jogo;
+  const c1 = j.cartasJ1[0];
+  const c2 = j.cartasJ2[0];
+
+  document.getElementById('placar-cartas1').textContent = j.cartasJ1.length;
+  document.getElementById('placar-cartas2').textContent = j.cartasJ2.length;
+
+  // Verifica fim de jogo
+  if (j.cartasJ1.length === 0 || j.cartasJ2.length === 0) {
+    const venceu = j.cartasJ1.length > 0;
+    mostrarFimJogo(venceu);
+    return;
+  }
+
+  document.getElementById('jogo-carta-j1').innerHTML = '';
+  document.getElementById('jogo-carta-j2').innerHTML = '';
+  document.getElementById('jogo-carta-j1').appendChild(gerarCartaEl(c1, false));
+  // Carta do CPU fica virada para baixo inicialmente
+  document.getElementById('jogo-carta-j2').appendChild(gerarCartaJogoCPU(c2));
+
+  document.getElementById('escolha-wrap').classList.remove('hidden');
+  document.getElementById('resultado-rodada-wrap').classList.add('hidden');
+  document.getElementById('jogo-status-msg').textContent = 'Sua vez! Escolha um atributo.';
+}
+
+function gerarCartaJogoCPU(carta) {
+  // Carta virada para baixo (mostra só as costas)
+  const div = document.createElement('div');
+  div.className = 'carta-visual';
+  div.style.background = 'linear-gradient(135deg, #1565c0, #0d47a1)';
+  div.innerHTML = `
+    <div style="height:100%;min-height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px">
+      <div style="font-size:48px;margin-bottom:12px">⚽</div>
+      <div style="color:rgba(255,255,255,0.7);font-size:13px;font-weight:700">Carta do adversário</div>
+    </div>`;
+  return div;
+}
+
+function jogarAtributo(atributo) {
+  const j = estado.jogo;
+  const c1 = j.cartasJ1[0];
+  const c2 = j.cartasJ2[0];
+
+  const v1 = c1[atributo];
+  const v2 = c2[atributo];
+
+  // Mostra carta do CPU revelada
+  document.getElementById('jogo-carta-j2').innerHTML = '';
+  document.getElementById('jogo-carta-j2').appendChild(gerarCartaEl(c2, false));
+
+  // Destaca atributo jogado em ambas as cartas
+  document.querySelectorAll(`[data-attr="${atributo}"]`).forEach(el => el.classList.add('destaque'));
+
+  document.getElementById('escolha-wrap').classList.add('hidden');
+  document.getElementById('resultado-rodada-wrap').classList.remove('hidden');
+
+  const emojiEl = document.getElementById('resultado-emoji');
+  const msgEl   = document.getElementById('resultado-msg');
+  const subEl   = document.getElementById('resultado-sub');
+  const attrLabel = ATRIBUTOS.find(a => a.k === atributo)?.label;
+
+  if (v1 > v2) {
+    emojiEl.textContent = '🏆';
+    msgEl.textContent = 'Você ganhou essa rodada!';
+    subEl.textContent = `${attrLabel}: ${v1} vs ${v2} — +${j.monteCentral.length + 2} cartas`;
+    j.cartasJ1.push(...j.cartasJ2.splice(0,1), ...j.monteCentral.splice(0));
+    j.cartasJ1.push(j.cartasJ1.shift()); // carta jogada vai pro fim
+  } else if (v2 > v1) {
+    emojiEl.textContent = '😮';
+    msgEl.textContent = 'CPU ganhou essa rodada!';
+    subEl.textContent = `${attrLabel}: ${v2} vs ${v1}`;
+    j.cartasJ2.push(...j.cartasJ1.splice(0,1), ...j.monteCentral.splice(0));
+    j.cartasJ2.push(j.cartasJ2.shift());
+  } else {
+    emojiEl.textContent = '🤝';
+    msgEl.textContent = 'Empate! Cartas vão para o monte.';
+    subEl.textContent = `${attrLabel}: ${v1} = ${v2} — próximo vencedor leva tudo`;
+    j.monteCentral.push(j.cartasJ1.shift(), j.cartasJ2.shift());
+  }
+}
+
+function proximaRodada() {
+  atualizarJogoUI();
+}
+
+function mostrarFimJogo(venceu) {
+  document.getElementById('escolha-wrap').classList.add('hidden');
+  document.getElementById('resultado-rodada-wrap').classList.remove('hidden');
+  document.getElementById('resultado-emoji').textContent = venceu ? '🏆' : '😢';
+  document.getElementById('resultado-msg').textContent = venceu ? 'Você venceu o jogo!' : 'CPU venceu o jogo!';
+  document.getElementById('resultado-sub').textContent = venceu ? 'Parabéns! Você ficou com todas as cartas!' : 'Não desanime, tente novamente!';
+  document.querySelector('#resultado-rodada-wrap .btn-primario').textContent = '← Voltar ao menu';
+  document.querySelector('#resultado-rodada-wrap .btn-primario').onclick = () => irPara('tela-menu');
+}
+
+function confirmarSairJogo() { mostrarModal('modal-sair-jogo'); }
+function sairJogo() { fecharModal('modal-sair-jogo'); irPara('tela-menu'); }
+
+// ================================================================
+// JOGO ONLINE (sala)
+// ================================================================
+async function criarSalaOnline() {
+  if (!estado.alunoLogado.carta_criada) { alert('Crie sua carta antes!'); return; }
+  const codigo = Math.random().toString(36).slice(2,6).toUpperCase();
+  const partida = await sb.insert('partidas', {
+    jogador1_id: estado.alunoLogado.id,
+    modo: 'humano',
+    status: 'aguardando',
+    codigo_sala: codigo,
+  });
+  if (!partida?.[0]?.id) { alert('Erro ao criar sala.'); return; }
+
+  estado.jogo.partidaId = partida[0].id;
+  document.getElementById('sala-codigo-display').textContent = codigo;
+  irPara('tela-sala-aguardando');
+
+  // Escuta por mudanças na partida via Realtime
+  estado.jogo.ws = sb.channel('partidas', `id=eq.${partida[0].id}`, async (rec) => {
+    if (rec.status === 'em_andamento' && rec.jogador2_id) {
+      // Jogador 2 entrou!
+      await iniciarPartidaOnline(rec);
+    }
+  });
+}
+
+async function entrarSalaOnline() {
+  const codigo = document.getElementById('codigo-sala-input').value.trim().toUpperCase();
+  if (codigo.length < 3) { alert('Digite o código da sala!'); return; }
+  if (!estado.alunoLogado.carta_criada) { alert('Crie sua carta antes!'); return; }
+
+  const partidas = await sb.select('partidas', `codigo_sala=eq.${codigo}&status=eq.aguardando`);
+  if (!partidas?.length) { alert('Sala não encontrada ou já em andamento.'); return; }
+
+  const partida = partidas[0];
+  // Entra na partida
+  await sb.update('partidas',
+    { jogador2_id: estado.alunoLogado.id, status: 'em_andamento', vez_de: partida.jogador1_id },
+    `id=eq.${partida.id}`
+  );
+  estado.jogo.partidaId = partida.id;
+  await iniciarPartidaOnline({ ...partida, jogador2_id: estado.alunoLogado.id, status: 'em_andamento' });
+}
+
+async function iniciarPartidaOnline(partida) {
+  // Carrega todas as cartas e divide
+  const todasCartas = await sb.select('cartas', 'ativa=eq.true');
+  const baralho = [...todasCartas].sort(() => Math.random() - 0.5);
+  const metade = Math.floor(baralho.length / 2);
+
+  estado.jogo.modo = 'online';
+  estado.jogo.cartasJ1 = baralho.slice(0, metade);
+  estado.jogo.cartasJ2 = baralho.slice(metade);
+  estado.jogo.monteCentral = [];
+
+  const isJ1 = partida.jogador1_id === estado.alunoLogado.id;
+  document.getElementById('placar-nome1').textContent = estado.alunoLogado.nome_completo.split(' ')[0];
+  document.getElementById('placar-nome2').textContent = isJ1 ? 'Adversário' : 'Adversário';
+
+  irPara('tela-jogo');
+  atualizarJogoUI();
+}
+
+function cancelarSala() {
+  if (estado.jogo.ws) estado.jogo.ws.close();
+  if (estado.jogo.partidaId) sb.delete('partidas', `id=eq.${estado.jogo.partidaId}`);
+  irPara('tela-online');
+}
+
+// ================================================================
+// ADMIN
+// ================================================================
+function mostrarModalAdmin() { mostrarModal('modal-admin'); }
+function fecharModalAdmin()  { fecharModal('modal-admin'); }
+
+function loginAdmin() {
+  const senha = document.getElementById('admin-senha-input').value;
+  const erro  = document.getElementById('admin-senha-erro');
+  if (senha === ADMIN_PASSWORD) {
+    fecharModal('modal-admin');
+    irPara('tela-admin');
+    carregarDadosAdmin();
+  } else {
+    erro.style.display = 'block';
+  }
+}
+
+function sairAdmin() { irPara('tela-login'); }
+
+function adminAba(id) {
+  document.querySelectorAll('.admin-nav-btn').forEach((b,i) => {
+    b.classList.toggle('ativo', ['visao-geral','alunos','cartas','partidas'][i] === id);
+  });
+  document.querySelectorAll('.admin-painel').forEach(p => p.classList.remove('ativo'));
+  document.getElementById('painel-' + id).classList.add('ativo');
+  if (id === 'cartas') carregarCartasAdmin();
+  if (id === 'partidas') carregarPartidasAdmin();
+}
+
+async function carregarDadosAdmin() {
+  const [alunos, cartas, partidas] = await Promise.all([
+    sb.select('alunos', 'order=nome_completo.asc'),
+    sb.select('cartas', 'ativa=eq.true'),
+    sb.select('partidas', 'status=eq.finalizada'),
+  ]);
+
+  const semCarta = (alunos||[]).filter(a => !a.carta_criada);
+
+  document.getElementById('stat-total-alunos').textContent  = alunos?.length || 0;
+  document.getElementById('stat-cartas-criadas').textContent = cartas?.length || 0;
+  document.getElementById('stat-sem-carta').textContent     = semCarta.length;
+  document.getElementById('stat-partidas').textContent      = partidas?.length || 0;
+
+  document.getElementById('lista-sem-carta').innerHTML = semCarta.length
+    ? `<table class="tabela-admin"><thead><tr><th>Nome</th><th>Nascimento</th><th>Pontos</th></tr></thead><tbody>
+        ${semCarta.map(a => `<tr><td>${a.nome_completo}</td><td>${a.data_nascimento}</td><td>${a.pontuacao_total}</td></tr>`).join('')}
+       </tbody></table>`
+    : '<p style="color:var(--verde2);font-weight:600">✅ Todos os alunos já criaram suas cartas!</p>';
+
+  // Tabela de alunos
+  document.getElementById('tabela-alunos-body').innerHTML = (alunos||[]).map(a => `
+    <tr>
+      <td><strong>${a.nome_completo}</strong></td>
+      <td>${a.data_nascimento}</td>
+      <td><span class="badge badge-azul">⭐ ${a.pontuacao_total}</span></td>
+      <td><span class="badge ${a.carta_criada?'badge-sim':'badge-nao'}">${a.carta_criada?'✅ Sim':'❌ Não'}</span></td>
+      <td>
+        <button class="btn-secundario" style="font-size:11px;padding:4px 8px"
+                onclick="removerAluno('${a.id}','${a.nome_completo}')">Remover</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function cadastrarAluno() {
+  const nome   = document.getElementById('admin-aluno-nome').value.trim();
+  const data   = document.getElementById('admin-aluno-data').value;
+  const pontos = parseInt(document.getElementById('admin-aluno-pontos').value);
+  const msg    = document.getElementById('admin-aluno-msg');
+  msg.style.display = 'none';
+
+  if (!nome || !data || !pontos) { msg.textContent = 'Preencha todos os campos.'; msg.style.display='block'; return; }
+  if (pontos < 360 || pontos > 600) { msg.textContent = 'Pontuação deve ser entre 360 e 600.'; msg.style.display='block'; return; }
+
+  const res = await sb.insert('alunos', { nome_completo: nome, data_nascimento: data, pontuacao_total: pontos });
+  if (res && res[0]?.id) {
+    alert(`✅ Aluno "${nome}" cadastrado!`);
+    document.getElementById('admin-aluno-nome').value = '';
+    document.getElementById('admin-aluno-data').value = '';
+    document.getElementById('admin-aluno-pontos').value = '';
+    carregarDadosAdmin();
+  } else {
+    msg.textContent = 'Erro ao cadastrar. Verifique se o aluno já está cadastrado.';
+    msg.style.display = 'block';
+  }
+}
+
+async function removerAluno(id, nome) {
+  if (!confirm(`Remover "${nome}"? Isso também apaga a carta dele.`)) return;
+  await sb.delete('alunos', `id=eq.${id}`);
+  carregarDadosAdmin();
+}
+
+async function carregarCartasAdmin() {
+  const grid = document.getElementById('admin-cartas-grid');
+  grid.innerHTML = '<div style="color:var(--cinza4)">Carregando...</div>';
+  const cartas = await sb.select('cartas', 'ativa=eq.true&order=created_at.asc');
+  grid.innerHTML = '';
+  (cartas||[]).forEach(c => grid.appendChild(gerarCartaEl(c, false)));
+}
+
+async function carregarPartidasAdmin() {
+  const partidas = await sb.select('partidas', 'order=created_at.desc&limit=50');
+  const alunos   = await sb.select('alunos', '');
+  const mapaAlunos = Object.fromEntries((alunos||[]).map(a => [a.id, a.nome_completo]));
+
+  document.getElementById('tabela-partidas-body').innerHTML = (partidas||[]).map(p => `
+    <tr>
+      <td>${mapaAlunos[p.jogador1_id]||'—'}</td>
+      <td>${p.modo==='cpu'?'🤖 CPU':(mapaAlunos[p.jogador2_id]||'—')}</td>
+      <td><span class="badge badge-azul">${p.modo==='cpu'?'vs CPU':'Online'}</span></td>
+      <td>${mapaAlunos[p.vencedor_id]||'—'}</td>
+      <td>${p.total_rodadas||0}</td>
+      <td>${new Date(p.created_at).toLocaleDateString('pt-BR')}</td>
+    </tr>
+  `).join('');
+}
+
+// ================================================================
+// INIT — renderiza grade de países ao carregar
+// ================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  renderizarPaises('');
+});
+</script>
+</body>
+</html>
