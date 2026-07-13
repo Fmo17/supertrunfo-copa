@@ -264,8 +264,7 @@ input,select{font-family:var(--font)}
   <div class="card-criador">
     <div class="avatar-builder">
       <div class="avatar-opcoes">
-        <div class="opcao-secao"><label>Tom de pele</label><div class="opcao-chips" id="op-pele"></div></div>
-        <div class="opcao-secao"><label>Estilo de cabelo</label><div class="opcao-chips" id="op-cabelo"></div></div>
+        <div class="opcao-secao"><label>Escolha seu avatar</label><div class="opcao-chips" id="op-avatar"></div></div>
       </div>
       <div class="avatar-preview-col">
         <div style="font-size:11px;font-weight:700;color:var(--cinza4);text-transform:uppercase;letter-spacing:0.5px">Preview</div>
@@ -476,62 +475,75 @@ const sb = {
 };
 
 // ═══════════════════════════════════════════════════════════════
-// 48 SELEÇÕES
+// 48 SELEÇÕES — apenas países com camisa pronta em assets/uniformes/
 // ═══════════════════════════════════════════════════════════════
 const PAISES = [
-  {c:'BR',n:'Brasil',e:'🇧🇷',c1:'#009C3B',c2:'#FFDF00'},{c:'AR',n:'Argentina',e:'🇦🇷',c1:'#74ACDF',c2:'#FFFFFF'},
-  {c:'UY',n:'Uruguai',e:'🇺🇾',c1:'#5EB6E4',c2:'#FFFFFF'},{c:'CO',n:'Colômbia',e:'🇨🇴',c1:'#FCD116',c2:'#003087'},
-  {c:'EC',n:'Equador',e:'🇪🇨',c1:'#FFD100',c2:'#003087'},{c:'PE',n:'Peru',e:'🇵🇪',c1:'#D91023',c2:'#FFFFFF'},
-  {c:'VE',n:'Venezuela',e:'🇻🇪',c1:'#CF142B',c2:'#002B7F'},{c:'PY',n:'Paraguai',e:'🇵🇾',c1:'#D52B1E',c2:'#FFFFFF'},
-  {c:'BO',n:'Bolívia',e:'🇧🇴',c1:'#D52B1E',c2:'#007A3D'},{c:'CL',n:'Chile',e:'🇨🇱',c1:'#D52B1E',c2:'#FFFFFF'},
-  {c:'US',n:'EUA',e:'🇺🇸',c1:'#002868',c2:'#BF0A30'},{c:'MX',n:'México',e:'🇲🇽',c1:'#006847',c2:'#FFFFFF'},
-  {c:'CA',n:'Canadá',e:'🇨🇦',c1:'#FF0000',c2:'#FFFFFF'},{c:'CR',n:'Costa Rica',e:'🇨🇷',c1:'#002B7F',c2:'#CE1126'},
-  {c:'JM',n:'Jamaica',e:'🇯🇲',c1:'#000000',c2:'#FED100'},{c:'HN',n:'Honduras',e:'🇭🇳',c1:'#0073CF',c2:'#FFFFFF'},
-  {c:'PA',n:'Panamá',e:'🇵🇦',c1:'#DA121A',c2:'#003580'},{c:'SV',n:'El Salvador',e:'🇸🇻',c1:'#0F47AF',c2:'#FFFFFF'},
-  {c:'DE',n:'Alemanha',e:'🇩🇪',c1:'#000000',c2:'#DD0000'},{c:'FR',n:'França',e:'🇫🇷',c1:'#002395',c2:'#ED2939'},
-  {c:'ES',n:'Espanha',e:'🇪🇸',c1:'#AA151B',c2:'#F1BF00'},{c:'PT',n:'Portugal',e:'🇵🇹',c1:'#006600',c2:'#FF0000'},
-  {c:'NL',n:'Holanda',e:'🇳🇱',c1:'#FF4F00',c2:'#FFFFFF'},{c:'EN',n:'Inglaterra',e:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',c1:'#CF142B',c2:'#FFFFFF'},
-  {c:'BE',n:'Bélgica',e:'🇧🇪',c1:'#000000',c2:'#EF3340'},{c:'IT',n:'Itália',e:'🇮🇹',c1:'#003D92',c2:'#FFFFFF'},
-  {c:'HR',n:'Croácia',e:'🇭🇷',c1:'#FF0000',c2:'#FFFFFF'},{c:'CH',n:'Suíça',e:'🇨🇭',c1:'#FF0000',c2:'#FFFFFF'},
-  {c:'DK',n:'Dinamarca',e:'🇩🇰',c1:'#C60C30',c2:'#FFFFFF'},{c:'AT',n:'Áustria',e:'🇦🇹',c1:'#ED2939',c2:'#FFFFFF'},
-  {c:'HU',n:'Hungria',e:'🇭🇺',c1:'#CE2939',c2:'#436F4D'},{c:'SK',n:'Eslováquia',e:'🇸🇰',c1:'#0B4EA2',c2:'#FFFFFF'},
-  {c:'RS',n:'Sérvia',e:'🇷🇸',c1:'#C6363C',c2:'#0C4076'},{c:'RO',n:'Romênia',e:'🇷🇴',c1:'#002B7F',c2:'#FCD116'},
-  {c:'AL',n:'Albânia',e:'🇦🇱',c1:'#E41E20',c2:'#000000'},{c:'GE',n:'Geórgia',e:'🇬🇪',c1:'#FF0000',c2:'#FFFFFF'},
-  {c:'SI',n:'Eslovênia',e:'🇸🇮',c1:'#003DA5',c2:'#FFFFFF'},{c:'UA',n:'Ucrânia',e:'🇺🇦',c1:'#005BBB',c2:'#FFD500'},
-  {c:'JP',n:'Japão',e:'🇯🇵',c1:'#BC002D',c2:'#FFFFFF'},{c:'KR',n:'Coreia do Sul',e:'🇰🇷',c1:'#CD2E3A',c2:'#003478'},
-  {c:'AU',n:'Austrália',e:'🇦🇺',c1:'#00843D',c2:'#FFCD00'},{c:'IR',n:'Irã',e:'🇮🇷',c1:'#239F40',c2:'#FFFFFF'},
-  {c:'SA',n:'Arábia Saudita',e:'🇸🇦',c1:'#006C35',c2:'#FFFFFF'},{c:'UZ',n:'Uzbequistão',e:'🇺🇿',c1:'#1EB53A',c2:'#FFFFFF'},
-  {c:'MA',n:'Marrocos',e:'🇲🇦',c1:'#C1272D',c2:'#006233'},{c:'SN',n:'Senegal',e:'🇸🇳',c1:'#00853F',c2:'#FDEF42'},
-  {c:'EG',n:'Egito',e:'🇪🇬',c1:'#CE1126',c2:'#FFFFFF'},{c:'NG',n:'Nigéria',e:'🇳🇬',c1:'#008751',c2:'#FFFFFF'},
-  {c:'NZ',n:'Nova Zelândia',e:'🇳🇿',c1:'#00247D',c2:'#FFFFFF'},
+  {c:'ZA',n:'África do Sul',e:'🇿🇦',c1:'#007749',c2:'#FFB612'},
+  {c:'DE',n:'Alemanha',e:'🇩🇪',c1:'#000000',c2:'#DD0000'},
+  {c:'SA',n:'Arábia Saudita',e:'🇸🇦',c1:'#006C35',c2:'#FFFFFF'},
+  {c:'DZ',n:'Argélia',e:'🇩🇿',c1:'#006233',c2:'#FFFFFF'},
+  {c:'AR',n:'Argentina',e:'🇦🇷',c1:'#74ACDF',c2:'#FFFFFF'},
+  {c:'AU',n:'Austrália',e:'🇦🇺',c1:'#00843D',c2:'#FFCD00'},
+  {c:'AT',n:'Áustria',e:'🇦🇹',c1:'#ED2939',c2:'#FFFFFF'},
+  {c:'BE',n:'Bélgica',e:'🇧🇪',c1:'#000000',c2:'#FFD90F'},
+  {c:'BA',n:'Bósnia',e:'🇧🇦',c1:'#002395',c2:'#FECB00'},
+  {c:'BR',n:'Brasil',e:'🇧🇷',c1:'#009C3B',c2:'#FFDF00'},
+  {c:'CV',n:'Cabo Verde',e:'🇨🇻',c1:'#003893',c2:'#FFFFFF'},
+  {c:'CA',n:'Canadá',e:'🇨🇦',c1:'#FF0000',c2:'#FFFFFF'},
+  {c:'QA',n:'Catar',e:'🇶🇦',c1:'#8D1B3D',c2:'#FFFFFF'},
+  {c:'CZ',n:'Chéquia',e:'🇨🇿',c1:'#D7141A',c2:'#11457E'},
+  {c:'CO',n:'Colômbia',e:'🇨🇴',c1:'#FCD116',c2:'#003087'},
+  {c:'CG',n:'Congo',e:'🇨🇬',c1:'#009543',c2:'#FBDE4A'},
+  {c:'KR',n:'Coreia do Sul',e:'🇰🇷',c1:'#CD2E3A',c2:'#003478'},
+  {c:'CI',n:'Costa do Marfim',e:'🇨🇮',c1:'#FF8200',c2:'#009E60'},
+  {c:'HR',n:'Croácia',e:'🇭🇷',c1:'#FF0000',c2:'#FFFFFF'},
+  {c:'CW',n:'Curaçao',e:'🇨🇼',c1:'#002B7F',c2:'#FFD100'},
+  {c:'EG',n:'Egito',e:'🇪🇬',c1:'#CE1126',c2:'#FFFFFF'},
+  {c:'EC',n:'Equador',e:'🇪🇨',c1:'#FFD100',c2:'#003087'},
+  {c:'SCT',n:'Escócia',e:'🏴',c1:'#005EB8',c2:'#FFFFFF'},
+  {c:'ES',n:'Espanha',e:'🇪🇸',c1:'#AA151B',c2:'#F1BF00'},
+  {c:'US',n:'Estados Unidos',e:'🇺🇸',c1:'#002868',c2:'#BF0A30'},
+  {c:'FR',n:'França',e:'🇫🇷',c1:'#002395',c2:'#ED2939'},
+  {c:'GH',n:'Gana',e:'🇬🇭',c1:'#CE1126',c2:'#FCD116'},
+  {c:'HT',n:'Haiti',e:'🇭🇹',c1:'#00209F',c2:'#D21034'},
+  {c:'NL',n:'Holanda',e:'🇳🇱',c1:'#FF4F00',c2:'#FFFFFF'},
+  {c:'ENG',n:'Inglaterra',e:'🏴',c1:'#CF142B',c2:'#FFFFFF'},
+  {c:'IR',n:'Irã',e:'🇮🇷',c1:'#239F40',c2:'#FFFFFF'},
+  {c:'IQ',n:'Iraque',e:'🇮🇶',c1:'#CE1126',c2:'#FFFFFF'},
+  {c:'JP',n:'Japão',e:'🇯🇵',c1:'#BC002D',c2:'#FFFFFF'},
+  {c:'JO',n:'Jordânia',e:'🇯🇴',c1:'#000000',c2:'#007A3D'},
+  {c:'MA',n:'Marrocos',e:'🇲🇦',c1:'#C1272D',c2:'#006233'},
+  {c:'MX',n:'México',e:'🇲🇽',c1:'#006847',c2:'#CE1126'},
+  {c:'NO',n:'Noruega',e:'🇳🇴',c1:'#EF2B2D',c2:'#002868'},
+  {c:'NZ',n:'Nova Zelândia',e:'🇳🇿',c1:'#00247D',c2:'#CC142B'},
+  {c:'PA',n:'Panamá',e:'🇵🇦',c1:'#DA121A',c2:'#003580'},
+  {c:'PY',n:'Paraguai',e:'🇵🇾',c1:'#D52B1E',c2:'#0038A8'},
+  {c:'PT',n:'Portugal',e:'🇵🇹',c1:'#006600',c2:'#FF0000'},
+  {c:'SN',n:'Senegal',e:'🇸🇳',c1:'#00853F',c2:'#FDEF42'},
+  {c:'SE',n:'Suécia',e:'🇸🇪',c1:'#006AA7',c2:'#FECC00'},
+  {c:'CH',n:'Suíça',e:'🇨🇭',c1:'#FF0000',c2:'#FFFFFF'},
+  {c:'TN',n:'Tunísia',e:'🇹🇳',c1:'#E70013',c2:'#FFFFFF'},
+  {c:'TR',n:'Turquia',e:'🇹🇷',c1:'#E30A17',c2:'#FFFFFF'},
+  {c:'UY',n:'Uruguai',e:'🇺🇾',c1:'#5EB6E4',c2:'#FFFFFF'},
+  {c:'UZ',n:'Uzbequistão',e:'🇺🇿',c1:'#0099B5',c2:'#1EB53A'},
 ];
 
 // ═══════════════════════════════════════════════════════════════
-// SISTEMA DE AVATAR POR CAMADAS PNG
+// REGISTRO DE AVATARES — cada avatar tem seu próprio shift calibrado
 // ═══════════════════════════════════════════════════════════════
-const AV = {
-  bustos: [
-    {id:'Tom1', label:'Pálida'},
-    {id:'Tom2', label:'Clara'},
-    {id:'Tom3', label:'Morena clara'},
-    {id:'Tom4', label:'Parda'},
-    {id:'Tom5', label:'Negra'},
-    {id:'Tom6', label:'Retinta'},
-  ],
-  cabelos: [
-    {id:'1',    label:'Liso longo'},
-    {id:'2',    label:'Médio liso'},
-    {id:'3',    label:'Crespo curto'},
-    {id:'4',    label:'Despenteado'},
-    {id:'5',    label:'Ondulado'},
-    {id:'6',    label:'Longo ondulado'},
-    {id:'7',    label:'Black power'},
-    {id:'8',    label:'Curto liso'},
-    {id:'none', label:'Careca'},
-  ],
+const AVATARES = {
+  menino1: {
+    arquivo: `${ASSETS}/avatares/menino1.png`,
+    label: 'Menino 1',
+    shiftY: 445,
+    shiftX: 0
+  }
+  // Novos avatares entram aqui depois de calibrados
+  // (repete o teste de shift_y feito com esse antes de adicionar um novo)
 };
+
 // ═══════════════════════════════════════════════════════════════
-// SISTEMA DE CAMADAS PNG — canvas compositor
+// SISTEMA DE CAMADAS PNG — canvas compositor (avatar + camisa)
 // ═══════════════════════════════════════════════════════════════
 
 // Carrega uma imagem PNG e retorna Promise<HTMLImageElement>
@@ -545,36 +557,28 @@ function loadImg(url) {
   });
 }
 
-// Compõe as camadas em canvas e retorna dataURL
-async function compostar(bustoId, cabeloId, paisNome, largura=400, altura=480) {
+// Compõe avatar + camisa em canvas e retorna dataURL
+async function compostar(avatarId, paisNome) {
+  const avatarInfo = AVATARES[avatarId];
+  if (!avatarInfo) throw new Error('Avatar não encontrado: ' + avatarId);
+
+  const TAM = 500;           // resolução de saída (os PNGs originais são 1254x1254)
+  const escala = TAM / 1254;
+
   const canvas = document.createElement('canvas');
-  canvas.width  = largura;
-  canvas.height = altura;
+  canvas.width  = TAM;
+  canvas.height = TAM;
   const ctx = canvas.getContext('2d');
 
-  const unifUrl  = `${ASSETS}/uniformes/${paisNome}.png`;
-  const bustoUrl = `${ASSETS}/bustos/${bustoId}.png`;
-  const cabUrls  = cabeloId !== 'none' ? `${ASSETS}/cabelos/${cabeloId}.png` : null;
+  const camisaUrl = `${ASSETS}/uniformes/${paisNome}.png`;
 
-  // Carrega imagens em paralelo
-  const imgs = await Promise.allSettled([
-    loadImg(unifUrl),
-    loadImg(bustoUrl),
-    cabUrls ? loadImg(cabUrls) : Promise.resolve(null),
+  const [avatarImg, camisaImg] = await Promise.all([
+    loadImg(avatarInfo.arquivo),
+    loadImg(camisaUrl),
   ]);
 
-  // Camada 1: Uniforme (posicionado embaixo, busto fica acima)
-  if (imgs[0].status === 'fulfilled' && imgs[0].value) {
-    ctx.drawImage(imgs[0].value, 0, largura * 0.42, largura, altura - largura * 0.42);
-  }
-  // Camada 2: Busto (ocupa a parte central)
-  if (imgs[1].status === 'fulfilled' && imgs[1].value) {
-    ctx.drawImage(imgs[1].value, largura * 0.05, 0, largura * 0.9, altura * 0.82);
-  }
-  // Camada 3: Cabelo (sobrepõe o topo da cabeça)
-  if (imgs[2].status === 'fulfilled' && imgs[2].value) {
-    ctx.drawImage(imgs[2].value, largura * 0.05, -largura * 0.02, largura * 0.9, largura * 0.82);
-  }
+  ctx.drawImage(avatarImg, 0, 0, TAM, TAM);
+  ctx.drawImage(camisaImg, avatarInfo.shiftX * escala, avatarInfo.shiftY * escala, TAM, TAM);
 
   return canvas.toDataURL('image/png');
 }
@@ -585,7 +589,7 @@ async function compostar(bustoId, cabeloId, paisNome, largura=400, altura=480) {
 // ═══════════════════════════════════════════════════════════════
 let G = {
   aluno: null,
-  criacao: { apelido:'', pais:null, avatar:{ busto:'Tom2', cabelo:'8' }, chute:40,passe:40,desarme:40,tecnica:40,visao:40 },
+  criacao: { apelido:'', pais:null, avatarId:'menino1', chute:40,passe:40,desarme:40,tecnica:40,visao:40 },
   jogo: { modo:'cpu', j1:[], j2:[], monte:[], partidaId:null, ws:null }
 };
 
@@ -659,26 +663,23 @@ function irParaAvatar(){
 function iniciarAvatar(){renderOpcoesAvatar();atualizarPreviewAvatar()}
 
 function renderOpcoesAvatar(){
-  // Busto / tom de pele
-  document.getElementById('op-pele').innerHTML=AV.bustos.map(o=>
-    `<button class="chip ${G.criacao.avatar.busto===o.id?'ativo':''}" onclick="setAv('busto','${o.id}')">${o.label}</button>`).join('');
-  // Cabelo
-  document.getElementById('op-cabelo').innerHTML=AV.cabelos.map(o=>
-    `<button class="chip ${G.criacao.avatar.cabelo===o.id?'ativo':''}" onclick="setAv('cabelo','${o.id}')">${o.label}</button>`).join('');
+  document.getElementById('op-avatar').innerHTML = Object.entries(AVATARES).map(([id, info]) =>
+    `<button class="chip ${G.criacao.avatarId===id?'ativo':''}" onclick="setAvatar('${id}')">${info.label}</button>`
+  ).join('');
 }
 
-function setAv(prop, val){G.criacao.avatar[prop]=val;renderOpcoesAvatar();atualizarPreviewAvatar();}
+function setAvatar(id){
+  G.criacao.avatarId = id;
+  renderOpcoesAvatar();
+  atualizarPreviewAvatar();
+}
 
 async function atualizarPreviewAvatar(){
   const wrap = document.getElementById('avatar-preview');
   wrap.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:28px">⏳</div>';
   try {
     const paisNome = G.criacao.pais?.n || 'Brasil';
-    const dataUrl  = await compostar(
-      G.criacao.avatar.busto  || 'Tom2',
-      G.criacao.avatar.cabelo || '8',
-      paisNome
-    );
+    const dataUrl  = await compostar(G.criacao.avatarId || 'menino1', paisNome);
     wrap.innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;object-position:top;border-radius:50%">`;
   } catch(e) {
     wrap.innerHTML = '<div style="font-size:28px">😊</div>';
@@ -687,9 +688,8 @@ async function atualizarPreviewAvatar(){
 }
 
 function randomAvatar(){
-  const pickB = () => AV.bustos[Math.floor(Math.random()*AV.bustos.length)].id;
-  const pickC = () => AV.cabelos[Math.floor(Math.random()*AV.cabelos.length)].id;
-  G.criacao.avatar = { busto: pickB(), cabelo: pickC() };
+  const ids = Object.keys(AVATARES);
+  G.criacao.avatarId = ids[Math.floor(Math.random()*ids.length)];
   renderOpcoesAvatar();
   atualizarPreviewAvatar();
 }
@@ -748,7 +748,7 @@ async function salvarCarta(){
   const res=await sb.insert('cartas',{
     aluno_id:G.aluno.id, apelido:G.criacao.apelido,
     pais_codigo:G.criacao.pais.c, pais_nome:G.criacao.pais.n,
-    avatar_config:G.criacao.avatar,
+    avatar_config: { avatarId: G.criacao.avatarId },
     chute:G.criacao.chute, passe:G.criacao.passe,
     desarme:G.criacao.desarme, tecnica:G.criacao.tecnica, visao:G.criacao.visao,
   });
@@ -765,7 +765,7 @@ async function salvarCarta(){
 function gerarCartaEl(carta, grande=false){
   const pais=PAISES.find(p=>p.c===carta.pais_codigo)||{c1:'#1a9e4a',c2:'#ffdf00',e:'🌍',n:'—'};
   const total=carta.chute+carta.passe+carta.desarme+carta.tecnica+carta.visao;
-  const cfg=carta.avatar_config||{busto:'Tom2',cabelo:'8'};
+  const cfg=carta.avatar_config||{avatarId:'menino1'};
   const div=document.createElement('div');
   div.className='carta-visual';
   if(grande)div.style.width='240px';
@@ -794,7 +794,7 @@ function gerarCartaEl(carta, grande=false){
 
   // Carrega avatar async após inserir no DOM
   const wrap = div.querySelector('.carta-avatar-wrap');
-  compostar(cfg.busto||'Tom2', cfg.cabelo||'8', pais.n).then(url=>{
+  compostar(cfg.avatarId||'menino1', pais.n).then(url=>{
     wrap.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;object-position:top">`;
   }).catch(()=>{
     wrap.innerHTML='<div style="font-size:32px;opacity:0.5">⚽</div>';
