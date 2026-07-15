@@ -97,8 +97,9 @@ input,select{font-family:var(--font)}
 .carta-topo-bg{position:absolute;inset:0}
 .carta-avatar-svg{width:180px;height:200px;position:relative;z-index:2;display:block}
 .carta-estrela-pts{position:absolute;top:10px;left:12px;z-index:3;background:rgba(0,0,0,0.35);backdrop-filter:blur(4px);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:900;color:#fff}
-.carta-bandeira{position:absolute;top:10px;right:12px;z-index:3;font-size:22px}
-.carta-body{background:linear-gradient(180deg, rgba(6,8,14,0.35), rgba(6,8,14,0.92) 55%);padding:10px 13px 13px;border-top:1px solid rgba(255,255,255,0.08)}
+.carta-bandeira{position:absolute;top:10px;right:12px;z-index:3;width:30px;height:30px;border-radius:6px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.35)}
+.carta-bandeira img{width:100%;height:100%;object-fit:cover;display:block}
+.carta-body{background:linear-gradient(180deg, rgba(6,8,14,0.55), rgba(6,8,14,0.94) 55%);padding:10px 13px 13px;border-top:1px solid rgba(255,255,255,0.08)}
 .carta-nome{font-size:13px;font-weight:900;text-align:center;color:#fff;text-transform:uppercase;letter-spacing:1.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px}
 .carta-pais{font-size:9px;color:rgba(255,255,255,0.4);text-align:center;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px}
 .carta-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);margin-bottom:8px}
@@ -480,9 +481,9 @@ const sb = {
 // Campo "arq" = nome EXATO do arquivo no GitHub (assets/uniformes/ e assets/fundos/),
 // sem acento e com underline no lugar de espaço. Campo "n" é só o nome exibido ao aluno.
 const PAISES = [
-  {c:'ZA',n:'África do Sul',arq:'Africa_do_Sul',e:'🇿🇦',c1:'#007749',c2:'#FFB612'},
+  {c:'ZA',n:'África do Sul',arq:'Africa do Sul',e:'🇿🇦',c1:'#007749',c2:'#FFB612'},
   {c:'DE',n:'Alemanha',arq:'Alemanha',e:'🇩🇪',c1:'#000000',c2:'#DD0000'},
-  {c:'SA',n:'Arábia Saudita',arq:'Arabia_Saudita',e:'🇸🇦',c1:'#006C35',c2:'#FFFFFF'},
+  {c:'SA',n:'Arábia Saudita',arq:'Arabia Saudita',e:'🇸🇦',c1:'#006C35',c2:'#FFFFFF'},
   {c:'DZ',n:'Argélia',arq:'Argelia',e:'🇩🇿',c1:'#006233',c2:'#FFFFFF'},
   {c:'AR',n:'Argentina',arq:'Argentina',e:'🇦🇷',c1:'#74ACDF',c2:'#FFFFFF'},
   {c:'AU',n:'Austrália',arq:'Australia',e:'🇦🇺',c1:'#00843D',c2:'#FFCD00'},
@@ -490,21 +491,21 @@ const PAISES = [
   {c:'BE',n:'Bélgica',arq:'Belgica',e:'🇧🇪',c1:'#000000',c2:'#FFD90F'},
   {c:'BA',n:'Bósnia',arq:'Bosnia',e:'🇧🇦',c1:'#002395',c2:'#FECB00'},
   {c:'BR',n:'Brasil',arq:'Brasil',e:'🇧🇷',c1:'#009C3B',c2:'#FFDF00'},
-  {c:'CV',n:'Cabo Verde',arq:'Cabo_Verde',e:'🇨🇻',c1:'#003893',c2:'#FFFFFF'},
+  {c:'CV',n:'Cabo Verde',arq:'Cabo Verde',e:'🇨🇻',c1:'#003893',c2:'#FFFFFF'},
   {c:'CA',n:'Canadá',arq:'Canada',e:'🇨🇦',c1:'#FF0000',c2:'#FFFFFF'},
   {c:'QA',n:'Catar',arq:'Catar',e:'🇶🇦',c1:'#8D1B3D',c2:'#FFFFFF'},
   {c:'CZ',n:'Chéquia',arq:'Chéquia',e:'🇨🇿',c1:'#D7141A',c2:'#11457E'},
   {c:'CO',n:'Colômbia',arq:'Colombia',e:'🇨🇴',c1:'#FCD116',c2:'#003087'},
   {c:'CG',n:'Congo',arq:'Congo',e:'🇨🇬',c1:'#009543',c2:'#FBDE4A'},
-  {c:'KR',n:'Coreia do Sul',arq:'Coreia_do_Sul',e:'🇰🇷',c1:'#CD2E3A',c2:'#003478'},
-  {c:'CI',n:'Costa do Marfim',arq:'Costa_do_Marfim',e:'🇨🇮',c1:'#FF8200',c2:'#009E60'},
+  {c:'KR',n:'Coreia do Sul',arq:'Coreia do Sul',e:'🇰🇷',c1:'#CD2E3A',c2:'#003478'},
+  {c:'CI',n:'Costa do Marfim',arq:'Costa do Marfim',e:'🇨🇮',c1:'#FF8200',c2:'#009E60'},
   {c:'HR',n:'Croácia',arq:'Croacia',e:'🇭🇷',c1:'#FF0000',c2:'#FFFFFF'},
   {c:'CW',n:'Curaçao',arq:'Curacao',e:'🇨🇼',c1:'#002B7F',c2:'#FFD100'},
   {c:'EG',n:'Egito',arq:'Egito',e:'🇪🇬',c1:'#CE1126',c2:'#FFFFFF'},
   {c:'EC',n:'Equador',arq:'Equador',e:'🇪🇨',c1:'#FFD100',c2:'#003087'},
   {c:'SCT',n:'Escócia',arq:'Escocia',e:'🏴',c1:'#005EB8',c2:'#FFFFFF'},
   {c:'ES',n:'Espanha',arq:'Espanha',e:'🇪🇸',c1:'#AA151B',c2:'#F1BF00'},
-  {c:'US',n:'Estados Unidos',arq:'Estados_Unidos',e:'🇺🇸',c1:'#002868',c2:'#BF0A30'},
+  {c:'US',n:'Estados Unidos',arq:'Estados Unidos',e:'🇺🇸',c1:'#002868',c2:'#BF0A30'},
   {c:'FR',n:'França',arq:'França',e:'🇫🇷',c1:'#002395',c2:'#ED2939'},
   {c:'GH',n:'Gana',arq:'Gana',e:'🇬🇭',c1:'#CE1126',c2:'#FCD116'},
   {c:'HT',n:'Haiti',arq:'Haiti',e:'🇭🇹',c1:'#00209F',c2:'#D21034'},
@@ -517,7 +518,7 @@ const PAISES = [
   {c:'MA',n:'Marrocos',arq:'Marrocos',e:'🇲🇦',c1:'#C1272D',c2:'#006233'},
   {c:'MX',n:'México',arq:'Mexico',e:'🇲🇽',c1:'#006847',c2:'#CE1126'},
   {c:'NO',n:'Noruega',arq:'Noruega',e:'🇳🇴',c1:'#EF2B2D',c2:'#002868'},
-  {c:'NZ',n:'Nova Zelândia',arq:'Nova_Zelandia',e:'🇳🇿',c1:'#00247D',c2:'#CC142B'},
+  {c:'NZ',n:'Nova Zelândia',arq:'Nova Zelandia',e:'🇳🇿',c1:'#00247D',c2:'#CC142B'},
   {c:'PA',n:'Panamá',arq:'Panamá',e:'🇵🇦',c1:'#DA121A',c2:'#003580'},
   {c:'PY',n:'Paraguai',arq:'Paraguai',e:'🇵🇾',c1:'#D52B1E',c2:'#0038A8'},
   {c:'PT',n:'Portugal',arq:'Portugal',e:'🇵🇹',c1:'#006600',c2:'#FF0000'},
@@ -572,7 +573,7 @@ async function compostar(avatarId, paisNome) {
   canvas.height = TAM;
   const ctx = canvas.getContext('2d');
 
-  const camisaUrl = `${ASSETS}/uniformes/${paisNome}.png`;
+  const camisaUrl = `${ASSETS}/uniformes/${encodeURIComponent(paisNome)}.png`;
 
   const [avatarImg, camisaImg] = await Promise.all([
     loadImg(avatarInfo.arquivo),
@@ -774,7 +775,7 @@ function gerarCartaEl(carta, grande=false){
 
   // Fundo da carta inteira (foto do país). Se não achar o país, cai no gradiente antigo como reserva.
   if (pais.arq) {
-    div.style.backgroundImage = `url('${ASSETS}/fundos/${pais.arq}.png')`;
+    div.style.backgroundImage = `url('${ASSETS}/fundos/${encodeURIComponent(pais.arq)}.png')`;
     div.style.backgroundSize = 'cover';
     div.style.backgroundPosition = 'center';
   } else {
@@ -782,10 +783,10 @@ function gerarCartaEl(carta, grande=false){
   }
 
   div.innerHTML=`
-    <div class="carta-topo" style="background:linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.04) 45%, rgba(0,0,0,0.30))">
+    <div class="carta-topo" style="background:linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.20) 45%, rgba(0,0,0,0.45))">
       <div class="carta-avatar-wrap" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px">⏳</div>
       <div class="carta-estrela-pts">⭐ ${total}</div>
-      <div class="carta-bandeira">${pais.e}</div>
+      <div class="carta-bandeira"><img src="${ASSETS}/bandeiras/${encodeURIComponent(pais.arq)}.png" alt="${pais.n}" onerror="this.parentElement.innerHTML='${pais.e}';this.parentElement.style.cssText='position:absolute;top:10px;right:12px;z-index:3;font-size:22px;background:none;box-shadow:none'"></div>
     </div>
     <div class="carta-body">
       <div class="carta-nome">${carta.apelido}</div>
