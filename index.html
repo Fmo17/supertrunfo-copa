@@ -190,6 +190,14 @@ input,select{font-family:var(--font)}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;align-items:center;justify-content:center;padding:16px}
 .modal-overlay.ativo{display:flex}
 .modal{background:var(--branco);border-radius:var(--radius);padding:28px 24px;width:100%;max-width:420px;box-shadow:0 16px 64px rgba(0,0,0,0.2);text-align:center}
+.modal-lg{max-width:640px;text-align:left}
+.modal-lg h3{text-align:center;margin-bottom:20px}
+.modal-lg select{width:100%;padding:12px 14px;border:1.5px solid var(--cinza3);border-radius:var(--radius2);font-size:15px;color:var(--preto);background:var(--cinza1)}
+.carta-admin-item{display:flex;flex-direction:column;align-items:center;gap:10px}
+.carta-admin-actions{display:flex;gap:8px}
+.carta-admin-actions button{font-size:11px;padding:6px 12px}
+.btn-excluir{background:#fff0f0;color:var(--vermelho)}
+.btn-excluir:hover{background:#ffdede}
 .modal h3{font-size:18px;font-weight:800;margin-bottom:8px}
 .modal p{font-size:14px;color:var(--cinza5);margin-bottom:20px}
 .modal-btns{display:flex;gap:10px;justify-content:center}
@@ -442,11 +450,17 @@ input,select{font-family:var(--font)}
       <div id="a-msg" class="msg-erro" style="display:none;margin-top:8px"></div>
     </div>
     <div class="admin-card"><h3>👥 Alunos cadastrados</h3>
-      <div style="overflow-x:auto"><table class="tabela-admin"><thead><tr><th>Nome</th><th>Nascimento</th><th>Pontos</th><th>Carta?</th><th>Ação</th></tr></thead>
+      <div style="overflow-x:auto"><table class="tabela-admin"><thead><tr><th>Nome</th><th>Nascimento</th><th>Pontos</th><th>Carta criada</th><th>Ação</th></tr></thead>
       <tbody id="tbody-alunos"></tbody></table></div></div>
   </div>
   <div class="admin-painel" id="painel-cartas">
-    <div class="admin-card"><h3>🃏 Cartas dos alunos</h3><div id="admin-cartas" class="cartas-grid"></div></div>
+    <div class="admin-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <h3 style="margin-bottom:0">🃏 Cartas dos alunos</h3>
+        <button class="btn-primario" style="width:auto;padding:10px 20px" onclick="abrirModalCarta()">+ Nova Carta</button>
+      </div>
+      <div id="admin-cartas" class="cartas-grid"></div>
+    </div>
   </div>
   <div class="admin-painel" id="painel-partidas">
     <div class="admin-card"><h3>🎮 Histórico de partidas</h3>
@@ -470,6 +484,44 @@ input,select{font-family:var(--font)}
     <div class="modal-btns">
       <button class="btn-secundario" onclick="fecharModal('modal-sair-jogo')">Continuar</button>
       <button class="btn-primario" style="background:var(--vermelho)" onclick="sairJogo()">Sair</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-carta-editor">
+  <div class="modal modal-lg">
+    <h3 id="carta-editor-titulo">🃏 Nova Carta</h3>
+    <input type="hidden" id="carta-editor-id">
+    <div class="form-admin">
+      <div class="campo" style="grid-column:1/-1">
+        <label>Aluno</label>
+        <select id="carta-editor-aluno"></select>
+      </div>
+      <div class="campo" style="grid-column:1/-1">
+        <label>Apelido na carta</label>
+        <input type="text" id="carta-editor-apelido" maxlength="20" placeholder="Ex: Trovão, Rainha...">
+      </div>
+      <div class="campo">
+        <label>Seleção</label>
+        <select id="carta-editor-pais"></select>
+      </div>
+      <div class="campo">
+        <label>Avatar</label>
+        <select id="carta-editor-avatar"></select>
+      </div>
+      <div class="campo"><label>Chute</label><input type="number" id="carta-editor-chute" min="40" max="200"></div>
+      <div class="campo"><label>Passe</label><input type="number" id="carta-editor-passe" min="40" max="200"></div>
+      <div class="campo"><label>Desarme</label><input type="number" id="carta-editor-desarme" min="40" max="200"></div>
+      <div class="campo"><label>Técnica</label><input type="number" id="carta-editor-tecnica" min="40" max="200"></div>
+      <div class="campo"><label>Visão de Jogo</label><input type="number" id="carta-editor-visao" min="40" max="200"></div>
+      <div class="campo" style="display:flex;align-items:center;gap:8px;margin-top:8px">
+        <input type="checkbox" id="carta-editor-ativa" style="width:auto" checked>
+        <label style="margin:0;text-transform:none;font-size:13px;color:var(--preto)">Carta ativa (aparece no baralho)</label>
+      </div>
+    </div>
+    <div id="carta-editor-erro" class="msg-erro" style="text-align:left"></div>
+    <div class="modal-btns" style="margin-top:16px">
+      <button class="btn-secundario" onclick="fecharModal('modal-carta-editor')">Cancelar</button>
+      <button class="btn-primario" style="flex:1" onclick="salvarCartaAdmin()">💾 Salvar</button>
+    </div>
   </div>
 </div>
 
@@ -887,7 +939,9 @@ async function compostar(avatarId, paisNome) {
 let G = {
   aluno: null,
   criacao: { apelido:'', pais:null, avatarId:'menino1', avatarGenero:'menino', chute:40,passe:40,desarme:40,tecnica:40,visao:40 },
-  jogo: { modo:'cpu', j1:[], j2:[], monte:[], partidaId:null, ws:null }
+  jogo: { modo:'cpu', j1:[], j2:[], monte:[], partidaId:null, ws:null },
+  adminAlunos: [],
+  adminCartas: []
 };
 
 const ATTRS = [
@@ -1317,6 +1371,11 @@ async function carregarAdmin(){
     sb.select('cartas','ativa=eq.true'),
     sb.select('partidas','status=eq.finalizada'),
   ]);
+  G.adminAlunos = alunos||[];
+  G.adminCartas = cartas||[];
+  const cartaPorAluno = {};
+  G.adminCartas.forEach(c=>{ cartaPorAluno[c.aluno_id]=c; });
+
   const sem=(alunos||[]).filter(a=>!a.carta_criada);
   document.getElementById('s-alunos').textContent=alunos?.length||0;
   document.getElementById('s-cartas').textContent=cartas?.length||0;
@@ -1327,12 +1386,19 @@ async function carregarAdmin(){
       ${sem.map(a=>`<tr><td>${a.nome_completo}</td><td>${a.data_nascimento}</td><td>${a.pontuacao_total}</td></tr>`).join('')}
       </tbody></table>`
     :'<p style="color:var(--verde2);font-weight:600">✅ Todos criaram suas cartas!</p>';
-  document.getElementById('tbody-alunos').innerHTML=(alunos||[]).map(a=>`
+  document.getElementById('tbody-alunos').innerHTML=(alunos||[]).map(a=>{
+    const c = cartaPorAluno[a.id];
+    const pais = c ? PAISES.find(p=>p.c===c.pais_codigo) : null;
+    const cartaInfo = c
+      ? `<strong>${c.apelido}</strong><br><span style="font-size:11px;color:var(--cinza4)">${pais?.e||'🌍'} ${c.pais_nome}</span>`
+      : '<span style="color:var(--cinza4);font-size:12px">— nenhuma —</span>';
+    return `
     <tr><td><strong>${a.nome_completo}</strong></td><td>${a.data_nascimento}</td>
     <td><span class="badge badge-azul">⭐ ${a.pontuacao_total}</span></td>
-    <td><span class="badge ${a.carta_criada?'badge-sim':'badge-nao'}">${a.carta_criada?'✅ Sim':'❌ Não'}</span></td>
+    <td>${cartaInfo}</td>
     <td><button class="btn-secundario" style="font-size:11px;padding:4px 8px" onclick="remAluno('${a.id}','${a.nome_completo}')">Remover</button></td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 async function cadastrarAluno(){
   const n=document.getElementById('a-nome').value.trim();
@@ -1356,9 +1422,134 @@ async function remAluno(id,n){
 async function carregarCartasAdmin(){
   const g=document.getElementById('admin-cartas');
   g.innerHTML='<div style="color:var(--cinza4)">Carregando...</div>';
-  const cartas=await sb.select('cartas','ativa=eq.true&order=created_at.asc');
+  const [cartas, alunos] = await Promise.all([
+    sb.select('cartas','ativa=eq.true&order=created_at.asc'),
+    sb.select('alunos','order=nome_completo.asc'),
+  ]);
+  G.adminCartas = cartas||[];
+  G.adminAlunos = alunos||[];
   g.innerHTML='';
-  (cartas||[]).forEach(c=>g.appendChild(gerarCartaEl(c,false)));
+  if(!G.adminCartas.length){
+    g.innerHTML='<div style="color:var(--cinza4);padding:20px">Nenhuma carta criada ainda.</div>';
+    return;
+  }
+  G.adminCartas.forEach(c=>{
+    const item=document.createElement('div');
+    item.className='carta-admin-item';
+    item.appendChild(gerarCartaEl(c,false));
+    const alunoNome = G.adminAlunos.find(a=>a.id===c.aluno_id)?.nome_completo?.split(' ')[0] || '—';
+    const actions=document.createElement('div');
+    actions.className='carta-admin-actions';
+    actions.innerHTML=`
+      <button class="btn-secundario" onclick="abrirModalCarta('${c.id}')">✏️ Editar</button>
+      <button class="btn-secundario btn-excluir" onclick="excluirCartaAdmin('${c.id}')">🗑️ Excluir</button>`;
+    item.appendChild(actions);
+    const dono=document.createElement('div');
+    dono.style.cssText='font-size:11px;color:var(--cinza4);text-align:center';
+    dono.textContent=`Dono: ${alunoNome}`;
+    item.appendChild(dono);
+    g.appendChild(item);
+  });
+}
+
+function abrirModalCarta(id){
+  const carta = id ? (G.adminCartas||[]).find(c=>c.id===id) : null;
+  document.getElementById('carta-editor-titulo').textContent = carta ? '✏️ Editar Carta' : '🃏 Nova Carta';
+  document.getElementById('carta-editor-id').value = id || '';
+
+  const selAluno = document.getElementById('carta-editor-aluno');
+  if(carta){
+    const nomeAtual = G.adminAlunos.find(a=>a.id===carta.aluno_id)?.nome_completo || '—';
+    selAluno.innerHTML = `<option value="${carta.aluno_id}">${nomeAtual}</option>`;
+    selAluno.disabled = true;
+  } else {
+    selAluno.disabled = false;
+    selAluno.innerHTML = (G.adminAlunos||[]).map(a=>
+      `<option value="${a.id}">${a.nome_completo}${a.carta_criada?' (já tem carta — será substituída)':''}</option>`
+    ).join('');
+  }
+
+  document.getElementById('carta-editor-apelido').value = carta?.apelido || '';
+
+  const selPais = document.getElementById('carta-editor-pais');
+  selPais.innerHTML = PAISES.map(p=>
+    `<option value="${p.c}" ${carta?.pais_codigo===p.c?'selected':''}>${p.e} ${p.n}</option>`
+  ).join('');
+
+  const avatarAtual = carta?.avatar_config?.avatarId || 'menino1';
+  const selAvatar = document.getElementById('carta-editor-avatar');
+  const meninos = Object.entries(AVATARES).filter(([aid])=>generoDoAvatar(aid)==='menino');
+  const meninas = Object.entries(AVATARES).filter(([aid])=>generoDoAvatar(aid)==='menina');
+  selAvatar.innerHTML =
+    `<optgroup label="Meninos">${meninos.map(([aid,info])=>`<option value="${aid}" ${avatarAtual===aid?'selected':''}>${info.label}</option>`).join('')}</optgroup>` +
+    `<optgroup label="Meninas">${meninas.map(([aid,info])=>`<option value="${aid}" ${avatarAtual===aid?'selected':''}>${info.label}</option>`).join('')}</optgroup>`;
+
+  ['chute','passe','desarme','tecnica','visao'].forEach(k=>{
+    document.getElementById('carta-editor-'+k).value = carta?.[k] ?? 40;
+  });
+  document.getElementById('carta-editor-ativa').checked = carta ? carta.ativa!==false : true;
+
+  const err=document.getElementById('carta-editor-erro');
+  err.style.display='none'; err.textContent='';
+  mostrarModal('modal-carta-editor');
+}
+
+async function salvarCartaAdmin(){
+  const id = document.getElementById('carta-editor-id').value;
+  const alunoId = document.getElementById('carta-editor-aluno').value;
+  const apelido = document.getElementById('carta-editor-apelido').value.trim();
+  const paisCodigo = document.getElementById('carta-editor-pais').value;
+  const avatarId = document.getElementById('carta-editor-avatar').value;
+  const ativa = document.getElementById('carta-editor-ativa').checked;
+  const err = document.getElementById('carta-editor-erro');
+  err.style.display='none';
+
+  if(!alunoId||!apelido||!paisCodigo||!avatarId){
+    err.textContent='Preencha todos os campos.';err.style.display='block';return;
+  }
+
+  const attrs={};
+  for(const k of ['chute','passe','desarme','tecnica','visao']){
+    const v=parseInt(document.getElementById('carta-editor-'+k).value);
+    if(isNaN(v)||v<40||v>200){
+      err.textContent=`O atributo "${k}" deve estar entre 40 e 200.`;err.style.display='block';return;
+    }
+    attrs[k]=v;
+  }
+
+  const pais = PAISES.find(p=>p.c===paisCodigo);
+  const payload = {
+    aluno_id: alunoId, apelido,
+    pais_codigo: pais.c, pais_nome: pais.n,
+    avatar_config: { avatarId },
+    ...attrs, ativa,
+  };
+
+  if(id){
+    await sb.update('cartas', payload, `id=eq.${id}`);
+  } else {
+    const antigas = (G.adminCartas||[]).filter(c=>c.aluno_id===alunoId && c.ativa!==false);
+    for(const antiga of antigas){ await sb.update('cartas',{ativa:false},`id=eq.${antiga.id}`); }
+    const res = await sb.insert('cartas', payload);
+    if(!res?.[0]?.id){ err.textContent='Erro ao salvar. Tente novamente.'; err.style.display='block'; return; }
+    await sb.update('alunos',{carta_criada:true},`id=eq.${alunoId}`);
+  }
+
+  fecharModal('modal-carta-editor');
+  await carregarCartasAdmin();
+  await carregarAdmin();
+}
+
+async function excluirCartaAdmin(id){
+  const carta = (G.adminCartas||[]).find(c=>c.id===id);
+  if(!confirm(`Excluir a carta "${carta?.apelido||''}" permanentemente?`))return;
+  await sb.delete('cartas',`id=eq.${id}`);
+  if(carta){
+    const restantes = await sb.select('cartas',`aluno_id=eq.${carta.aluno_id}&ativa=eq.true`);
+    if(!restantes?.length){ await sb.update('alunos',{carta_criada:false},`id=eq.${carta.aluno_id}`); }
+  }
+  await carregarCartasAdmin();
+  await carregarAdmin();
 }
 async function carregarPartidasAdmin(){
   const [ps,al]=await Promise.all([sb.select('partidas','order=created_at.desc&limit=50'),sb.select('alunos','')]);
