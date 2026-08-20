@@ -202,6 +202,11 @@ input,select{font-family:var(--font)}
 .cartas-pdf-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--cinza1);border-radius:12px;padding:12px 16px;margin-bottom:16px}
 .carta-select-wrap{position:relative}
 .carta-select-checkbox{position:absolute;top:8px;left:8px;width:24px;height:24px;z-index:5;cursor:pointer;accent-color:var(--verde)}
+.baralho-card-select{cursor:pointer;border:3px solid transparent;border-radius:20px;padding:4px;transition:all 0.15s;position:relative}
+.baralho-card-select:hover{border-color:var(--cinza3)}
+.baralho-card-select.selecionado{border-color:var(--verde);background:#e8f7ee}
+.baralho-card-select.travada{cursor:default;border-color:var(--amarelo)}
+.baralho-badge-sua{position:absolute;top:8px;left:8px;z-index:5;background:var(--amarelo);color:var(--preto);font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px}
 .modal h3{font-size:18px;font-weight:800;margin-bottom:8px}
 .modal p{font-size:14px;color:var(--cinza5);margin-bottom:20px}
 .modal-btns{display:flex;gap:10px;justify-content:center}
@@ -246,9 +251,9 @@ input,select{font-family:var(--font)}
       <button class="btn-sair" onclick="sair()">Sair</button></div>
   </div>
   <div class="menu-grid">
-    <div class="menu-item" onclick="irPara('tela-criar')">
-      <div class="icone">🃏</div><div class="titulo">Criar Carta</div>
-      <div class="desc">Monte sua carta de jogador</div></div>
+    <div class="menu-item" id="menu-item-criar" onclick="irPara('tela-criar')">
+      <div class="icone" id="menu-criar-icone">🃏</div><div class="titulo" id="menu-criar-titulo">Criar Carta</div>
+      <div class="desc" id="menu-criar-desc">Monte sua carta de jogador</div></div>
     <div class="menu-item" onclick="verMinhaCarta()">
       <div class="icone">👁️</div><div class="titulo">Minha Carta</div>
       <div class="desc">Ver a carta que criei</div></div>
@@ -356,6 +361,27 @@ input,select{font-family:var(--font)}
   </div>
 </div>
 
+<!-- MONTAR BARALHO -->
+<div id="tela-montar-baralho" class="tela">
+  <div class="header-aluno">
+    <button class="btn-secundario" onclick="cancelarMontagemBaralho()">← Voltar</button>
+    <div class="nome-usuario">Monte seu Baralho</div><div></div></div>
+  <div class="secao-titulo">
+    <h2>🎴 Escolha suas 10 cartas</h2>
+    <p>Sua carta já está no baralho. Escolha mais <strong id="baralho-faltam">9</strong> carta(s) entre todas as disponíveis (colegas e cartas especiais do sistema).</p>
+  </div>
+  <div class="card-criador">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <input type="text" id="baralho-busca" placeholder="🔍 Buscar por apelido ou país..." style="flex:1;min-width:220px;padding:12px 14px;border:1.5px solid var(--cinza3);border-radius:10px;font-size:14px" oninput="filtrarCartasBaralho()">
+      <span id="baralho-contador" style="font-size:14px;font-weight:800;color:var(--verde2);white-space:nowrap">1/10 selecionadas</span>
+    </div>
+    <div id="baralho-cartas-grid" class="cartas-grid" style="max-height:520px;overflow-y:auto"></div>
+    <div style="margin-top:20px;display:flex;justify-content:flex-end">
+      <button class="btn-primario" id="btn-confirmar-baralho" style="width:auto;padding:12px 28px" disabled onclick="confirmarBaralho()">Confirmar baralho e jogar →</button>
+    </div>
+  </div>
+</div>
+
 <!-- ONLINE -->
 <div id="tela-online" class="tela">
   <div class="header-aluno">
@@ -382,10 +408,12 @@ input,select{font-family:var(--font)}
 <div id="tela-sala" class="tela" style="justify-content:center">
   <div class="sala-card">
     <div style="font-size:36px;margin-bottom:8px">🏟️</div>
-    <div style="font-size:14px;color:var(--cinza5);font-weight:600">Código da sala</div>
-    <div class="sala-codigo" id="sala-codigo-display">—</div>
-    <div style="font-size:13px;color:var(--cinza4)">Passe esse código para seu colega entrar</div>
-    <div class="sala-aguardando" style="margin-top:16px"><div class="spinner"></div>Aguardando...</div>
+    <div id="sala-codigo-bloco">
+      <div style="font-size:14px;color:var(--cinza5);font-weight:600">Código da sala</div>
+      <div class="sala-codigo" id="sala-codigo-display">—</div>
+      <div style="font-size:13px;color:var(--cinza4)">Passe esse código para seu colega entrar</div>
+    </div>
+    <div class="sala-aguardando" style="margin-top:16px"><div class="spinner"></div><span id="sala-status-texto">Aguardando...</span></div>
     <button class="btn-secundario" style="margin-top:20px;width:100%" onclick="cancelarSala()">Cancelar</button>
   </div>
 </div>
@@ -393,9 +421,9 @@ input,select{font-family:var(--font)}
 <!-- JOGO -->
 <div id="tela-jogo" class="tela">
   <div class="jogo-placar">
-    <div class="jinfo"><div class="jnome" id="placar-n1">Você</div><div class="jqtd" id="placar-c1">0</div><div style="font-size:10px;opacity:0.7">cartas</div></div>
+    <div class="jinfo"><div class="jnome" id="placar-n1">Você</div><div class="jqtd" id="placar-c1">0</div><div style="font-size:10px;opacity:0.7">vitórias</div></div>
     <div class="jogo-vs">VS</div>
-    <div class="jinfo"><div class="jnome" id="placar-n2">CPU</div><div class="jqtd" id="placar-c2">0</div><div style="font-size:10px;opacity:0.7">cartas</div></div>
+    <div class="jinfo"><div class="jnome" id="placar-n2">CPU</div><div class="jqtd" id="placar-c2">0</div><div style="font-size:10px;opacity:0.7">vitórias</div></div>
   </div>
   <div class="jogo-status" id="jogo-status">Sua vez! Escolha um atributo.</div>
   <div class="jogo-area">
@@ -417,7 +445,7 @@ input,select{font-family:var(--font)}
       <div class="emoji" id="res-emoji">🏆</div>
       <div class="msg" id="res-msg">—</div>
       <div class="sub" id="res-sub">—</div>
-      <button class="btn-primario" style="margin-top:16px" onclick="proximaRodada()">Próxima rodada →</button>
+      <button class="btn-primario" id="btn-proxima-rodada" style="margin-top:16px" onclick="proximaRodada()">Próxima rodada →</button>
     </div>
   </div>
   <div style="margin-top:16px"><button class="btn-secundario" onclick="mostrarModal('modal-sair-jogo')">🚪 Sair do jogo</button></div>
@@ -463,7 +491,11 @@ input,select{font-family:var(--font)}
     <div class="admin-card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <h3 style="margin-bottom:0">🃏 Cartas dos alunos</h3>
-        <button class="btn-primario" style="width:auto;padding:10px 20px" onclick="abrirModalCarta()">+ Nova Carta</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn-secundario" id="btn-gerar-auto" onclick="gerarCartasAutomaticas()">🎲 Gerar automáticas (quem não tem)</button>
+          <button class="btn-secundario" id="btn-gerar-craques" onclick="criarCardsCraques()">⭐ Criar cards de craques</button>
+          <button class="btn-primario" style="width:auto;padding:10px 20px" onclick="abrirModalCarta()">+ Nova Carta</button>
+        </div>
       </div>
       <div class="cartas-pdf-toolbar">
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -974,7 +1006,13 @@ async function compostar(avatarId, paisNome) {
 let G = {
   aluno: null,
   criacao: { apelido:'', pais:null, avatarId:'menino1', avatarGenero:'menino', chute:40,passe:40,desarme:40,tecnica:40,visao:40 },
-  jogo: { modo:'cpu', j1:[], j2:[], monte:[], partidaId:null, ws:null },
+  jogo: {
+    modo:'cpu',
+    baralhoJ1:[], baralhoJ2:[],     // 10 cartas de cada lado, na ordem das rodadas
+    rodada:0, vitoriasJ1:0, vitoriasJ2:0,
+    partidaId:null, codigoSala:null, souJogador1:true, ws:null,
+    modoPendente:null, baralhoDisponiveis:[], selecaoBaralho:new Set(),
+  },
   adminAlunos: [],
   adminCartas: [],
   cartaEditorState: { paisCodigo:null, avatarId:null, avatarGenero:'menino' }
@@ -992,6 +1030,11 @@ const ATTRS = [
 // NAVEGAÇÃO
 // ═══════════════════════════════════════════════════════════════
 function irPara(id) {
+  if(id==='tela-criar' && G.aluno?.carta_criada){
+    alert('Você já criou sua carta! Cada aluno pode ter apenas uma. Se precisar mudar algo, fale com o professor.');
+    verMinhaCarta();
+    return;
+  }
   document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
   document.getElementById(id).classList.add('ativa');
   window.scrollTo(0,0);
@@ -1020,6 +1063,19 @@ function atualizarMenu(){
   document.getElementById('menu-nome').textContent=a.nome_completo.split(' ')[0];
   document.getElementById('menu-pts-info').textContent=`${a.pontuacao_total} pontos para distribuir`;
   document.getElementById('menu-pts-badge').textContent=`⭐ ${a.pontuacao_total}`;
+
+  const itemCriar = document.getElementById('menu-item-criar');
+  if(a.carta_criada){
+    itemCriar.onclick = ()=>verMinhaCarta();
+    document.getElementById('menu-criar-icone').textContent='✅';
+    document.getElementById('menu-criar-titulo').textContent='Carta Criada';
+    document.getElementById('menu-criar-desc').textContent='Você já tem sua carta — toque para ver';
+  } else {
+    itemCriar.onclick = ()=>irPara('tela-criar');
+    document.getElementById('menu-criar-icone').textContent='🃏';
+    document.getElementById('menu-criar-titulo').textContent='Criar Carta';
+    document.getElementById('menu-criar-desc').textContent='Monte sua carta de jogador';
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1147,6 +1203,17 @@ async function salvarCarta(){
   const total=G.aluno.pontuacao_total;
   const usado=ATTRS.reduce((s,a)=>s+G.criacao[a.k],0);
   if(usado!==total){alert(`Distribua exatamente ${total} pontos! Usou ${usado}.`);return}
+
+  // checagem de segurança: garante que o aluno ainda não tem carta ativa
+  // (cobre casos como duas abas abertas ao mesmo tempo)
+  const existentes = await sb.select('cartas', `aluno_id=eq.${G.aluno.id}&ativa=eq.true`);
+  if(existentes?.length){
+    G.aluno.carta_criada = true;
+    alert('Você já tem uma carta criada! Cada aluno pode ter apenas uma.');
+    verMinhaCarta();
+    return;
+  }
+
   const res=await sb.insert('cartas',{
     aluno_id:G.aluno.id, apelido:G.criacao.apelido,
     pais_codigo:G.criacao.pais.c, pais_nome:G.criacao.pais.n,
@@ -1247,32 +1314,139 @@ async function carregarBaralho(){
 }
 
 // ═══════════════════════════════════════════════════════════════
-// JOGO vs CPU
+// MONTAGEM DE BARALHO (10 cartas: a sua + 9 escolhidas)
 // ═══════════════════════════════════════════════════════════════
 async function iniciarCPU(){
   if(!G.aluno.carta_criada){alert('Crie sua carta antes de jogar!');return}
-  const todas=await sb.select('cartas','ativa=eq.true');
-  if(!todas||todas.length<2){alert('São necessárias pelo menos 2 cartas para jogar!');return}
-  const bar=[...todas].sort(()=>Math.random()-0.5);
-  const m=Math.floor(bar.length/2);
-  G.jogo.j1=bar.slice(0,m); G.jogo.j2=bar.slice(m); G.jogo.monte=[];
-  document.getElementById('placar-n1').textContent=G.aluno.nome_completo.split(' ')[0];
-  document.getElementById('placar-n2').textContent='🤖 CPU';
-  irPara('tela-jogo');atualizarJogoUI();
+  await abrirMontagemBaralho('cpu');
 }
 
-function atualizarJogoUI(){
-  const j=G.jogo;
-  document.getElementById('placar-c1').textContent=j.j1.length;
-  document.getElementById('placar-c2').textContent=j.j2.length;
-  if(!j.j1.length||!j.j2.length){fimJogo(j.j1.length>0);return}
+async function abrirMontagemBaralho(modo){
+  const todas = await sb.select('cartas','ativa=eq.true');
+  if(!todas || todas.length<10){
+    alert(`É necessário pelo menos 10 cartas ativas no sistema para montar um baralho (hoje há ${todas?.length||0}). Peça para o professor criar mais cartas — inclusive as cartas avulsas dos craques.`);
+    return;
+  }
+  const minhaCarta = todas.find(c=>c.aluno_id===G.aluno.id);
+  if(!minhaCarta){alert('Não encontramos sua carta ativa. Fale com o professor.');return}
+
+  G.jogo.modoPendente = modo;
+  G.jogo.baralhoDisponiveis = todas;
+  G.jogo.selecaoBaralho = new Set([minhaCarta.id]);
+  document.getElementById('baralho-busca').value='';
+  renderGradeBaralho('');
+  atualizarContadorBaralho();
+  irPara('tela-montar-baralho');
+}
+
+function filtrarCartasBaralho(){
+  renderGradeBaralho(document.getElementById('baralho-busca').value);
+}
+
+function renderGradeBaralho(filtro=''){
+  const minhaCarta = G.jogo.baralhoDisponiveis.find(c=>c.aluno_id===G.aluno.id);
+  const minhaId = minhaCarta?.id;
+  const f = filtro.toLowerCase();
+  const lista = G.jogo.baralhoDisponiveis.filter(c=>
+    c.apelido.toLowerCase().includes(f) || (c.pais_nome||'').toLowerCase().includes(f)
+  );
+  const g = document.getElementById('baralho-cartas-grid');
+  g.innerHTML='';
+  lista.forEach(c=>{
+    const cardWrap=document.createElement('div');
+    cardWrap.className='baralho-card-select'+(G.jogo.selecaoBaralho.has(c.id)?' selecionado':'')+(c.id===minhaId?' travada':'');
+    cardWrap.appendChild(gerarCartaEl(c,false));
+    if(c.id===minhaId){
+      const badge=document.createElement('div');
+      badge.className='baralho-badge-sua';
+      badge.textContent='SUA CARTA';
+      cardWrap.appendChild(badge);
+    } else {
+      cardWrap.onclick=()=>toggleCartaBaralho(c.id);
+    }
+    g.appendChild(cardWrap);
+  });
+}
+
+function toggleCartaBaralho(id){
+  if(G.jogo.selecaoBaralho.has(id)){
+    G.jogo.selecaoBaralho.delete(id);
+  } else {
+    if(G.jogo.selecaoBaralho.size>=10){ alert('Seu baralho já tem 10 cartas! Remova alguma antes de adicionar outra.'); return; }
+    G.jogo.selecaoBaralho.add(id);
+  }
+  renderGradeBaralho(document.getElementById('baralho-busca').value);
+  atualizarContadorBaralho();
+}
+
+function atualizarContadorBaralho(){
+  const n = G.jogo.selecaoBaralho.size;
+  document.getElementById('baralho-contador').textContent = `${n}/10 selecionadas`;
+  document.getElementById('baralho-faltam').textContent = Math.max(0,10-n);
+  document.getElementById('btn-confirmar-baralho').disabled = n!==10;
+}
+
+function cancelarMontagemBaralho(){
+  if(G.jogo.modoPendente==='online' && G.jogo.partidaId){
+    if(G.jogo.souJogador1){
+      sb.delete('partidas',`id=eq.${G.jogo.partidaId}`);
+    } else {
+      sb.update('partidas',{jogador2_id:null},`id=eq.${G.jogo.partidaId}`);
+    }
+    G.jogo.partidaId=null;
+  }
+  G.jogo.modoPendente=null;
+  irPara('tela-jogar-menu');
+}
+
+async function confirmarBaralho(){
+  if(G.jogo.selecaoBaralho.size!==10) return;
+  const escolhidas = G.jogo.baralhoDisponiveis.filter(c=>G.jogo.selecaoBaralho.has(c.id));
+  G.jogo.baralhoJ1 = [...escolhidas].sort(()=>Math.random()-0.5);
+
+  if(G.jogo.modoPendente==='cpu'){
+    const restantes = G.jogo.baralhoDisponiveis.filter(c=>!G.jogo.selecaoBaralho.has(c.id));
+    const pool = restantes.length>=10 ? restantes : G.jogo.baralhoDisponiveis;
+    G.jogo.baralhoJ2 = [...pool].sort(()=>Math.random()-0.5).slice(0,10);
+    G.jogo.modo='cpu';
+    document.getElementById('placar-n1').textContent=G.aluno.nome_completo.split(' ')[0];
+    document.getElementById('placar-n2').textContent='🤖 CPU';
+    iniciarPartidaFixa();
+  } else {
+    await enviarBaralhoOnline();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PARTIDA — 10 rodadas fixas (carta 1 vs carta 1, carta 2 vs carta 2...)
+// ═══════════════════════════════════════════════════════════════
+function iniciarPartidaFixa(){
+  G.jogo.rodada = 0;
+  G.jogo.vitoriasJ1 = 0;
+  G.jogo.vitoriasJ2 = 0;
+  const btnProx = document.getElementById('btn-proxima-rodada');
+  btnProx.onclick = proximaRodada;
+  btnProx.textContent = 'Próxima rodada →';
+  irPara('tela-jogo');
+  atualizarPlacarFixo();
+  mostrarRodadaAtual();
+}
+
+function atualizarPlacarFixo(){
+  document.getElementById('placar-c1').textContent=G.jogo.vitoriasJ1;
+  document.getElementById('placar-c2').textContent=G.jogo.vitoriasJ2;
+}
+
+function mostrarRodadaAtual(){
+  const r = G.jogo.rodada;
+  if(r>=10){ fimJogo(); return; }
+  document.getElementById('jogo-status').textContent=`Rodada ${r+1} de 10 — Escolha um atributo.`;
   document.getElementById('jogo-c1').innerHTML='';
   document.getElementById('jogo-c2').innerHTML='';
-  document.getElementById('jogo-c1').appendChild(gerarCartaEl(j.j1[0],false));
+  document.getElementById('jogo-c1').appendChild(gerarCartaEl(G.jogo.baralhoJ1[r],false));
   document.getElementById('jogo-c2').appendChild(gerarCartaJogoCPU());
   document.getElementById('escolha-wrap').classList.remove('hidden');
   document.getElementById('resultado-wrap').classList.add('hidden');
-  document.getElementById('jogo-status').textContent='Sua vez! Escolha um atributo.';
 }
 
 function gerarCartaJogoCPU(){
@@ -1293,13 +1467,11 @@ function gerarCartaJogoCPU(){
 }
 
 function jogar(attr){
-  const j=G.jogo;
-  const c1=j.j1[0], c2=j.j2[0];
+  const r = G.jogo.rodada;
+  const c1=G.jogo.baralhoJ1[r], c2=G.jogo.baralhoJ2[r];
   const v1=c1[attr], v2=c2[attr];
-  // Revela carta CPU
   document.getElementById('jogo-c2').innerHTML='';
   document.getElementById('jogo-c2').appendChild(gerarCartaEl(c2,false));
-  // Destaca atributo
   document.querySelectorAll(`[data-attr="${attr}"]`).forEach(el=>{
     el.classList.add('destaque');
     const isJ1=!!el.closest('#jogo-c1');
@@ -1309,34 +1481,42 @@ function jogar(attr){
   document.getElementById('resultado-wrap').classList.remove('hidden');
   const lbl=ATTRS.find(a=>a.k===attr)?.label;
   if(v1>v2){
+    G.jogo.vitoriasJ1++;
     document.getElementById('res-emoji').textContent='🏆';
     document.getElementById('res-msg').textContent='Você ganhou essa rodada!';
-    document.getElementById('res-sub').textContent=`${lbl}: ${v1} vs ${v2} — +${j.monte.length+2} cartas`;
-    j.j1.push(...j.j2.splice(0,1),...j.monte.splice(0));
-    j.j1.push(j.j1.shift());
+    document.getElementById('res-sub').textContent=`${lbl}: ${v1} vs ${v2}`;
   } else if(v2>v1){
+    G.jogo.vitoriasJ2++;
     document.getElementById('res-emoji').textContent='😮';
-    document.getElementById('res-msg').textContent='CPU ganhou essa rodada!';
+    document.getElementById('res-msg').textContent=(G.jogo.modo==='cpu'?'CPU':'Seu adversário')+' ganhou essa rodada!';
     document.getElementById('res-sub').textContent=`${lbl}: ${v2} vs ${v1}`;
-    j.j2.push(...j.j1.splice(0,1),...j.monte.splice(0));
-    j.j2.push(j.j2.shift());
   } else {
     document.getElementById('res-emoji').textContent='🤝';
-    document.getElementById('res-msg').textContent='Empate! Cartas ao monte.';
+    document.getElementById('res-msg').textContent='Empate nessa rodada!';
     document.getElementById('res-sub').textContent=`${lbl}: ${v1} = ${v2}`;
-    j.monte.push(j.j1.shift(),j.j2.shift());
   }
+  atualizarPlacarFixo();
+  G.jogo.rodada++;
+  const btnProx = document.getElementById('btn-proxima-rodada');
+  btnProx.textContent = G.jogo.rodada>=10 ? '🏁 Ver resultado final' : 'Próxima rodada →';
 }
 
-function proximaRodada(){atualizarJogoUI()}
-function fimJogo(venceu){
+function proximaRodada(){ mostrarRodadaAtual(); }
+
+function fimJogo(){
   document.getElementById('escolha-wrap').classList.add('hidden');
   document.getElementById('resultado-wrap').classList.remove('hidden');
-  document.getElementById('res-emoji').textContent=venceu?'🏆':'😢';
-  document.getElementById('res-msg').textContent=venceu?'Você venceu!':'CPU venceu!';
-  document.getElementById('res-sub').textContent=venceu?'Parabéns!':'Tente novamente!';
-  document.querySelector('#resultado-wrap .btn-primario').textContent='← Voltar ao menu';
-  document.querySelector('#resultado-wrap .btn-primario').onclick=()=>irPara('tela-menu');
+  const v1=G.jogo.vitoriasJ1, v2=G.jogo.vitoriasJ2;
+  let emoji, msg;
+  if(v1>v2){ emoji='🏆'; msg='Você venceu a partida!'; }
+  else if(v2>v1){ emoji='😢'; msg=(G.jogo.modo==='cpu'?'CPU':'Seu adversário')+' venceu a partida!'; }
+  else { emoji='🤝'; msg='A partida empatou!'; }
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-msg').textContent=msg;
+  document.getElementById('res-sub').textContent=`Placar final: ${v1} × ${v2} (10 rodadas)`;
+  const btn=document.querySelector('#resultado-wrap .btn-primario');
+  btn.textContent='← Voltar ao menu';
+  btn.onclick=()=>irPara('tela-menu');
 }
 function sairJogo(){fecharModal('modal-sair-jogo');irPara('tela-menu')}
 
@@ -1349,38 +1529,87 @@ async function criarSala(){
   const p=await sb.insert('partidas',{jogador1_id:G.aluno.id,modo:'humano',status:'aguardando',codigo_sala:cod});
   if(!p?.[0]?.id){alert('Erro ao criar sala.');return}
   G.jogo.partidaId=p[0].id;
-  document.getElementById('sala-codigo-display').textContent=cod;
-  irPara('tela-sala');
-  const wsUrl=SUPABASE_URL.replace('https','wss')+'/realtime/v1/websocket?apikey='+SUPABASE_KEY;
-  G.jogo.ws=new WebSocket(wsUrl);
-  G.jogo.ws.onopen=()=>G.jogo.ws.send(JSON.stringify({topic:`realtime:public:partidas:id=eq.${p[0].id}`,event:'phx_join',payload:{},ref:'1'}));
-  G.jogo.ws.onmessage=async e=>{
-    const m=JSON.parse(e.data);
-    if((m.event==='UPDATE'||m.event==='INSERT')&&m.payload?.record?.status==='em_andamento')await iniciarOnline(m.payload.record);
-  };
+  G.jogo.codigoSala=cod;
+  G.jogo.souJogador1=true;
+  await abrirMontagemBaralho('online');
 }
 async function entrarSala(){
   const cod=document.getElementById('codigo-sala-input').value.trim().toUpperCase();
   if(cod.length<3){alert('Digite o código!');return}
   if(!G.aluno.carta_criada){alert('Crie sua carta antes!');return}
   const ps=await sb.select('partidas',`codigo_sala=eq.${cod}&status=eq.aguardando`);
-  if(!ps?.length){alert('Sala não encontrada.');return}
-  await sb.update('partidas',{jogador2_id:G.aluno.id,status:'em_andamento',vez_de:ps[0].jogador1_id},`id=eq.${ps[0].id}`);
+  if(!ps?.length){alert('Sala não encontrada ou já em andamento.');return}
+  await sb.update('partidas',{jogador2_id:G.aluno.id},`id=eq.${ps[0].id}`);
   G.jogo.partidaId=ps[0].id;
-  await iniciarOnline({...ps[0],jogador2_id:G.aluno.id,status:'em_andamento'});
+  G.jogo.codigoSala=cod;
+  G.jogo.souJogador1=false;
+  await abrirMontagemBaralho('online');
 }
-async function iniciarOnline(p){
-  const todas=await sb.select('cartas','ativa=eq.true');
-  const bar=[...todas].sort(()=>Math.random()-0.5);
-  const m=Math.floor(bar.length/2);
-  G.jogo.j1=bar.slice(0,m); G.jogo.j2=bar.slice(m); G.jogo.monte=[];
+
+async function enviarBaralhoOnline(){
+  const souJ1 = G.jogo.souJogador1;
+  const idsBaralho = G.jogo.baralhoJ1.map(c=>c.id); // "meu" baralho, independente do papel na sala
+  const campoBaralho = souJ1 ? 'baralho_j1' : 'baralho_j2';
+  const campoPronto  = souJ1 ? 'pronto_j1' : 'pronto_j2';
+
+  const atual = await sb.select('partidas',`id=eq.${G.jogo.partidaId}`);
+  const registro = atual?.[0] || {};
+  const outroPronto = souJ1 ? registro.pronto_j2 : registro.pronto_j1;
+
+  const payload = { [campoBaralho]: idsBaralho, [campoPronto]: true };
+  if(outroPronto) payload.status = 'em_andamento';
+  await sb.update('partidas', payload, `id=eq.${G.jogo.partidaId}`);
+
+  if(outroPronto){
+    await iniciarPartidaOnlineComRegistro({ ...registro, ...payload });
+  } else {
+    document.getElementById('sala-codigo-bloco').style.display = souJ1 ? 'block' : 'none';
+    document.getElementById('sala-codigo-display').textContent = G.jogo.codigoSala || '—';
+    document.getElementById('sala-status-texto').textContent = 'Aguardando o outro jogador montar o baralho...';
+    irPara('tela-sala');
+    escutarSalaRealtime();
+  }
+}
+
+function escutarSalaRealtime(){
+  if(G.jogo.ws){ try{G.jogo.ws.close();}catch(e){} }
+  const wsUrl=SUPABASE_URL.replace('https','wss')+'/realtime/v1/websocket?apikey='+SUPABASE_KEY;
+  G.jogo.ws=new WebSocket(wsUrl);
+  G.jogo.ws.onopen=()=>G.jogo.ws.send(JSON.stringify({topic:`realtime:public:partidas:id=eq.${G.jogo.partidaId}`,event:'phx_join',payload:{},ref:'1'}));
+  G.jogo.ws.onmessage=async e=>{
+    const m=JSON.parse(e.data);
+    if((m.event==='UPDATE'||m.event==='INSERT')&&m.payload?.record?.status==='em_andamento'){
+      await iniciarPartidaOnlineComRegistro(m.payload.record);
+    }
+  };
+}
+
+async function buscarCartasPorIds(ids){
+  if(!ids || !ids.length) return [];
+  return await sb.select('cartas', `id=in.(${ids.join(',')})`);
+}
+function ordenarPorIds(cartas, ids){
+  const mapa={}; cartas.forEach(c=>mapa[c.id]=c);
+  return (ids||[]).map(id=>mapa[id]).filter(Boolean);
+}
+
+async function iniciarPartidaOnlineComRegistro(registro){
+  if(G.jogo.ws){ try{G.jogo.ws.close();}catch(e){} G.jogo.ws=null; }
+  const idsMeu = G.jogo.souJogador1 ? registro.baralho_j1 : registro.baralho_j2;
+  const idsAdv = G.jogo.souJogador1 ? registro.baralho_j2 : registro.baralho_j1;
+  const todasEnvolvidas = await buscarCartasPorIds([...(idsMeu||[]), ...(idsAdv||[])]);
+  G.jogo.baralhoJ1 = ordenarPorIds(todasEnvolvidas, idsMeu);
+  G.jogo.baralhoJ2 = ordenarPorIds(todasEnvolvidas, idsAdv);
+  G.jogo.modo='online';
   document.getElementById('placar-n1').textContent=G.aluno.nome_completo.split(' ')[0];
   document.getElementById('placar-n2').textContent='Adversário';
-  irPara('tela-jogo');atualizarJogoUI();
+  iniciarPartidaFixa();
 }
+
 function cancelarSala(){
-  if(G.jogo.ws)G.jogo.ws.close();
-  if(G.jogo.partidaId)sb.delete('partidas',`id=eq.${G.jogo.partidaId}`);
+  if(G.jogo.ws){ try{G.jogo.ws.close();}catch(e){} G.jogo.ws=null; }
+  if(G.jogo.partidaId) sb.delete('partidas',`id=eq.${G.jogo.partidaId}`);
+  document.getElementById('sala-codigo-bloco').style.display='block';
   irPara('tela-online');
 }
 
@@ -1484,7 +1713,7 @@ async function carregarCartasAdmin(){
     selWrap.appendChild(gerarCartaEl(c,false));
     item.appendChild(selWrap);
 
-    const alunoNome = G.adminAlunos.find(a=>a.id===c.aluno_id)?.nome_completo?.split(' ')[0] || '—';
+    const alunoNome = c.aluno_id ? (G.adminAlunos.find(a=>a.id===c.aluno_id)?.nome_completo?.split(' ')[0] || '—') : '🖥️ Sistema';
     const actions=document.createElement('div');
     actions.className='carta-admin-actions';
     actions.innerHTML=`
@@ -1616,12 +1845,16 @@ function abrirModalCarta(id){
 
   const selAluno = document.getElementById('carta-editor-aluno');
   if(carta){
-    const nomeAtual = G.adminAlunos.find(a=>a.id===carta.aluno_id)?.nome_completo || '—';
-    selAluno.innerHTML = `<option value="${carta.aluno_id}">${nomeAtual}</option>`;
+    if(carta.aluno_id){
+      const nomeAtual = G.adminAlunos.find(a=>a.id===carta.aluno_id)?.nome_completo || '—';
+      selAluno.innerHTML = `<option value="${carta.aluno_id}">${nomeAtual}</option>`;
+    } else {
+      selAluno.innerHTML = `<option value="">🖥️ Carta do sistema (sem aluno)</option>`;
+    }
     selAluno.disabled = true;
   } else {
     selAluno.disabled = false;
-    selAluno.innerHTML = (G.adminAlunos||[]).map(a=>
+    selAluno.innerHTML = `<option value="">🖥️ Carta do sistema (sem aluno)</option>` + (G.adminAlunos||[]).map(a=>
       `<option value="${a.id}">${a.nome_completo}${a.carta_criada?' (já tem carta — será substituída)':''}</option>`
     ).join('');
   }
@@ -1705,7 +1938,8 @@ async function atualizarPreviewCartaEditor(){
 
 async function salvarCartaAdmin(){
   const id = document.getElementById('carta-editor-id').value;
-  const alunoId = document.getElementById('carta-editor-aluno').value;
+  const alunoIdRaw = document.getElementById('carta-editor-aluno').value;
+  const alunoId = alunoIdRaw || null; // vazio = carta do sistema, sem aluno
   const apelido = document.getElementById('carta-editor-apelido').value.trim();
   const paisCodigo = G.cartaEditorState?.paisCodigo;
   const avatarId = G.cartaEditorState?.avatarId;
@@ -1713,7 +1947,7 @@ async function salvarCartaAdmin(){
   const err = document.getElementById('carta-editor-erro');
   err.style.display='none';
 
-  if(!alunoId||!apelido||!paisCodigo||!avatarId){
+  if(!apelido||!paisCodigo||!avatarId){
     err.textContent='Preencha todos os campos (não esqueça de escolher a seleção e o avatar).';err.style.display='block';return;
   }
 
@@ -1737,11 +1971,17 @@ async function salvarCartaAdmin(){
   if(id){
     await sb.update('cartas', payload, `id=eq.${id}`);
   } else {
-    const antigas = (G.adminCartas||[]).filter(c=>c.aluno_id===alunoId && c.ativa!==false);
-    for(const antiga of antigas){ await sb.update('cartas',{ativa:false},`id=eq.${antiga.id}`); }
+    if(alunoId){
+      const antigas = (G.adminCartas||[]).filter(c=>c.aluno_id===alunoId && c.ativa!==false);
+      for(const antiga of antigas){ await sb.update('cartas',{ativa:false},`id=eq.${antiga.id}`); }
+    }
     const res = await sb.insert('cartas', payload);
-    if(!res?.[0]?.id){ err.textContent='Erro ao salvar. Tente novamente.'; err.style.display='block'; return; }
-    await sb.update('alunos',{carta_criada:true},`id=eq.${alunoId}`);
+    if(!res?.[0]?.id){
+      err.textContent='Erro ao salvar. Se for uma carta do sistema, confirme que a coluna aluno_id no Supabase aceita valor nulo (veja instruções do professor/dev).';
+      err.style.display='block';
+      return;
+    }
+    if(alunoId){ await sb.update('alunos',{carta_criada:true},`id=eq.${alunoId}`); }
   }
 
   fecharModal('modal-carta-editor');
@@ -1753,13 +1993,140 @@ async function excluirCartaAdmin(id){
   const carta = (G.adminCartas||[]).find(c=>c.id===id);
   if(!confirm(`Excluir a carta "${carta?.apelido||''}" permanentemente?`))return;
   await sb.delete('cartas',`id=eq.${id}`);
-  if(carta){
+  if(carta && carta.aluno_id){
     const restantes = await sb.select('cartas',`aluno_id=eq.${carta.aluno_id}&ativa=eq.true`);
     if(!restantes?.length){ await sb.update('alunos',{carta_criada:false},`id=eq.${carta.aluno_id}`); }
   }
   await carregarCartasAdmin();
   await carregarAdmin();
 }
+
+// ═══════════════════════════════════════════════════════════════
+// GERAÇÃO AUTOMÁTICA DE CARTAS (país, avatar e atributos aleatórios)
+// ═══════════════════════════════════════════════════════════════
+const APELIDOS_ALEATORIOS = [
+  'Trovão','Relâmpago','Foguete','Fera','Craque','Águia','Furacão','Tigre',
+  'Fenômeno','Bala','Ciclone','Mago','Muralha','Flecha','Titã','Coringa',
+  'Vulcão','Raio','Camisa 10','Artilheiro','Bólido','Coruja','Leão','Pantera'
+];
+
+function distribuirAtributosAleatorio(total){
+  const chaves=['chute','passe','desarme','tecnica','visao'];
+  const valores=[40,40,40,40,40];
+  const capacidade=[160,160,160,160,160]; // até o máximo de 200 cada
+  let restante = Math.max(0, total-200);
+  while(restante>0){
+    const idxDisponiveis=chaves.map((_,i)=>i).filter(i=>capacidade[i]>0);
+    if(!idxDisponiveis.length) break;
+    const i = idxDisponiveis[Math.floor(Math.random()*idxDisponiveis.length)];
+    const inc = Math.min(restante, capacidade[i], 1+Math.floor(Math.random()*10));
+    valores[i]+=inc; capacidade[i]-=inc; restante-=inc;
+  }
+  const obj={}; chaves.forEach((k,i)=>obj[k]=valores[i]);
+  return obj;
+}
+
+async function gerarCartasAutomaticas(){
+  const semCarta = (G.adminAlunos||[]).filter(a=>!a.carta_criada);
+  if(!semCarta.length){ alert('Todos os alunos já têm carta criada! 🎉'); return; }
+  if(!confirm(`Gerar cartas automáticas (país, avatar e atributos aleatórios) para ${semCarta.length} aluno(s) sem carta?`)) return;
+
+  const btn = document.getElementById('btn-gerar-auto');
+  const original = btn.textContent;
+  btn.disabled = true;
+
+  const avatarIds = Object.keys(AVATARES);
+  let sucesso = 0;
+
+  for(let i=0;i<semCarta.length;i++){
+    const aluno = semCarta[i];
+    btn.textContent = `⏳ Criando ${i+1}/${semCarta.length}...`;
+    const pais = PAISES[Math.floor(Math.random()*PAISES.length)];
+    const avatarId = avatarIds[Math.floor(Math.random()*avatarIds.length)];
+    const apelido = APELIDOS_ALEATORIOS[Math.floor(Math.random()*APELIDOS_ALEATORIOS.length)];
+    const attrs = distribuirAtributosAleatorio(aluno.pontuacao_total);
+
+    const payload = {
+      aluno_id: aluno.id, apelido,
+      pais_codigo: pais.c, pais_nome: pais.n,
+      avatar_config: { avatarId },
+      ...attrs, ativa: true,
+    };
+    const res = await sb.insert('cartas', payload);
+    if(res?.[0]?.id){
+      await sb.update('alunos',{carta_criada:true},`id=eq.${aluno.id}`);
+      sucesso++;
+    }
+  }
+
+  btn.disabled = false;
+  btn.textContent = original;
+  alert(`✅ ${sucesso} de ${semCarta.length} carta(s) criada(s) com sucesso!`);
+  await carregarCartasAdmin();
+  await carregarAdmin();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CARDS DE CRAQUES — cartas do sistema, sem aluno vinculado (aluno_id null)
+// ═══════════════════════════════════════════════════════════════
+const CRAQUES_SISTEMA = [
+  { apelido:'Messi',            pais:'AR',  avatarId:'menino1',  chute:190, passe:200, desarme:60,  tecnica:200, visao:195 },
+  { apelido:'Neymar Jr.',       pais:'BR',  avatarId:'menino5',  chute:180, passe:180, desarme:55,  tecnica:200, visao:175 },
+  { apelido:'Cristiano Ronaldo',pais:'PT',  avatarId:'menino9',  chute:200, passe:150, desarme:70,  tecnica:180, visao:160 },
+  { apelido:'Erling Haaland',   pais:'NO',  avatarId:'menino13', chute:200, passe:110, desarme:90,  tecnica:150, visao:120 },
+  { apelido:'Kylian Mbappé',    pais:'FR',  avatarId:'menino17', chute:195, passe:150, desarme:70,  tecnica:185, visao:160 },
+  { apelido:'Mohamed Salah',    pais:'EG',  avatarId:'menino21', chute:185, passe:155, desarme:65,  tecnica:175, visao:150 },
+  { apelido:'Vinícius Jr.',     pais:'BR',  avatarId:'menino3',  chute:170, passe:140, desarme:60,  tecnica:190, visao:145 },
+  { apelido:'Luka Modrić',      pais:'HR',  avatarId:'menino7',  chute:140, passe:195, desarme:110, tecnica:185, visao:200 },
+  { apelido:'Kevin De Bruyne',  pais:'BE',  avatarId:'menino11', chute:170, passe:200, desarme:90,  tecnica:170, visao:195 },
+  { apelido:'Harry Kane',       pais:'ENG', avatarId:'menino15', chute:195, passe:160, desarme:75,  tecnica:160, visao:170 },
+  { apelido:'Virgil van Dijk',  pais:'NL',  avatarId:'menino19', chute:100, passe:150, desarme:200, tecnica:140, visao:170 },
+];
+
+async function criarCardsCraques(){
+  const jaExistentes = (G.adminCartas||[]).filter(c=>!c.aluno_id).map(c=>c.apelido);
+  const novos = CRAQUES_SISTEMA.filter(cr=>!jaExistentes.includes(cr.apelido));
+  if(!novos.length){
+    alert('Todos os cards de craques já foram criados! Você pode editá-los ou excluí-los na lista de cartas.');
+    return;
+  }
+  if(!confirm(`Criar ${novos.length} card(s) de craques do sistema (${novos.map(c=>c.apelido).join(', ')})?`)) return;
+
+  const btn = document.getElementById('btn-gerar-craques');
+  const original = btn.textContent;
+  btn.disabled = true;
+  let sucesso = 0;
+
+  for(let i=0;i<novos.length;i++){
+    const cr = novos[i];
+    btn.textContent = `⏳ Criando ${i+1}/${novos.length}...`;
+    const pais = PAISES.find(p=>p.c===cr.pais);
+    if(!pais){ continue; }
+    const payload = {
+      aluno_id: null,
+      apelido: cr.apelido,
+      pais_codigo: pais.c, pais_nome: pais.n,
+      avatar_config: { avatarId: cr.avatarId },
+      chute: cr.chute, passe: cr.passe, desarme: cr.desarme, tecnica: cr.tecnica, visao: cr.visao,
+      ativa: true,
+    };
+    const res = await sb.insert('cartas', payload);
+    if(res?.[0]?.id) sucesso++;
+  }
+
+  btn.disabled = false;
+  btn.textContent = original;
+
+  if(sucesso===0){
+    alert('Não foi possível criar os cards. Confirme que você rodou o comando SQL para permitir aluno_id nulo na tabela "cartas" (ALTER TABLE cartas ALTER COLUMN aluno_id DROP NOT NULL;).');
+  } else {
+    alert(`✅ ${sucesso} de ${novos.length} card(s) de craques criado(s) com sucesso!`);
+  }
+
+  await carregarCartasAdmin();
+  await carregarAdmin();
+}
+
 async function carregarPartidasAdmin(){
   const [ps,al]=await Promise.all([sb.select('partidas','order=created_at.desc&limit=50'),sb.select('alunos','')]);
   const ma=Object.fromEntries((al||[]).map(a=>[a.id,a.nome_completo]));
