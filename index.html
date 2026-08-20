@@ -70,6 +70,17 @@ input,select{font-family:var(--font)}
 .cor-chip{width:30px;height:30px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:transform 0.15s,border-color 0.15s;flex-shrink:0}
 .cor-chip:hover{transform:scale(1.2)}
 .cor-chip.ativo{border-color:var(--preto);transform:scale(1.1)}
+.avatar-genero-toggle{display:flex;gap:8px;margin-bottom:12px}
+.genero-btn{flex:1;padding:10px 12px;border-radius:12px;border:2px solid var(--cinza3);background:var(--cinza1);font-size:14px;font-weight:700;color:var(--cinza5);cursor:pointer;transition:all 0.15s}
+.genero-btn:hover{border-color:var(--verde);color:var(--verde2)}
+.genero-btn.ativo{background:var(--verde);color:var(--branco);border-color:var(--verde)}
+.avatar-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:10px;max-height:360px;overflow-y:auto;padding:4px}
+.avatar-card{display:flex;flex-direction:column;align-items:center;cursor:pointer;border:3px solid transparent;border-radius:14px;padding:5px;transition:all 0.15s;background:var(--cinza1)}
+.avatar-card:hover{border-color:var(--verde)}
+.avatar-card.selecionado{border-color:var(--verde);background:#e8f7ee;box-shadow:0 0 0 3px rgba(26,158,74,0.15)}
+.avatar-card img{width:100%;aspect-ratio:1/1;object-fit:cover;object-position:top center;border-radius:10px;background:#eef0f4;display:block}
+.avatar-card-label{font-size:10px;font-weight:700;color:var(--cinza5);margin-top:5px;text-align:center;white-space:nowrap}
+.avatar-card.selecionado .avatar-card-label{color:var(--verde2)}
 .avatar-preview-col{display:flex;flex-direction:column;align-items:center;gap:12px;flex-shrink:0}
 .avatar-preview-circulo{width:150px;height:150px;border-radius:50%;overflow:hidden;border:4px solid var(--verde);background:linear-gradient(135deg,#e8f7ee,#c8eeda);box-shadow:var(--sombra)}
 .avatar-preview-circulo svg{width:100%;height:100%}
@@ -265,7 +276,14 @@ input,select{font-family:var(--font)}
   <div class="card-criador">
     <div class="avatar-builder">
       <div class="avatar-opcoes">
-        <div class="opcao-secao"><label>Escolha seu avatar</label><div class="opcao-chips" id="op-avatar"></div></div>
+        <div class="opcao-secao">
+          <label>Escolha seu avatar</label>
+          <div class="avatar-genero-toggle" id="avatar-genero-toggle">
+            <button class="genero-btn ativo" data-genero="menino" onclick="setGenero('menino')">👦 Menino</button>
+            <button class="genero-btn" data-genero="menina" onclick="setGenero('menina')">👧 Menina</button>
+          </div>
+          <div class="avatar-cards-grid" id="op-avatar"></div>
+        </div>
       </div>
       <div class="avatar-preview-col">
         <div style="font-size:11px;font-weight:700;color:var(--cinza4);text-transform:uppercase;letter-spacing:0.5px">Preview</div>
@@ -868,7 +886,7 @@ async function compostar(avatarId, paisNome) {
 // ═══════════════════════════════════════════════════════════════
 let G = {
   aluno: null,
-  criacao: { apelido:'', pais:null, avatarId:'menino1', chute:40,passe:40,desarme:40,tecnica:40,visao:40 },
+  criacao: { apelido:'', pais:null, avatarId:'menino1', avatarGenero:'menino', chute:40,passe:40,desarme:40,tecnica:40,visao:40 },
   jogo: { modo:'cpu', j1:[], j2:[], monte:[], partidaId:null, ws:null }
 };
 
@@ -939,12 +957,27 @@ function irParaAvatar(){
 // ═══════════════════════════════════════════════════════════════
 // PASSO 2: AVATAR
 // ═══════════════════════════════════════════════════════════════
-function iniciarAvatar(){renderOpcoesAvatar();atualizarPreviewAvatar()}
+function generoDoAvatar(id){ return id.startsWith('menina') ? 'menina' : 'menino'; }
+
+function iniciarAvatar(){
+  G.criacao.avatarGenero = generoDoAvatar(G.criacao.avatarId || 'menino1');
+  renderOpcoesAvatar();
+  atualizarPreviewAvatar();
+}
+
+function setGenero(g){
+  G.criacao.avatarGenero = g;
+  renderOpcoesAvatar();
+}
 
 function renderOpcoesAvatar(){
-  document.getElementById('op-avatar').innerHTML = Object.entries(AVATARES).map(([id, info]) =>
-    `<button class="chip ${G.criacao.avatarId===id?'ativo':''}" onclick="setAvatar('${id}')">${info.label}</button>`
-  ).join('');
+  document.querySelectorAll('.genero-btn').forEach(b=>b.classList.toggle('ativo', b.dataset.genero===G.criacao.avatarGenero));
+  const lista = Object.entries(AVATARES).filter(([id]) => generoDoAvatar(id)===G.criacao.avatarGenero);
+  document.getElementById('op-avatar').innerHTML = lista.map(([id, info]) => `
+    <div class="avatar-card ${G.criacao.avatarId===id?'selecionado':''}" onclick="setAvatar('${id}')">
+      <img src="${info.arquivo}" alt="${info.label}" loading="lazy">
+      <div class="avatar-card-label">${info.label}</div>
+    </div>`).join('');
 }
 
 function setAvatar(id){
@@ -967,7 +1000,7 @@ async function atualizarPreviewAvatar(){
 }
 
 function randomAvatar(){
-  const ids = Object.keys(AVATARES);
+  const ids = Object.keys(AVATARES).filter(id => generoDoAvatar(id)===G.criacao.avatarGenero);
   G.criacao.avatarId = ids[Math.floor(Math.random()*ids.length)];
   renderOpcoesAvatar();
   atualizarPreviewAvatar();
