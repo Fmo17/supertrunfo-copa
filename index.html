@@ -198,6 +198,9 @@ input,select{font-family:var(--font)}
 .carta-admin-actions button{font-size:11px;padding:6px 12px}
 .btn-excluir{background:#fff0f0;color:var(--vermelho)}
 .btn-excluir:hover{background:#ffdede}
+.cartas-pdf-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--cinza1);border-radius:12px;padding:12px 16px;margin-bottom:16px}
+.carta-select-wrap{position:relative}
+.carta-select-checkbox{position:absolute;top:8px;left:8px;width:24px;height:24px;z-index:5;cursor:pointer;accent-color:var(--verde)}
 .modal h3{font-size:18px;font-weight:800;margin-bottom:8px}
 .modal p{font-size:14px;color:var(--cinza5);margin-bottom:20px}
 .modal-btns{display:flex;gap:10px;justify-content:center}
@@ -212,6 +215,8 @@ input,select{font-family:var(--font)}
 </style>
 </head>
 <body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <!-- LOGIN -->
 <div id="tela-login" class="tela ativa">
@@ -455,9 +460,17 @@ input,select{font-family:var(--font)}
   </div>
   <div class="admin-painel" id="painel-cartas">
     <div class="admin-card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <h3 style="margin-bottom:0">🃏 Cartas dos alunos</h3>
         <button class="btn-primario" style="width:auto;padding:10px 20px" onclick="abrirModalCarta()">+ Nova Carta</button>
+      </div>
+      <div class="cartas-pdf-toolbar">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn-secundario" style="font-size:12px" onclick="selecionarTodasCartas(true)">☑️ Selecionar todas</button>
+          <button class="btn-secundario" style="font-size:12px" onclick="selecionarTodasCartas(false)">◻️ Limpar seleção</button>
+          <span id="contador-selecionadas" style="font-size:13px;color:var(--cinza5);font-weight:700">0 selecionadas</span>
+        </div>
+        <button class="btn-primario" id="btn-gerar-pdf" style="width:auto;padding:10px 20px" onclick="gerarPDFCartas()">📄 Gerar PDF (A3 · 5×7cm)</button>
       </div>
       <div id="admin-cartas" class="cartas-grid"></div>
     </div>
@@ -486,6 +499,8 @@ input,select{font-family:var(--font)}
       <button class="btn-primario" style="background:var(--vermelho)" onclick="sairJogo()">Sair</button></div>
   </div>
 </div>
+<div id="pdf-render-area" style="position:fixed;left:-9999px;top:0;pointer-events:none"></div>
+
 <div class="modal-overlay" id="modal-carta-editor">
   <div class="modal modal-lg">
     <h3 id="carta-editor-titulo">🃏 Nova Carta</h3>
@@ -1436,7 +1451,18 @@ async function carregarCartasAdmin(){
   G.adminCartas.forEach(c=>{
     const item=document.createElement('div');
     item.className='carta-admin-item';
-    item.appendChild(gerarCartaEl(c,false));
+
+    const selWrap=document.createElement('div');
+    selWrap.className='carta-select-wrap';
+    const checkbox=document.createElement('input');
+    checkbox.type='checkbox';
+    checkbox.className='carta-select-checkbox';
+    checkbox.dataset.id=c.id;
+    checkbox.onchange=atualizarContadorSelecionadas;
+    selWrap.appendChild(checkbox);
+    selWrap.appendChild(gerarCartaEl(c,false));
+    item.appendChild(selWrap);
+
     const alunoNome = G.adminAlunos.find(a=>a.id===c.aluno_id)?.nome_completo?.split(' ')[0] || '—';
     const actions=document.createElement('div');
     actions.className='carta-admin-actions';
@@ -1450,6 +1476,100 @@ async function carregarCartasAdmin(){
     item.appendChild(dono);
     g.appendChild(item);
   });
+  atualizarContadorSelecionadas();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SELEÇÃO DE CARTAS + GERAÇÃO DE PDF PARA IMPRESSÃO (A3, cartas 5×7cm)
+// ═══════════════════════════════════════════════════════════════
+function selecionarTodasCartas(valor){
+  document.querySelectorAll('.carta-select-checkbox').forEach(cb=>cb.checked=valor);
+  atualizarContadorSelecionadas();
+}
+
+function atualizarContadorSelecionadas(){
+  const n = document.querySelectorAll('.carta-select-checkbox:checked').length;
+  const el = document.getElementById('contador-selecionadas');
+  if(el) el.textContent = `${n} selecionada${n===1?'':'s'}`;
+}
+
+function esperarElementoCarregado(el, seletor, timeoutMs=3000){
+  return new Promise(resolve=>{
+    const inicio=Date.now();
+    const checar=()=>{
+      if(el.querySelector(seletor)) return resolve(true);
+      if(Date.now()-inicio>timeoutMs) return resolve(false);
+      setTimeout(checar,100);
+    };
+    checar();
+  });
+}
+
+async function gerarPDFCartas(){
+  const ids = Array.from(document.querySelectorAll('.carta-select-checkbox:checked')).map(cb=>cb.dataset.id);
+  if(!ids.length){ alert('Selecione ao menos uma carta para gerar o PDF.'); return; }
+  if(typeof window.jspdf==='undefined' || typeof html2canvas==='undefined'){
+    alert('As bibliotecas de PDF ainda estão carregando. Tente novamente em alguns segundos.');
+    return;
+  }
+
+  const btn = document.getElementById('btn-gerar-pdf');
+  const textoOriginal = btn.textContent;
+  btn.disabled = true;
+
+  const renderArea = document.getElementById('pdf-render-area');
+  renderArea.innerHTML = '';
+
+  try {
+    const cartas = ids.map(id => G.adminCartas.find(c=>c.id===id)).filter(Boolean);
+    const imagens = [];
+
+    for(let i=0;i<cartas.length;i++){
+      btn.textContent = `⏳ Renderizando ${i+1}/${cartas.length}...`;
+      const el = gerarCartaEl(cartas[i], false);
+      el.style.width = '300px'; // tamanho fixo para captura em boa resolução
+      renderArea.innerHTML = '';
+      renderArea.appendChild(el);
+      await esperarElementoCarregado(el, '.carta-avatar-wrap img');
+      await new Promise(r=>setTimeout(r,150)); // pequena folga para a bandeira/fundo terminarem de carregar
+      const canvas = await html2canvas(el, { scale:3, backgroundColor:null, useCORS:true });
+      imagens.push(canvas.toDataURL('image/png'));
+    }
+    renderArea.innerHTML = '';
+
+    btn.textContent = '📄 Montando PDF...';
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit:'cm', format:'a3', orientation:'portrait' });
+    const pageW = 29.7, pageH = 42;
+    const cardW = 5, cardH = 7;
+    const cols = Math.floor(pageW/cardW);
+    const rows = Math.floor(pageH/cardH);
+    const marginX = (pageW - cols*cardW)/2;
+    const marginY = (pageH - rows*cardH)/2;
+    const porPagina = cols*rows;
+
+    imagens.forEach((imgData,i)=>{
+      const pos = i % porPagina;
+      if(i>0 && pos===0) doc.addPage();
+      const col = pos % cols;
+      const row = Math.floor(pos/cols);
+      const x = marginX + col*cardW;
+      const y = marginY + row*cardH;
+      doc.addImage(imgData,'PNG',x,y,cardW,cardH);
+      doc.setDrawColor(210);
+      doc.setLineWidth(0.01);
+      doc.rect(x,y,cardW,cardH); // guia de corte
+    });
+
+    doc.save(`cartas-supertrunfo-${new Date().toISOString().slice(0,10)}.pdf`);
+  } catch(e){
+    console.error('Erro ao gerar PDF:', e);
+    alert('Erro ao gerar o PDF. Veja o console para detalhes.');
+  } finally {
+    renderArea.innerHTML = '';
+    btn.disabled = false;
+    btn.textContent = textoOriginal;
+  }
 }
 
 function abrirModalCarta(id){
