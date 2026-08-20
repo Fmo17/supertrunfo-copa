@@ -470,7 +470,13 @@ input,select{font-family:var(--font)}
           <button class="btn-secundario" style="font-size:12px" onclick="selecionarTodasCartas(false)">◻️ Limpar seleção</button>
           <span id="contador-selecionadas" style="font-size:13px;color:var(--cinza5);font-weight:700">0 selecionadas</span>
         </div>
-        <button class="btn-primario" id="btn-gerar-pdf" style="width:auto;padding:10px 20px" onclick="gerarPDFCartas()">📄 Gerar PDF (A3 · 5×7cm)</button>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <label style="font-size:12px;color:var(--cinza5);font-weight:600;display:flex;align-items:center;gap:6px">
+            Espaço entre cartas (cm)
+            <input type="number" id="pdf-gap-cm" value="0.5" min="0" max="2" step="0.1" style="width:60px;padding:6px 8px;border:1.5px solid var(--cinza3);border-radius:8px;font-size:13px">
+          </label>
+          <button class="btn-primario" id="btn-gerar-pdf" style="width:auto;padding:10px 20px" onclick="gerarPDFCartas()">📄 Gerar PDF (A3 · 5×7cm)</button>
+        </div>
       </div>
       <div id="admin-cartas" class="cartas-grid"></div>
     </div>
@@ -1533,7 +1539,7 @@ async function gerarPDFCartas(){
       await esperarElementoCarregado(el, '.carta-avatar-wrap img');
       await new Promise(r=>setTimeout(r,150)); // pequena folga para a bandeira/fundo terminarem de carregar
       const canvas = await html2canvas(el, { scale:3, backgroundColor:null, useCORS:true });
-      imagens.push(canvas.toDataURL('image/png'));
+      imagens.push({ data: canvas.toDataURL('image/png'), ratio: canvas.width/canvas.height });
     }
     renderArea.innerHTML = '';
 
@@ -1542,23 +1548,40 @@ async function gerarPDFCartas(){
     const doc = new jsPDF({ unit:'cm', format:'a3', orientation:'portrait' });
     const pageW = 29.7, pageH = 42;
     const cardW = 5, cardH = 7;
-    const cols = Math.floor(pageW/cardW);
-    const rows = Math.floor(pageH/cardH);
-    const marginX = (pageW - cols*cardW)/2;
-    const marginY = (pageH - rows*cardH)/2;
-    const porPagina = cols*rows;
+    const gap = parseFloat(document.getElementById('pdf-gap-cm').value) || 0;
 
-    imagens.forEach((imgData,i)=>{
+    const cols = Math.max(1, Math.floor((pageW + gap) / (cardW + gap)));
+    const rows = Math.max(1, Math.floor((pageH + gap) / (cardH + gap)));
+    const larguraUsada = cols*cardW + (cols-1)*gap;
+    const alturaUsada  = rows*cardH + (rows-1)*gap;
+    const marginX = (pageW - larguraUsada)/2;
+    const marginY = (pageH - alturaUsada)/2;
+    const porPagina = cols*rows;
+    const cardRatioAlvo = cardW/cardH; // 5/7 ≈ 0.714
+
+    imagens.forEach((img,i)=>{
       const pos = i % porPagina;
       if(i>0 && pos===0) doc.addPage();
       const col = pos % cols;
       const row = Math.floor(pos/cols);
-      const x = marginX + col*cardW;
-      const y = marginY + row*cardH;
-      doc.addImage(imgData,'PNG',x,y,cardW,cardH);
+      const x = marginX + col*(cardW+gap);
+      const y = marginY + row*(cardH+gap);
+
+      // encaixe "contain": preserva a proporção real da carta, sem esticar
+      let w, h;
+      if(img.ratio > cardRatioAlvo){
+        w = cardW; h = cardW/img.ratio;
+      } else {
+        h = cardH; w = cardH*img.ratio;
+      }
+      const offX = x + (cardW-w)/2;
+      const offY = y + (cardH-h)/2;
+      doc.addImage(img.data,'PNG',offX,offY,w,h);
+
+      // guia de corte no tamanho exato de 5×7cm
       doc.setDrawColor(210);
       doc.setLineWidth(0.01);
-      doc.rect(x,y,cardW,cardH); // guia de corte
+      doc.rect(x,y,cardW,cardH);
     });
 
     doc.save(`cartas-supertrunfo-${new Date().toISOString().slice(0,10)}.pdf`);
