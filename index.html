@@ -475,7 +475,7 @@ input,select{font-family:var(--font)}
             Espaço entre cartas (cm)
             <input type="number" id="pdf-gap-cm" value="0.5" min="0" max="2" step="0.1" style="width:60px;padding:6px 8px;border:1.5px solid var(--cinza3);border-radius:8px;font-size:13px">
           </label>
-          <button class="btn-primario" id="btn-gerar-pdf" style="width:auto;padding:10px 20px" onclick="gerarPDFCartas()">📄 Gerar PDF (A3 · 5×7cm)</button>
+          <button class="btn-primario" id="btn-gerar-pdf" style="width:auto;padding:10px 20px" onclick="gerarPDFCartas()">📄 Gerar PDF (A3 · 5×8cm)</button>
         </div>
       </div>
       <div id="admin-cartas" class="cartas-grid"></div>
@@ -1486,7 +1486,7 @@ async function carregarCartasAdmin(){
 }
 
 // ═══════════════════════════════════════════════════════════════
-// SELEÇÃO DE CARTAS + GERAÇÃO DE PDF PARA IMPRESSÃO (A3, cartas 5×7cm)
+// SELEÇÃO DE CARTAS + GERAÇÃO DE PDF PARA IMPRESSÃO (A3, cartas 5×8cm)
 // ═══════════════════════════════════════════════════════════════
 function selecionarTodasCartas(valor){
   document.querySelectorAll('.carta-select-checkbox').forEach(cb=>cb.checked=valor);
@@ -1532,13 +1532,12 @@ async function gerarPDFCartas(){
 
     for(let i=0;i<cartas.length;i++){
       btn.textContent = `⏳ Renderizando ${i+1}/${cartas.length}...`;
-      const el = gerarCartaEl(cartas[i], false);
-      el.style.width = '300px'; // tamanho fixo para captura em boa resolução
+      const el = gerarCartaEl(cartas[i], false); // mantém a proporção natural (200px), resolução vem do scale abaixo
       renderArea.innerHTML = '';
       renderArea.appendChild(el);
       await esperarElementoCarregado(el, '.carta-avatar-wrap img');
       await new Promise(r=>setTimeout(r,150)); // pequena folga para a bandeira/fundo terminarem de carregar
-      const canvas = await html2canvas(el, { scale:3, backgroundColor:null, useCORS:true });
+      const canvas = await html2canvas(el, { scale:4, backgroundColor:null, useCORS:true });
       imagens.push({ data: canvas.toDataURL('image/png'), ratio: canvas.width/canvas.height });
     }
     renderArea.innerHTML = '';
@@ -1547,7 +1546,7 @@ async function gerarPDFCartas(){
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit:'cm', format:'a3', orientation:'portrait' });
     const pageW = 29.7, pageH = 42;
-    const cardW = 5, cardH = 7;
+    const cardW = 5, cardH = 8;
     const gap = parseFloat(document.getElementById('pdf-gap-cm').value) || 0;
 
     const cols = Math.max(1, Math.floor((pageW + gap) / (cardW + gap)));
@@ -1578,7 +1577,7 @@ async function gerarPDFCartas(){
       const offY = y + (cardH-h)/2;
       doc.addImage(img.data,'PNG',offX,offY,w,h);
 
-      // guia de corte no tamanho exato de 5×7cm
+      // guia de corte no tamanho exato de 5×8cm
       doc.setDrawColor(210);
       doc.setLineWidth(0.01);
       doc.rect(x,y,cardW,cardH);
