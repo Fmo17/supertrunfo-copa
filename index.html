@@ -70,7 +70,7 @@ input,select{font-family:var(--font)}
 .cor-chip{width:30px;height:30px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:transform 0.15s,border-color 0.15s;flex-shrink:0}
 .cor-chip:hover{transform:scale(1.2)}
 .cor-chip.ativo{border-color:var(--preto);transform:scale(1.1)}
-.avatar-genero-toggle{display:flex;gap:8px;margin-bottom:12px}
+.avatar-genero-toggle{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
 .genero-btn{flex:1;padding:10px 12px;border-radius:12px;border:2px solid var(--cinza3);background:var(--cinza1);font-size:14px;font-weight:700;color:var(--cinza5);cursor:pointer;transition:all 0.15s}
 .genero-btn:hover{border-color:var(--verde);color:var(--verde2)}
 .genero-btn.ativo{background:var(--verde);color:var(--branco);border-color:var(--verde)}
@@ -565,6 +565,7 @@ input,select{font-family:var(--font)}
             <div class="avatar-genero-toggle" id="carta-editor-genero-toggle">
               <button type="button" class="genero-btn ativo" data-genero="menino" onclick="setGeneroCartaEditor('menino')">👦 Menino</button>
               <button type="button" class="genero-btn" data-genero="menina" onclick="setGeneroCartaEditor('menina')">👧 Menina</button>
+              <button type="button" class="genero-btn" data-genero="craque" onclick="setGeneroCartaEditor('craque')">⭐ Craques</button>
             </div>
             <div class="avatar-cards-grid" id="carta-editor-avatar-grid" style="max-height:230px"></div>
           </div>
@@ -1251,6 +1252,7 @@ function irParaAvatar(){
 // PASSO 2: AVATAR
 // ═══════════════════════════════════════════════════════════════
 function generoDoAvatar(id){ return id.startsWith('menina') ? 'menina' : 'menino'; }
+function generoOuCraqueDoAvatar(id){ return AVATARES_CRAQUES[id] ? 'craque' : generoDoAvatar(id); }
 
 function iniciarAvatar(){
   G.criacao.avatarGenero = generoDoAvatar(G.criacao.avatarId || 'menino1');
@@ -2012,7 +2014,7 @@ function abrirModalCarta(id){
   G.cartaEditorState = {
     paisCodigo: carta?.pais_codigo || null,
     avatarId: avatarAtual,
-    avatarGenero: avatarAtual ? generoDoAvatar(avatarAtual) : 'menino',
+    avatarGenero: avatarAtual ? generoOuCraqueDoAvatar(avatarAtual) : 'menino',
   };
   document.getElementById('carta-editor-busca-pais').value = '';
   renderizarPaisesCartaEditor('');
@@ -2050,7 +2052,9 @@ function renderAvatarGridCartaEditor(){
   document.querySelectorAll('#carta-editor-genero-toggle .genero-btn').forEach(b=>
     b.classList.toggle('ativo', b.dataset.genero===G.cartaEditorState.avatarGenero)
   );
-  const lista = Object.entries(AVATARES).filter(([aid])=>generoDoAvatar(aid)===G.cartaEditorState.avatarGenero);
+  const lista = G.cartaEditorState.avatarGenero==='craque'
+    ? Object.entries(AVATARES_CRAQUES)
+    : Object.entries(AVATARES).filter(([aid])=>generoDoAvatar(aid)===G.cartaEditorState.avatarGenero);
   document.getElementById('carta-editor-avatar-grid').innerHTML = lista.map(([aid,info])=>`
     <div class="avatar-card ${G.cartaEditorState.avatarId===aid?'selecionado':''}" onclick="setAvatarCartaEditor('${aid}')">
       <img src="${info.arquivo}" alt="${info.label}" loading="lazy">
@@ -2217,18 +2221,22 @@ async function gerarCartasAutomaticas(){
 // CARDS DE CRAQUES — cartas do sistema, sem aluno vinculado (aluno_id null)
 // ═══════════════════════════════════════════════════════════════
 const CRAQUES_SISTEMA = [
-  { apelido:'Messi',            pais:'AR',  avatarId:'menino1',  chute:190, passe:200, desarme:60,  tecnica:200, visao:195 },
-  { apelido:'Neymar Jr.',       pais:'BR',  avatarId:'menino5',  chute:180, passe:180, desarme:55,  tecnica:200, visao:175 },
-  { apelido:'Cristiano Ronaldo',pais:'PT',  avatarId:'menino9',  chute:200, passe:150, desarme:70,  tecnica:180, visao:160 },
-  { apelido:'Erling Haaland',   pais:'NO',  avatarId:'menino13', chute:200, passe:110, desarme:90,  tecnica:150, visao:120 },
-  { apelido:'Kylian Mbappé',    pais:'FR',  avatarId:'menino17', chute:195, passe:150, desarme:70,  tecnica:185, visao:160 },
-  { apelido:'Mohamed Salah',    pais:'EG',  avatarId:'menino21', chute:185, passe:155, desarme:65,  tecnica:175, visao:150 },
-  { apelido:'Vinícius Jr.',     pais:'BR',  avatarId:'menino3',  chute:170, passe:140, desarme:60,  tecnica:190, visao:145 },
-  { apelido:'Luka Modrić',      pais:'HR',  avatarId:'menino7',  chute:140, passe:195, desarme:110, tecnica:185, visao:200 },
-  { apelido:'Kevin De Bruyne',  pais:'BE',  avatarId:'menino11', chute:170, passe:200, desarme:90,  tecnica:170, visao:195 },
-  { apelido:'Harry Kane',       pais:'ENG', avatarId:'menino15', chute:195, passe:160, desarme:75,  tecnica:160, visao:170 },
-  { apelido:'Virgil van Dijk',  pais:'NL',  avatarId:'menino19', chute:100, passe:150, desarme:200, tecnica:140, visao:170 },
+  { apelido:'Messi',            pais:'AR',  avatarId:'menino31', chute:190, passe:200, desarme:60,  tecnica:200, visao:195 },
+  { apelido:'Neymar Jr.',       pais:'BR',  avatarId:'menino41', chute:180, passe:180, desarme:55,  tecnica:200, visao:175 },
+  { apelido:'Cristiano Ronaldo',pais:'PT',  avatarId:'menino27', chute:200, passe:150, desarme:70,  tecnica:180, visao:160 },
+  { apelido:'Erling Haaland',   pais:'NO',  avatarId:'menino26', chute:200, passe:110, desarme:90,  tecnica:150, visao:120 },
+  { apelido:'Kylian Mbappé',    pais:'FR',  avatarId:'menino24', chute:195, passe:150, desarme:70,  tecnica:185, visao:160 },
+  { apelido:'Mohamed Salah',    pais:'EG',  avatarId:'menino33', chute:185, passe:155, desarme:65,  tecnica:175, visao:150 },
+  { apelido:'Vinícius Jr.',     pais:'BR',  avatarId:'menino34', chute:170, passe:140, desarme:60,  tecnica:190, visao:145 },
+  { apelido:'Luka Modrić',      pais:'HR',  avatarId:'menino37', chute:140, passe:195, desarme:110, tecnica:185, visao:200 },
+  { apelido:'Kevin De Bruyne',  pais:'BE',  avatarId:'menino30', chute:170, passe:200, desarme:90,  tecnica:170, visao:195 },
+  { apelido:'Harry Kane',       pais:'ENG', avatarId:'menino28', chute:195, passe:160, desarme:75,  tecnica:160, visao:170 },
+  { apelido:'Virgil van Dijk',  pais:'NL',  avatarId:'menino43', chute:100, passe:150, desarme:200, tecnica:140, visao:170 },
+  { apelido:'Marta',            pais:'BR',  avatarId:'menina26', chute:195, passe:150, desarme:55,  tecnica:195, visao:165 },
+  { apelido:'Alexia Putellas',  pais:'ES',  avatarId:'menina27', chute:155, passe:195, desarme:95,  tecnica:180, visao:195 },
+  { apelido:'Alex Morgan',      pais:'US',  avatarId:'menina28', chute:185, passe:145, desarme:60,  tecnica:170, visao:150 },
 ];
+
 
 async function criarCardsCraques(){
   const jaExistentes = (G.adminCartas||[]).filter(c=>!c.aluno_id).map(c=>c.apelido);
