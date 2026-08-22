@@ -36,18 +36,18 @@ input,select{font-family:var(--font)}
 .btn-secundario:hover{background:var(--cinza3)}
 .login-admin-link{margin-top:20px;font-size:12px;color:var(--cinza4);cursor:pointer;text-decoration:underline}
 .msg-erro{background:#fff0f0;color:var(--vermelho);border-radius:var(--radius2);padding:10px 14px;font-size:13px;font-weight:600;margin-top:12px;display:none}
-.header-aluno{width:100%;max-width:720px;display:flex;align-items:center;justify-content:space-between;background:var(--branco);border-radius:var(--radius);padding:12px 20px;box-shadow:var(--sombra2);margin-bottom:24px}
+.header-aluno{width:100%;max-width:960px;display:flex;align-items:center;justify-content:space-between;background:var(--branco);border-radius:var(--radius);padding:12px 20px;box-shadow:var(--sombra2);margin-bottom:24px}
 .nome-usuario{font-size:14px;font-weight:700;color:var(--verde2)}
 .pontos-badge{background:linear-gradient(135deg,var(--amarelo),var(--amarelo2));color:var(--preto);font-size:12px;font-weight:800;padding:4px 10px;border-radius:20px}
 .btn-sair{background:none;color:var(--cinza4);font-size:12px;padding:4px 8px;border-radius:8px;border:1px solid var(--cinza3)}
-.secao-titulo{width:100%;max-width:720px;margin-bottom:20px}
+.secao-titulo{width:100%;max-width:960px;margin-bottom:20px}
 .secao-titulo h2{font-size:20px;font-weight:800;color:var(--preto)}
 .secao-titulo p{font-size:14px;color:var(--cinza4);margin-top:4px}
-.step-indicador{display:flex;gap:8px;margin-bottom:24px;width:100%;max-width:720px}
+.step-indicador{display:flex;gap:8px;margin-bottom:24px;width:100%;max-width:960px}
 .step{flex:1;height:5px;background:var(--cinza3);border-radius:3px;transition:background 0.3s}
 .step.ativo{background:var(--verde)}
 .step.completo{background:var(--verde2)}
-.card-criador{width:100%;max-width:720px;background:var(--branco);border-radius:var(--radius);padding:28px 24px;box-shadow:var(--sombra)}
+.card-criador{width:100%;max-width:960px;background:var(--branco);border-radius:var(--radius);padding:28px 24px;box-shadow:var(--sombra)}
 
 /* PAIS GRID */
 .pais-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;max-height:280px;overflow-y:auto;padding:4px;margin-top:8px}
@@ -70,8 +70,19 @@ input,select{font-family:var(--font)}
 .cor-chip{width:30px;height:30px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:transform 0.15s,border-color 0.15s;flex-shrink:0}
 .cor-chip:hover{transform:scale(1.2)}
 .cor-chip.ativo{border-color:var(--preto);transform:scale(1.1)}
+.avatar-genero-toggle{display:flex;gap:8px;margin-bottom:12px}
+.genero-btn{flex:1;padding:10px 12px;border-radius:12px;border:2px solid var(--cinza3);background:var(--cinza1);font-size:14px;font-weight:700;color:var(--cinza5);cursor:pointer;transition:all 0.15s}
+.genero-btn:hover{border-color:var(--verde);color:var(--verde2)}
+.genero-btn.ativo{background:var(--verde);color:var(--branco);border-color:var(--verde)}
+.avatar-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px;max-height:420px;overflow-y:auto;padding:4px}
+.avatar-card{display:flex;flex-direction:column;align-items:center;cursor:pointer;border:3px solid transparent;border-radius:14px;padding:5px;transition:all 0.15s;background:var(--cinza1)}
+.avatar-card:hover{border-color:var(--verde)}
+.avatar-card.selecionado{border-color:var(--verde);background:#e8f7ee;box-shadow:0 0 0 3px rgba(26,158,74,0.15)}
+.avatar-card img{width:100%;aspect-ratio:1/1;object-fit:cover;object-position:top center;border-radius:10px;background:#eef0f4;display:block}
+.avatar-card-label{font-size:10px;font-weight:700;color:var(--cinza5);margin-top:5px;text-align:center;white-space:nowrap}
+.avatar-card.selecionado .avatar-card-label{color:var(--verde2)}
 .avatar-preview-col{display:flex;flex-direction:column;align-items:center;gap:12px;flex-shrink:0}
-.avatar-preview-circulo{width:150px;height:150px;border-radius:50%;overflow:hidden;border:4px solid var(--verde);background:linear-gradient(135deg,#e8f7ee,#c8eeda);box-shadow:var(--sombra)}
+.avatar-preview-circulo{width:220px;height:220px;border-radius:50%;overflow:hidden;border:4px solid var(--verde);background:linear-gradient(135deg,#e8f7ee,#c8eeda);box-shadow:var(--sombra)}
 .avatar-preview-circulo svg{width:100%;height:100%}
 
 /* ATRIBUTOS */
@@ -179,6 +190,23 @@ input,select{font-family:var(--font)}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;align-items:center;justify-content:center;padding:16px}
 .modal-overlay.ativo{display:flex}
 .modal{background:var(--branco);border-radius:var(--radius);padding:28px 24px;width:100%;max-width:420px;box-shadow:0 16px 64px rgba(0,0,0,0.2);text-align:center}
+.modal-lg{max-width:640px;text-align:left}
+.modal-xl{max-width:820px;max-height:88vh;overflow-y:auto}
+.modal-lg h3{text-align:center;margin-bottom:20px}
+.modal-lg select{width:100%;padding:12px 14px;border:1.5px solid var(--cinza3);border-radius:var(--radius2);font-size:15px;color:var(--preto);background:var(--cinza1)}
+.carta-admin-item{display:flex;flex-direction:column;align-items:center;gap:10px}
+.carta-admin-actions{display:flex;gap:8px}
+.carta-admin-actions button{font-size:11px;padding:6px 12px}
+.btn-excluir{background:#fff0f0;color:var(--vermelho)}
+.btn-excluir:hover{background:#ffdede}
+.cartas-pdf-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--cinza1);border-radius:12px;padding:12px 16px;margin-bottom:16px}
+.carta-select-wrap{position:relative}
+.carta-select-checkbox{position:absolute;top:8px;left:8px;width:24px;height:24px;z-index:5;cursor:pointer;accent-color:var(--verde)}
+.baralho-card-select{cursor:pointer;border:3px solid transparent;border-radius:20px;padding:4px;transition:all 0.15s;position:relative}
+.baralho-card-select:hover{border-color:var(--cinza3)}
+.baralho-card-select.selecionado{border-color:var(--verde);background:#e8f7ee}
+.baralho-card-select.travada{cursor:default;border-color:var(--amarelo)}
+.baralho-badge-sua{position:absolute;top:8px;left:8px;z-index:5;background:var(--amarelo);color:var(--preto);font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px}
 .modal h3{font-size:18px;font-weight:800;margin-bottom:8px}
 .modal p{font-size:14px;color:var(--cinza5);margin-bottom:20px}
 .modal-btns{display:flex;gap:10px;justify-content:center}
@@ -193,6 +221,8 @@ input,select{font-family:var(--font)}
 </style>
 </head>
 <body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <!-- LOGIN -->
 <div id="tela-login" class="tela ativa">
@@ -221,9 +251,9 @@ input,select{font-family:var(--font)}
       <button class="btn-sair" onclick="sair()">Sair</button></div>
   </div>
   <div class="menu-grid">
-    <div class="menu-item" onclick="irPara('tela-criar')">
-      <div class="icone">🃏</div><div class="titulo">Criar Carta</div>
-      <div class="desc">Monte sua carta de jogador</div></div>
+    <div class="menu-item" id="menu-item-criar" onclick="irPara('tela-criar')">
+      <div class="icone" id="menu-criar-icone">🃏</div><div class="titulo" id="menu-criar-titulo">Criar Carta</div>
+      <div class="desc" id="menu-criar-desc">Monte sua carta de jogador</div></div>
     <div class="menu-item" onclick="verMinhaCarta()">
       <div class="icone">👁️</div><div class="titulo">Minha Carta</div>
       <div class="desc">Ver a carta que criei</div></div>
@@ -265,7 +295,14 @@ input,select{font-family:var(--font)}
   <div class="card-criador">
     <div class="avatar-builder">
       <div class="avatar-opcoes">
-        <div class="opcao-secao"><label>Escolha seu avatar</label><div class="opcao-chips" id="op-avatar"></div></div>
+        <div class="opcao-secao">
+          <label>Escolha seu avatar</label>
+          <div class="avatar-genero-toggle" id="avatar-genero-toggle">
+            <button class="genero-btn ativo" data-genero="menino" onclick="setGenero('menino')">👦 Menino</button>
+            <button class="genero-btn" data-genero="menina" onclick="setGenero('menina')">👧 Menina</button>
+          </div>
+          <div class="avatar-cards-grid" id="op-avatar"></div>
+        </div>
       </div>
       <div class="avatar-preview-col">
         <div style="font-size:11px;font-weight:700;color:var(--cinza4);text-transform:uppercase;letter-spacing:0.5px">Preview</div>
@@ -324,6 +361,27 @@ input,select{font-family:var(--font)}
   </div>
 </div>
 
+<!-- MONTAR BARALHO -->
+<div id="tela-montar-baralho" class="tela">
+  <div class="header-aluno">
+    <button class="btn-secundario" onclick="cancelarMontagemBaralho()">← Voltar</button>
+    <div class="nome-usuario">Monte seu Baralho</div><div></div></div>
+  <div class="secao-titulo">
+    <h2>🎴 Escolha suas 10 cartas</h2>
+    <p>Sua carta já está no baralho. Escolha mais <strong id="baralho-faltam">9</strong> carta(s) entre todas as disponíveis (colegas e cartas especiais do sistema).</p>
+  </div>
+  <div class="card-criador">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <input type="text" id="baralho-busca" placeholder="🔍 Buscar por apelido ou país..." style="flex:1;min-width:220px;padding:12px 14px;border:1.5px solid var(--cinza3);border-radius:10px;font-size:14px" oninput="filtrarCartasBaralho()">
+      <span id="baralho-contador" style="font-size:14px;font-weight:800;color:var(--verde2);white-space:nowrap">1/10 selecionadas</span>
+    </div>
+    <div id="baralho-cartas-grid" class="cartas-grid" style="max-height:520px;overflow-y:auto"></div>
+    <div style="margin-top:20px;display:flex;justify-content:flex-end">
+      <button class="btn-primario" id="btn-confirmar-baralho" style="width:auto;padding:12px 28px" disabled onclick="confirmarBaralho()">Confirmar baralho e jogar →</button>
+    </div>
+  </div>
+</div>
+
 <!-- ONLINE -->
 <div id="tela-online" class="tela">
   <div class="header-aluno">
@@ -350,10 +408,12 @@ input,select{font-family:var(--font)}
 <div id="tela-sala" class="tela" style="justify-content:center">
   <div class="sala-card">
     <div style="font-size:36px;margin-bottom:8px">🏟️</div>
-    <div style="font-size:14px;color:var(--cinza5);font-weight:600">Código da sala</div>
-    <div class="sala-codigo" id="sala-codigo-display">—</div>
-    <div style="font-size:13px;color:var(--cinza4)">Passe esse código para seu colega entrar</div>
-    <div class="sala-aguardando" style="margin-top:16px"><div class="spinner"></div>Aguardando...</div>
+    <div id="sala-codigo-bloco">
+      <div style="font-size:14px;color:var(--cinza5);font-weight:600">Código da sala</div>
+      <div class="sala-codigo" id="sala-codigo-display">—</div>
+      <div style="font-size:13px;color:var(--cinza4)">Passe esse código para seu colega entrar</div>
+    </div>
+    <div class="sala-aguardando" style="margin-top:16px"><div class="spinner"></div><span id="sala-status-texto">Aguardando...</span></div>
     <button class="btn-secundario" style="margin-top:20px;width:100%" onclick="cancelarSala()">Cancelar</button>
   </div>
 </div>
@@ -361,9 +421,9 @@ input,select{font-family:var(--font)}
 <!-- JOGO -->
 <div id="tela-jogo" class="tela">
   <div class="jogo-placar">
-    <div class="jinfo"><div class="jnome" id="placar-n1">Você</div><div class="jqtd" id="placar-c1">0</div><div style="font-size:10px;opacity:0.7">cartas</div></div>
+    <div class="jinfo"><div class="jnome" id="placar-n1">Você</div><div class="jqtd" id="placar-c1">0</div><div style="font-size:10px;opacity:0.7">vitórias</div></div>
     <div class="jogo-vs">VS</div>
-    <div class="jinfo"><div class="jnome" id="placar-n2">CPU</div><div class="jqtd" id="placar-c2">0</div><div style="font-size:10px;opacity:0.7">cartas</div></div>
+    <div class="jinfo"><div class="jnome" id="placar-n2">CPU</div><div class="jqtd" id="placar-c2">0</div><div style="font-size:10px;opacity:0.7">vitórias</div></div>
   </div>
   <div class="jogo-status" id="jogo-status">Sua vez! Escolha um atributo.</div>
   <div class="jogo-area">
@@ -385,7 +445,7 @@ input,select{font-family:var(--font)}
       <div class="emoji" id="res-emoji">🏆</div>
       <div class="msg" id="res-msg">—</div>
       <div class="sub" id="res-sub">—</div>
-      <button class="btn-primario" style="margin-top:16px" onclick="proximaRodada()">Próxima rodada →</button>
+      <button class="btn-primario" id="btn-proxima-rodada" style="margin-top:16px" onclick="proximaRodada()">Próxima rodada →</button>
     </div>
   </div>
   <div style="margin-top:16px"><button class="btn-secundario" onclick="mostrarModal('modal-sair-jogo')">🚪 Sair do jogo</button></div>
@@ -424,11 +484,35 @@ input,select{font-family:var(--font)}
       <div id="a-msg" class="msg-erro" style="display:none;margin-top:8px"></div>
     </div>
     <div class="admin-card"><h3>👥 Alunos cadastrados</h3>
-      <div style="overflow-x:auto"><table class="tabela-admin"><thead><tr><th>Nome</th><th>Nascimento</th><th>Pontos</th><th>Carta?</th><th>Ação</th></tr></thead>
+      <div style="overflow-x:auto"><table class="tabela-admin"><thead><tr><th>Nome</th><th>Nascimento</th><th>Pontos</th><th>Carta criada</th><th>Ação</th></tr></thead>
       <tbody id="tbody-alunos"></tbody></table></div></div>
   </div>
   <div class="admin-painel" id="painel-cartas">
-    <div class="admin-card"><h3>🃏 Cartas dos alunos</h3><div id="admin-cartas" class="cartas-grid"></div></div>
+    <div class="admin-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <h3 style="margin-bottom:0">🃏 Cartas dos alunos</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn-secundario" id="btn-gerar-auto" onclick="gerarCartasAutomaticas()">🎲 Gerar automáticas (quem não tem)</button>
+          <button class="btn-secundario" id="btn-gerar-craques" onclick="criarCardsCraques()">⭐ Criar cards de craques</button>
+          <button class="btn-primario" style="width:auto;padding:10px 20px" onclick="abrirModalCarta()">+ Nova Carta</button>
+        </div>
+      </div>
+      <div class="cartas-pdf-toolbar">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn-secundario" style="font-size:12px" onclick="selecionarTodasCartas(true)">☑️ Selecionar todas</button>
+          <button class="btn-secundario" style="font-size:12px" onclick="selecionarTodasCartas(false)">◻️ Limpar seleção</button>
+          <span id="contador-selecionadas" style="font-size:13px;color:var(--cinza5);font-weight:700">0 selecionadas</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <label style="font-size:12px;color:var(--cinza5);font-weight:600;display:flex;align-items:center;gap:6px">
+            Espaço entre cartas (cm)
+            <input type="number" id="pdf-gap-cm" value="0.5" min="0" max="2" step="0.1" style="width:60px;padding:6px 8px;border:1.5px solid var(--cinza3);border-radius:8px;font-size:13px">
+          </label>
+          <button class="btn-primario" id="btn-gerar-pdf" style="width:auto;padding:10px 20px" onclick="gerarPDFCartas()">📄 Gerar PDF (A3 · 5×8cm)</button>
+        </div>
+      </div>
+      <div id="admin-cartas" class="cartas-grid"></div>
+    </div>
   </div>
   <div class="admin-painel" id="painel-partidas">
     <div class="admin-card"><h3>🎮 Histórico de partidas</h3>
@@ -452,6 +536,59 @@ input,select{font-family:var(--font)}
     <div class="modal-btns">
       <button class="btn-secundario" onclick="fecharModal('modal-sair-jogo')">Continuar</button>
       <button class="btn-primario" style="background:var(--vermelho)" onclick="sairJogo()">Sair</button></div>
+  </div>
+</div>
+<div id="pdf-render-area" style="position:fixed;left:-9999px;top:0;pointer-events:none"></div>
+
+<div class="modal-overlay" id="modal-carta-editor">
+  <div class="modal modal-lg modal-xl">
+    <h3 id="carta-editor-titulo">🃏 Nova Carta</h3>
+    <input type="hidden" id="carta-editor-id">
+    <div class="form-admin">
+      <div class="campo" style="grid-column:1/-1">
+        <label>Aluno</label>
+        <select id="carta-editor-aluno"></select>
+      </div>
+      <div class="campo" style="grid-column:1/-1">
+        <label>Apelido na carta</label>
+        <input type="text" id="carta-editor-apelido" maxlength="20" placeholder="Ex: Trovão, Rainha...">
+      </div>
+      <div class="campo" style="grid-column:1/-1">
+        <label>Seleção</label>
+        <input type="text" id="carta-editor-busca-pais" placeholder="🔍 Buscar país..." style="margin-bottom:8px" oninput="filtrarPaisesCartaEditor()">
+        <div class="pais-grid" id="carta-editor-pais-grid" style="max-height:190px"></div>
+      </div>
+      <div class="campo" style="grid-column:1/-1">
+        <label>Avatar</label>
+        <div class="avatar-builder" style="gap:16px">
+          <div class="avatar-opcoes" style="min-width:220px">
+            <div class="avatar-genero-toggle" id="carta-editor-genero-toggle">
+              <button type="button" class="genero-btn ativo" data-genero="menino" onclick="setGeneroCartaEditor('menino')">👦 Menino</button>
+              <button type="button" class="genero-btn" data-genero="menina" onclick="setGeneroCartaEditor('menina')">👧 Menina</button>
+            </div>
+            <div class="avatar-cards-grid" id="carta-editor-avatar-grid" style="max-height:230px"></div>
+          </div>
+          <div class="avatar-preview-col">
+            <div style="font-size:11px;font-weight:700;color:var(--cinza4);text-transform:uppercase;letter-spacing:0.5px">Preview</div>
+            <div class="avatar-preview-circulo" id="carta-editor-preview" style="width:120px;height:120px;overflow:hidden;display:flex;align-items:center;justify-content:center"></div>
+          </div>
+        </div>
+      </div>
+      <div class="campo"><label>Chute</label><input type="number" id="carta-editor-chute" min="40" max="200"></div>
+      <div class="campo"><label>Passe</label><input type="number" id="carta-editor-passe" min="40" max="200"></div>
+      <div class="campo"><label>Desarme</label><input type="number" id="carta-editor-desarme" min="40" max="200"></div>
+      <div class="campo"><label>Técnica</label><input type="number" id="carta-editor-tecnica" min="40" max="200"></div>
+      <div class="campo"><label>Visão de Jogo</label><input type="number" id="carta-editor-visao" min="40" max="200"></div>
+      <div class="campo" style="display:flex;align-items:center;gap:8px;margin-top:8px">
+        <input type="checkbox" id="carta-editor-ativa" style="width:auto" checked>
+        <label style="margin:0;text-transform:none;font-size:13px;color:var(--preto)">Carta ativa (aparece no baralho)</label>
+      </div>
+    </div>
+    <div id="carta-editor-erro" class="msg-erro" style="text-align:left"></div>
+    <div class="modal-btns" style="margin-top:16px">
+      <button class="btn-secundario" onclick="fecharModal('modal-carta-editor')">Cancelar</button>
+      <button class="btn-primario" style="flex:1" onclick="salvarCartaAdmin()">💾 Salvar</button>
+    </div>
   </div>
 </div>
 
@@ -817,8 +954,155 @@ const AVATARES = {
     shiftY: 544,
     shiftX: 26
   },
-  // Novos avatares entram aqui depois de calibrados
-  // (repete o teste de shift_y feito com esse antes de adicionar um novo)
+};
+
+// Avatares reservados para os cards de craques do sistema (ex: Messi, Neymar, CR7...)
+// Nao aparecem no seletor normal do aluno -- uso exclusivo do admin ao criar cartas avulsas.
+const AVATARES_CRAQUES = {
+  menino23: {
+    arquivo: `${ASSETS}/avatares/menino23.png`,
+    label: 'Estrela 1',
+    shiftY: 473,
+    shiftX: 23
+  },
+  menino24: {
+    arquivo: `${ASSETS}/avatares/menino24.png`,
+    label: 'Estrela 2',
+    shiftY: 492,
+    shiftX: 36
+  },
+  menino25: {
+    arquivo: `${ASSETS}/avatares/menino25.png`,
+    label: 'Estrela 3',
+    shiftY: 488,
+    shiftX: 28
+  },
+  menino26: {
+    arquivo: `${ASSETS}/avatares/menino26.png`,
+    label: 'Estrela 4',
+    shiftY: 458,
+    shiftX: 29
+  },
+  menino27: {
+    arquivo: `${ASSETS}/avatares/menino27.png`,
+    label: 'Estrela 5',
+    shiftY: 474,
+    shiftX: 19
+  },
+  menino28: {
+    arquivo: `${ASSETS}/avatares/menino28.png`,
+    label: 'Estrela 6',
+    shiftY: 483,
+    shiftX: 23
+  },
+  menino29: {
+    arquivo: `${ASSETS}/avatares/menino29.png`,
+    label: 'Estrela 7',
+    shiftY: 479,
+    shiftX: 23
+  },
+  menino30: {
+    arquivo: `${ASSETS}/avatares/menino30.png`,
+    label: 'Estrela 8',
+    shiftY: 490,
+    shiftX: 24
+  },
+  menino31: {
+    arquivo: `${ASSETS}/avatares/menino31.png`,
+    label: 'Estrela 9',
+    shiftY: 487,
+    shiftX: 25
+  },
+  menino32: {
+    arquivo: `${ASSETS}/avatares/menino32.png`,
+    label: 'Estrela 10',
+    shiftY: 478,
+    shiftX: 11
+  },
+  menino33: {
+    arquivo: `${ASSETS}/avatares/menino33.png`,
+    label: 'Estrela 11',
+    shiftY: 473,
+    shiftX: 13
+  },
+  menina26: {
+    arquivo: `${ASSETS}/avatares/menina26.png`,
+    label: 'Estrela 12',
+    shiftY: 462,
+    shiftX: 15
+  },
+  menino34: {
+    arquivo: `${ASSETS}/avatares/menino34.png`,
+    label: 'Estrela 13',
+    shiftY: 486,
+    shiftX: 29
+  },
+  menina27: {
+    arquivo: `${ASSETS}/avatares/menina27.png`,
+    label: 'Estrela 14',
+    shiftY: 464,
+    shiftX: 17
+  },
+  menino35: {
+    arquivo: `${ASSETS}/avatares/menino35.png`,
+    label: 'Estrela 15',
+    shiftY: 478,
+    shiftX: 19
+  },
+  menino36: {
+    arquivo: `${ASSETS}/avatares/menino36.png`,
+    label: 'Estrela 16',
+    shiftY: 485,
+    shiftX: 10
+  },
+  menino37: {
+    arquivo: `${ASSETS}/avatares/menino37.png`,
+    label: 'Estrela 17',
+    shiftY: 486,
+    shiftX: 26
+  },
+  menino38: {
+    arquivo: `${ASSETS}/avatares/menino38.png`,
+    label: 'Estrela 18',
+    shiftY: 499,
+    shiftX: 19
+  },
+  menino39: {
+    arquivo: `${ASSETS}/avatares/menino39.png`,
+    label: 'Estrela 19',
+    shiftY: 478,
+    shiftX: 23
+  },
+  menino40: {
+    arquivo: `${ASSETS}/avatares/menino40.png`,
+    label: 'Estrela 20',
+    shiftY: 492,
+    shiftX: 27
+  },
+  menino41: {
+    arquivo: `${ASSETS}/avatares/menino41.png`,
+    label: 'Estrela 21',
+    shiftY: 490,
+    shiftX: 27
+  },
+  menina28: {
+    arquivo: `${ASSETS}/avatares/menina28.png`,
+    label: 'Estrela 22',
+    shiftY: 494,
+    shiftX: 26
+  },
+  menino42: {
+    arquivo: `${ASSETS}/avatares/menino42.png`,
+    label: 'Estrela 23',
+    shiftY: 468,
+    shiftX: 10
+  },
+  menino43: {
+    arquivo: `${ASSETS}/avatares/menino43.png`,
+    label: 'Estrela 24',
+    shiftY: 488,
+    shiftX: 22
+  },
 };
 
 // ═══════════════════════════════════════════════════════════════
@@ -838,7 +1122,7 @@ function loadImg(url) {
 
 // Compõe avatar + camisa em canvas e retorna dataURL
 async function compostar(avatarId, paisNome) {
-  const avatarInfo = AVATARES[avatarId];
+  const avatarInfo = AVATARES[avatarId] || AVATARES_CRAQUES[avatarId];
   if (!avatarInfo) throw new Error('Avatar não encontrado: ' + avatarId);
 
   const TAM = 500;           // resolução de saída (os PNGs originais são 1254x1254)
@@ -868,8 +1152,17 @@ async function compostar(avatarId, paisNome) {
 // ═══════════════════════════════════════════════════════════════
 let G = {
   aluno: null,
-  criacao: { apelido:'', pais:null, avatarId:'menino1', chute:40,passe:40,desarme:40,tecnica:40,visao:40 },
-  jogo: { modo:'cpu', j1:[], j2:[], monte:[], partidaId:null, ws:null }
+  criacao: { apelido:'', pais:null, avatarId:'menino1', avatarGenero:'menino', chute:40,passe:40,desarme:40,tecnica:40,visao:40 },
+  jogo: {
+    modo:'cpu',
+    baralhoJ1:[], baralhoJ2:[],     // 10 cartas de cada lado, na ordem das rodadas
+    rodada:0, vitoriasJ1:0, vitoriasJ2:0,
+    partidaId:null, codigoSala:null, souJogador1:true, ws:null,
+    modoPendente:null, baralhoDisponiveis:[], selecaoBaralho:new Set(),
+  },
+  adminAlunos: [],
+  adminCartas: [],
+  cartaEditorState: { paisCodigo:null, avatarId:null, avatarGenero:'menino' }
 };
 
 const ATTRS = [
@@ -884,6 +1177,11 @@ const ATTRS = [
 // NAVEGAÇÃO
 // ═══════════════════════════════════════════════════════════════
 function irPara(id) {
+  if(id==='tela-criar' && G.aluno?.carta_criada){
+    alert('Você já criou sua carta! Cada aluno pode ter apenas uma. Se precisar mudar algo, fale com o professor.');
+    verMinhaCarta();
+    return;
+  }
   document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
   document.getElementById(id).classList.add('ativa');
   window.scrollTo(0,0);
@@ -912,6 +1210,19 @@ function atualizarMenu(){
   document.getElementById('menu-nome').textContent=a.nome_completo.split(' ')[0];
   document.getElementById('menu-pts-info').textContent=`${a.pontuacao_total} pontos para distribuir`;
   document.getElementById('menu-pts-badge').textContent=`⭐ ${a.pontuacao_total}`;
+
+  const itemCriar = document.getElementById('menu-item-criar');
+  if(a.carta_criada){
+    itemCriar.onclick = ()=>verMinhaCarta();
+    document.getElementById('menu-criar-icone').textContent='✅';
+    document.getElementById('menu-criar-titulo').textContent='Carta Criada';
+    document.getElementById('menu-criar-desc').textContent='Você já tem sua carta — toque para ver';
+  } else {
+    itemCriar.onclick = ()=>irPara('tela-criar');
+    document.getElementById('menu-criar-icone').textContent='🃏';
+    document.getElementById('menu-criar-titulo').textContent='Criar Carta';
+    document.getElementById('menu-criar-desc').textContent='Monte sua carta de jogador';
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -939,12 +1250,27 @@ function irParaAvatar(){
 // ═══════════════════════════════════════════════════════════════
 // PASSO 2: AVATAR
 // ═══════════════════════════════════════════════════════════════
-function iniciarAvatar(){renderOpcoesAvatar();atualizarPreviewAvatar()}
+function generoDoAvatar(id){ return id.startsWith('menina') ? 'menina' : 'menino'; }
+
+function iniciarAvatar(){
+  G.criacao.avatarGenero = generoDoAvatar(G.criacao.avatarId || 'menino1');
+  renderOpcoesAvatar();
+  atualizarPreviewAvatar();
+}
+
+function setGenero(g){
+  G.criacao.avatarGenero = g;
+  renderOpcoesAvatar();
+}
 
 function renderOpcoesAvatar(){
-  document.getElementById('op-avatar').innerHTML = Object.entries(AVATARES).map(([id, info]) =>
-    `<button class="chip ${G.criacao.avatarId===id?'ativo':''}" onclick="setAvatar('${id}')">${info.label}</button>`
-  ).join('');
+  document.querySelectorAll('.genero-btn').forEach(b=>b.classList.toggle('ativo', b.dataset.genero===G.criacao.avatarGenero));
+  const lista = Object.entries(AVATARES).filter(([id]) => generoDoAvatar(id)===G.criacao.avatarGenero);
+  document.getElementById('op-avatar').innerHTML = lista.map(([id, info]) => `
+    <div class="avatar-card ${G.criacao.avatarId===id?'selecionado':''}" onclick="setAvatar('${id}')">
+      <img src="${info.arquivo}" alt="${info.label}" loading="lazy">
+      <div class="avatar-card-label">${info.label}</div>
+    </div>`).join('');
 }
 
 function setAvatar(id){
@@ -967,7 +1293,7 @@ async function atualizarPreviewAvatar(){
 }
 
 function randomAvatar(){
-  const ids = Object.keys(AVATARES);
+  const ids = Object.keys(AVATARES).filter(id => generoDoAvatar(id)===G.criacao.avatarGenero);
   G.criacao.avatarId = ids[Math.floor(Math.random()*ids.length)];
   renderOpcoesAvatar();
   atualizarPreviewAvatar();
@@ -1024,6 +1350,17 @@ async function salvarCarta(){
   const total=G.aluno.pontuacao_total;
   const usado=ATTRS.reduce((s,a)=>s+G.criacao[a.k],0);
   if(usado!==total){alert(`Distribua exatamente ${total} pontos! Usou ${usado}.`);return}
+
+  // checagem de segurança: garante que o aluno ainda não tem carta ativa
+  // (cobre casos como duas abas abertas ao mesmo tempo)
+  const existentes = await sb.select('cartas', `aluno_id=eq.${G.aluno.id}&ativa=eq.true`);
+  if(existentes?.length){
+    G.aluno.carta_criada = true;
+    alert('Você já tem uma carta criada! Cada aluno pode ter apenas uma.');
+    verMinhaCarta();
+    return;
+  }
+
   const res=await sb.insert('cartas',{
     aluno_id:G.aluno.id, apelido:G.criacao.apelido,
     pais_codigo:G.criacao.pais.c, pais_nome:G.criacao.pais.n,
@@ -1124,32 +1461,139 @@ async function carregarBaralho(){
 }
 
 // ═══════════════════════════════════════════════════════════════
-// JOGO vs CPU
+// MONTAGEM DE BARALHO (10 cartas: a sua + 9 escolhidas)
 // ═══════════════════════════════════════════════════════════════
 async function iniciarCPU(){
   if(!G.aluno.carta_criada){alert('Crie sua carta antes de jogar!');return}
-  const todas=await sb.select('cartas','ativa=eq.true');
-  if(!todas||todas.length<2){alert('São necessárias pelo menos 2 cartas para jogar!');return}
-  const bar=[...todas].sort(()=>Math.random()-0.5);
-  const m=Math.floor(bar.length/2);
-  G.jogo.j1=bar.slice(0,m); G.jogo.j2=bar.slice(m); G.jogo.monte=[];
-  document.getElementById('placar-n1').textContent=G.aluno.nome_completo.split(' ')[0];
-  document.getElementById('placar-n2').textContent='🤖 CPU';
-  irPara('tela-jogo');atualizarJogoUI();
+  await abrirMontagemBaralho('cpu');
 }
 
-function atualizarJogoUI(){
-  const j=G.jogo;
-  document.getElementById('placar-c1').textContent=j.j1.length;
-  document.getElementById('placar-c2').textContent=j.j2.length;
-  if(!j.j1.length||!j.j2.length){fimJogo(j.j1.length>0);return}
+async function abrirMontagemBaralho(modo){
+  const todas = await sb.select('cartas','ativa=eq.true');
+  if(!todas || todas.length<10){
+    alert(`É necessário pelo menos 10 cartas ativas no sistema para montar um baralho (hoje há ${todas?.length||0}). Peça para o professor criar mais cartas — inclusive as cartas avulsas dos craques.`);
+    return;
+  }
+  const minhaCarta = todas.find(c=>c.aluno_id===G.aluno.id);
+  if(!minhaCarta){alert('Não encontramos sua carta ativa. Fale com o professor.');return}
+
+  G.jogo.modoPendente = modo;
+  G.jogo.baralhoDisponiveis = todas;
+  G.jogo.selecaoBaralho = new Set([minhaCarta.id]);
+  document.getElementById('baralho-busca').value='';
+  renderGradeBaralho('');
+  atualizarContadorBaralho();
+  irPara('tela-montar-baralho');
+}
+
+function filtrarCartasBaralho(){
+  renderGradeBaralho(document.getElementById('baralho-busca').value);
+}
+
+function renderGradeBaralho(filtro=''){
+  const minhaCarta = G.jogo.baralhoDisponiveis.find(c=>c.aluno_id===G.aluno.id);
+  const minhaId = minhaCarta?.id;
+  const f = filtro.toLowerCase();
+  const lista = G.jogo.baralhoDisponiveis.filter(c=>
+    c.apelido.toLowerCase().includes(f) || (c.pais_nome||'').toLowerCase().includes(f)
+  );
+  const g = document.getElementById('baralho-cartas-grid');
+  g.innerHTML='';
+  lista.forEach(c=>{
+    const cardWrap=document.createElement('div');
+    cardWrap.className='baralho-card-select'+(G.jogo.selecaoBaralho.has(c.id)?' selecionado':'')+(c.id===minhaId?' travada':'');
+    cardWrap.appendChild(gerarCartaEl(c,false));
+    if(c.id===minhaId){
+      const badge=document.createElement('div');
+      badge.className='baralho-badge-sua';
+      badge.textContent='SUA CARTA';
+      cardWrap.appendChild(badge);
+    } else {
+      cardWrap.onclick=()=>toggleCartaBaralho(c.id);
+    }
+    g.appendChild(cardWrap);
+  });
+}
+
+function toggleCartaBaralho(id){
+  if(G.jogo.selecaoBaralho.has(id)){
+    G.jogo.selecaoBaralho.delete(id);
+  } else {
+    if(G.jogo.selecaoBaralho.size>=10){ alert('Seu baralho já tem 10 cartas! Remova alguma antes de adicionar outra.'); return; }
+    G.jogo.selecaoBaralho.add(id);
+  }
+  renderGradeBaralho(document.getElementById('baralho-busca').value);
+  atualizarContadorBaralho();
+}
+
+function atualizarContadorBaralho(){
+  const n = G.jogo.selecaoBaralho.size;
+  document.getElementById('baralho-contador').textContent = `${n}/10 selecionadas`;
+  document.getElementById('baralho-faltam').textContent = Math.max(0,10-n);
+  document.getElementById('btn-confirmar-baralho').disabled = n!==10;
+}
+
+function cancelarMontagemBaralho(){
+  if(G.jogo.modoPendente==='online' && G.jogo.partidaId){
+    if(G.jogo.souJogador1){
+      sb.delete('partidas',`id=eq.${G.jogo.partidaId}`);
+    } else {
+      sb.update('partidas',{jogador2_id:null},`id=eq.${G.jogo.partidaId}`);
+    }
+    G.jogo.partidaId=null;
+  }
+  G.jogo.modoPendente=null;
+  irPara('tela-jogar-menu');
+}
+
+async function confirmarBaralho(){
+  if(G.jogo.selecaoBaralho.size!==10) return;
+  const escolhidas = G.jogo.baralhoDisponiveis.filter(c=>G.jogo.selecaoBaralho.has(c.id));
+  G.jogo.baralhoJ1 = [...escolhidas].sort(()=>Math.random()-0.5);
+
+  if(G.jogo.modoPendente==='cpu'){
+    const restantes = G.jogo.baralhoDisponiveis.filter(c=>!G.jogo.selecaoBaralho.has(c.id));
+    const pool = restantes.length>=10 ? restantes : G.jogo.baralhoDisponiveis;
+    G.jogo.baralhoJ2 = [...pool].sort(()=>Math.random()-0.5).slice(0,10);
+    G.jogo.modo='cpu';
+    document.getElementById('placar-n1').textContent=G.aluno.nome_completo.split(' ')[0];
+    document.getElementById('placar-n2').textContent='🤖 CPU';
+    iniciarPartidaFixa();
+  } else {
+    await enviarBaralhoOnline();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PARTIDA — 10 rodadas fixas (carta 1 vs carta 1, carta 2 vs carta 2...)
+// ═══════════════════════════════════════════════════════════════
+function iniciarPartidaFixa(){
+  G.jogo.rodada = 0;
+  G.jogo.vitoriasJ1 = 0;
+  G.jogo.vitoriasJ2 = 0;
+  const btnProx = document.getElementById('btn-proxima-rodada');
+  btnProx.onclick = proximaRodada;
+  btnProx.textContent = 'Próxima rodada →';
+  irPara('tela-jogo');
+  atualizarPlacarFixo();
+  mostrarRodadaAtual();
+}
+
+function atualizarPlacarFixo(){
+  document.getElementById('placar-c1').textContent=G.jogo.vitoriasJ1;
+  document.getElementById('placar-c2').textContent=G.jogo.vitoriasJ2;
+}
+
+function mostrarRodadaAtual(){
+  const r = G.jogo.rodada;
+  if(r>=10){ fimJogo(); return; }
+  document.getElementById('jogo-status').textContent=`Rodada ${r+1} de 10 — Escolha um atributo.`;
   document.getElementById('jogo-c1').innerHTML='';
   document.getElementById('jogo-c2').innerHTML='';
-  document.getElementById('jogo-c1').appendChild(gerarCartaEl(j.j1[0],false));
+  document.getElementById('jogo-c1').appendChild(gerarCartaEl(G.jogo.baralhoJ1[r],false));
   document.getElementById('jogo-c2').appendChild(gerarCartaJogoCPU());
   document.getElementById('escolha-wrap').classList.remove('hidden');
   document.getElementById('resultado-wrap').classList.add('hidden');
-  document.getElementById('jogo-status').textContent='Sua vez! Escolha um atributo.';
 }
 
 function gerarCartaJogoCPU(){
@@ -1170,13 +1614,11 @@ function gerarCartaJogoCPU(){
 }
 
 function jogar(attr){
-  const j=G.jogo;
-  const c1=j.j1[0], c2=j.j2[0];
+  const r = G.jogo.rodada;
+  const c1=G.jogo.baralhoJ1[r], c2=G.jogo.baralhoJ2[r];
   const v1=c1[attr], v2=c2[attr];
-  // Revela carta CPU
   document.getElementById('jogo-c2').innerHTML='';
   document.getElementById('jogo-c2').appendChild(gerarCartaEl(c2,false));
-  // Destaca atributo
   document.querySelectorAll(`[data-attr="${attr}"]`).forEach(el=>{
     el.classList.add('destaque');
     const isJ1=!!el.closest('#jogo-c1');
@@ -1186,34 +1628,42 @@ function jogar(attr){
   document.getElementById('resultado-wrap').classList.remove('hidden');
   const lbl=ATTRS.find(a=>a.k===attr)?.label;
   if(v1>v2){
+    G.jogo.vitoriasJ1++;
     document.getElementById('res-emoji').textContent='🏆';
     document.getElementById('res-msg').textContent='Você ganhou essa rodada!';
-    document.getElementById('res-sub').textContent=`${lbl}: ${v1} vs ${v2} — +${j.monte.length+2} cartas`;
-    j.j1.push(...j.j2.splice(0,1),...j.monte.splice(0));
-    j.j1.push(j.j1.shift());
+    document.getElementById('res-sub').textContent=`${lbl}: ${v1} vs ${v2}`;
   } else if(v2>v1){
+    G.jogo.vitoriasJ2++;
     document.getElementById('res-emoji').textContent='😮';
-    document.getElementById('res-msg').textContent='CPU ganhou essa rodada!';
+    document.getElementById('res-msg').textContent=(G.jogo.modo==='cpu'?'CPU':'Seu adversário')+' ganhou essa rodada!';
     document.getElementById('res-sub').textContent=`${lbl}: ${v2} vs ${v1}`;
-    j.j2.push(...j.j1.splice(0,1),...j.monte.splice(0));
-    j.j2.push(j.j2.shift());
   } else {
     document.getElementById('res-emoji').textContent='🤝';
-    document.getElementById('res-msg').textContent='Empate! Cartas ao monte.';
+    document.getElementById('res-msg').textContent='Empate nessa rodada!';
     document.getElementById('res-sub').textContent=`${lbl}: ${v1} = ${v2}`;
-    j.monte.push(j.j1.shift(),j.j2.shift());
   }
+  atualizarPlacarFixo();
+  G.jogo.rodada++;
+  const btnProx = document.getElementById('btn-proxima-rodada');
+  btnProx.textContent = G.jogo.rodada>=10 ? '🏁 Ver resultado final' : 'Próxima rodada →';
 }
 
-function proximaRodada(){atualizarJogoUI()}
-function fimJogo(venceu){
+function proximaRodada(){ mostrarRodadaAtual(); }
+
+function fimJogo(){
   document.getElementById('escolha-wrap').classList.add('hidden');
   document.getElementById('resultado-wrap').classList.remove('hidden');
-  document.getElementById('res-emoji').textContent=venceu?'🏆':'😢';
-  document.getElementById('res-msg').textContent=venceu?'Você venceu!':'CPU venceu!';
-  document.getElementById('res-sub').textContent=venceu?'Parabéns!':'Tente novamente!';
-  document.querySelector('#resultado-wrap .btn-primario').textContent='← Voltar ao menu';
-  document.querySelector('#resultado-wrap .btn-primario').onclick=()=>irPara('tela-menu');
+  const v1=G.jogo.vitoriasJ1, v2=G.jogo.vitoriasJ2;
+  let emoji, msg;
+  if(v1>v2){ emoji='🏆'; msg='Você venceu a partida!'; }
+  else if(v2>v1){ emoji='😢'; msg=(G.jogo.modo==='cpu'?'CPU':'Seu adversário')+' venceu a partida!'; }
+  else { emoji='🤝'; msg='A partida empatou!'; }
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-msg').textContent=msg;
+  document.getElementById('res-sub').textContent=`Placar final: ${v1} × ${v2} (10 rodadas)`;
+  const btn=document.querySelector('#resultado-wrap .btn-primario');
+  btn.textContent='← Voltar ao menu';
+  btn.onclick=()=>irPara('tela-menu');
 }
 function sairJogo(){fecharModal('modal-sair-jogo');irPara('tela-menu')}
 
@@ -1226,38 +1676,87 @@ async function criarSala(){
   const p=await sb.insert('partidas',{jogador1_id:G.aluno.id,modo:'humano',status:'aguardando',codigo_sala:cod});
   if(!p?.[0]?.id){alert('Erro ao criar sala.');return}
   G.jogo.partidaId=p[0].id;
-  document.getElementById('sala-codigo-display').textContent=cod;
-  irPara('tela-sala');
-  const wsUrl=SUPABASE_URL.replace('https','wss')+'/realtime/v1/websocket?apikey='+SUPABASE_KEY;
-  G.jogo.ws=new WebSocket(wsUrl);
-  G.jogo.ws.onopen=()=>G.jogo.ws.send(JSON.stringify({topic:`realtime:public:partidas:id=eq.${p[0].id}`,event:'phx_join',payload:{},ref:'1'}));
-  G.jogo.ws.onmessage=async e=>{
-    const m=JSON.parse(e.data);
-    if((m.event==='UPDATE'||m.event==='INSERT')&&m.payload?.record?.status==='em_andamento')await iniciarOnline(m.payload.record);
-  };
+  G.jogo.codigoSala=cod;
+  G.jogo.souJogador1=true;
+  await abrirMontagemBaralho('online');
 }
 async function entrarSala(){
   const cod=document.getElementById('codigo-sala-input').value.trim().toUpperCase();
   if(cod.length<3){alert('Digite o código!');return}
   if(!G.aluno.carta_criada){alert('Crie sua carta antes!');return}
   const ps=await sb.select('partidas',`codigo_sala=eq.${cod}&status=eq.aguardando`);
-  if(!ps?.length){alert('Sala não encontrada.');return}
-  await sb.update('partidas',{jogador2_id:G.aluno.id,status:'em_andamento',vez_de:ps[0].jogador1_id},`id=eq.${ps[0].id}`);
+  if(!ps?.length){alert('Sala não encontrada ou já em andamento.');return}
+  await sb.update('partidas',{jogador2_id:G.aluno.id},`id=eq.${ps[0].id}`);
   G.jogo.partidaId=ps[0].id;
-  await iniciarOnline({...ps[0],jogador2_id:G.aluno.id,status:'em_andamento'});
+  G.jogo.codigoSala=cod;
+  G.jogo.souJogador1=false;
+  await abrirMontagemBaralho('online');
 }
-async function iniciarOnline(p){
-  const todas=await sb.select('cartas','ativa=eq.true');
-  const bar=[...todas].sort(()=>Math.random()-0.5);
-  const m=Math.floor(bar.length/2);
-  G.jogo.j1=bar.slice(0,m); G.jogo.j2=bar.slice(m); G.jogo.monte=[];
+
+async function enviarBaralhoOnline(){
+  const souJ1 = G.jogo.souJogador1;
+  const idsBaralho = G.jogo.baralhoJ1.map(c=>c.id); // "meu" baralho, independente do papel na sala
+  const campoBaralho = souJ1 ? 'baralho_j1' : 'baralho_j2';
+  const campoPronto  = souJ1 ? 'pronto_j1' : 'pronto_j2';
+
+  const atual = await sb.select('partidas',`id=eq.${G.jogo.partidaId}`);
+  const registro = atual?.[0] || {};
+  const outroPronto = souJ1 ? registro.pronto_j2 : registro.pronto_j1;
+
+  const payload = { [campoBaralho]: idsBaralho, [campoPronto]: true };
+  if(outroPronto) payload.status = 'em_andamento';
+  await sb.update('partidas', payload, `id=eq.${G.jogo.partidaId}`);
+
+  if(outroPronto){
+    await iniciarPartidaOnlineComRegistro({ ...registro, ...payload });
+  } else {
+    document.getElementById('sala-codigo-bloco').style.display = souJ1 ? 'block' : 'none';
+    document.getElementById('sala-codigo-display').textContent = G.jogo.codigoSala || '—';
+    document.getElementById('sala-status-texto').textContent = 'Aguardando o outro jogador montar o baralho...';
+    irPara('tela-sala');
+    escutarSalaRealtime();
+  }
+}
+
+function escutarSalaRealtime(){
+  if(G.jogo.ws){ try{G.jogo.ws.close();}catch(e){} }
+  const wsUrl=SUPABASE_URL.replace('https','wss')+'/realtime/v1/websocket?apikey='+SUPABASE_KEY;
+  G.jogo.ws=new WebSocket(wsUrl);
+  G.jogo.ws.onopen=()=>G.jogo.ws.send(JSON.stringify({topic:`realtime:public:partidas:id=eq.${G.jogo.partidaId}`,event:'phx_join',payload:{},ref:'1'}));
+  G.jogo.ws.onmessage=async e=>{
+    const m=JSON.parse(e.data);
+    if((m.event==='UPDATE'||m.event==='INSERT')&&m.payload?.record?.status==='em_andamento'){
+      await iniciarPartidaOnlineComRegistro(m.payload.record);
+    }
+  };
+}
+
+async function buscarCartasPorIds(ids){
+  if(!ids || !ids.length) return [];
+  return await sb.select('cartas', `id=in.(${ids.join(',')})`);
+}
+function ordenarPorIds(cartas, ids){
+  const mapa={}; cartas.forEach(c=>mapa[c.id]=c);
+  return (ids||[]).map(id=>mapa[id]).filter(Boolean);
+}
+
+async function iniciarPartidaOnlineComRegistro(registro){
+  if(G.jogo.ws){ try{G.jogo.ws.close();}catch(e){} G.jogo.ws=null; }
+  const idsMeu = G.jogo.souJogador1 ? registro.baralho_j1 : registro.baralho_j2;
+  const idsAdv = G.jogo.souJogador1 ? registro.baralho_j2 : registro.baralho_j1;
+  const todasEnvolvidas = await buscarCartasPorIds([...(idsMeu||[]), ...(idsAdv||[])]);
+  G.jogo.baralhoJ1 = ordenarPorIds(todasEnvolvidas, idsMeu);
+  G.jogo.baralhoJ2 = ordenarPorIds(todasEnvolvidas, idsAdv);
+  G.jogo.modo='online';
   document.getElementById('placar-n1').textContent=G.aluno.nome_completo.split(' ')[0];
   document.getElementById('placar-n2').textContent='Adversário';
-  irPara('tela-jogo');atualizarJogoUI();
+  iniciarPartidaFixa();
 }
+
 function cancelarSala(){
-  if(G.jogo.ws)G.jogo.ws.close();
-  if(G.jogo.partidaId)sb.delete('partidas',`id=eq.${G.jogo.partidaId}`);
+  if(G.jogo.ws){ try{G.jogo.ws.close();}catch(e){} G.jogo.ws=null; }
+  if(G.jogo.partidaId) sb.delete('partidas',`id=eq.${G.jogo.partidaId}`);
+  document.getElementById('sala-codigo-bloco').style.display='block';
   irPara('tela-online');
 }
 
@@ -1284,6 +1783,11 @@ async function carregarAdmin(){
     sb.select('cartas','ativa=eq.true'),
     sb.select('partidas','status=eq.finalizada'),
   ]);
+  G.adminAlunos = alunos||[];
+  G.adminCartas = cartas||[];
+  const cartaPorAluno = {};
+  G.adminCartas.forEach(c=>{ cartaPorAluno[c.aluno_id]=c; });
+
   const sem=(alunos||[]).filter(a=>!a.carta_criada);
   document.getElementById('s-alunos').textContent=alunos?.length||0;
   document.getElementById('s-cartas').textContent=cartas?.length||0;
@@ -1294,12 +1798,19 @@ async function carregarAdmin(){
       ${sem.map(a=>`<tr><td>${a.nome_completo}</td><td>${a.data_nascimento}</td><td>${a.pontuacao_total}</td></tr>`).join('')}
       </tbody></table>`
     :'<p style="color:var(--verde2);font-weight:600">✅ Todos criaram suas cartas!</p>';
-  document.getElementById('tbody-alunos').innerHTML=(alunos||[]).map(a=>`
+  document.getElementById('tbody-alunos').innerHTML=(alunos||[]).map(a=>{
+    const c = cartaPorAluno[a.id];
+    const pais = c ? PAISES.find(p=>p.c===c.pais_codigo) : null;
+    const cartaInfo = c
+      ? `<strong>${c.apelido}</strong><br><span style="font-size:11px;color:var(--cinza4)">${pais?.e||'🌍'} ${c.pais_nome}</span>`
+      : '<span style="color:var(--cinza4);font-size:12px">— nenhuma —</span>';
+    return `
     <tr><td><strong>${a.nome_completo}</strong></td><td>${a.data_nascimento}</td>
     <td><span class="badge badge-azul">⭐ ${a.pontuacao_total}</span></td>
-    <td><span class="badge ${a.carta_criada?'badge-sim':'badge-nao'}">${a.carta_criada?'✅ Sim':'❌ Não'}</span></td>
+    <td>${cartaInfo}</td>
     <td><button class="btn-secundario" style="font-size:11px;padding:4px 8px" onclick="remAluno('${a.id}','${a.nome_completo}')">Remover</button></td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 async function cadastrarAluno(){
   const n=document.getElementById('a-nome').value.trim();
@@ -1323,10 +1834,446 @@ async function remAluno(id,n){
 async function carregarCartasAdmin(){
   const g=document.getElementById('admin-cartas');
   g.innerHTML='<div style="color:var(--cinza4)">Carregando...</div>';
-  const cartas=await sb.select('cartas','ativa=eq.true&order=created_at.asc');
+  const [cartas, alunos] = await Promise.all([
+    sb.select('cartas','ativa=eq.true&order=created_at.asc'),
+    sb.select('alunos','order=nome_completo.asc'),
+  ]);
+  G.adminCartas = cartas||[];
+  G.adminAlunos = alunos||[];
   g.innerHTML='';
-  (cartas||[]).forEach(c=>g.appendChild(gerarCartaEl(c,false)));
+  if(!G.adminCartas.length){
+    g.innerHTML='<div style="color:var(--cinza4);padding:20px">Nenhuma carta criada ainda.</div>';
+    return;
+  }
+  G.adminCartas.forEach(c=>{
+    const item=document.createElement('div');
+    item.className='carta-admin-item';
+
+    const selWrap=document.createElement('div');
+    selWrap.className='carta-select-wrap';
+    const checkbox=document.createElement('input');
+    checkbox.type='checkbox';
+    checkbox.className='carta-select-checkbox';
+    checkbox.dataset.id=c.id;
+    checkbox.onchange=atualizarContadorSelecionadas;
+    selWrap.appendChild(checkbox);
+    selWrap.appendChild(gerarCartaEl(c,false));
+    item.appendChild(selWrap);
+
+    const alunoNome = c.aluno_id ? (G.adminAlunos.find(a=>a.id===c.aluno_id)?.nome_completo?.split(' ')[0] || '—') : '🖥️ Sistema';
+    const actions=document.createElement('div');
+    actions.className='carta-admin-actions';
+    actions.innerHTML=`
+      <button class="btn-secundario" onclick="abrirModalCarta('${c.id}')">✏️ Editar</button>
+      <button class="btn-secundario btn-excluir" onclick="excluirCartaAdmin('${c.id}')">🗑️ Excluir</button>`;
+    item.appendChild(actions);
+    const dono=document.createElement('div');
+    dono.style.cssText='font-size:11px;color:var(--cinza4);text-align:center';
+    dono.textContent=`Dono: ${alunoNome}`;
+    item.appendChild(dono);
+    g.appendChild(item);
+  });
+  atualizarContadorSelecionadas();
 }
+
+// ═══════════════════════════════════════════════════════════════
+// SELEÇÃO DE CARTAS + GERAÇÃO DE PDF PARA IMPRESSÃO (A3, cartas 5×8cm)
+// ═══════════════════════════════════════════════════════════════
+function selecionarTodasCartas(valor){
+  document.querySelectorAll('.carta-select-checkbox').forEach(cb=>cb.checked=valor);
+  atualizarContadorSelecionadas();
+}
+
+function atualizarContadorSelecionadas(){
+  const n = document.querySelectorAll('.carta-select-checkbox:checked').length;
+  const el = document.getElementById('contador-selecionadas');
+  if(el) el.textContent = `${n} selecionada${n===1?'':'s'}`;
+}
+
+function esperarElementoCarregado(el, seletor, timeoutMs=3000){
+  return new Promise(resolve=>{
+    const inicio=Date.now();
+    const checar=()=>{
+      if(el.querySelector(seletor)) return resolve(true);
+      if(Date.now()-inicio>timeoutMs) return resolve(false);
+      setTimeout(checar,100);
+    };
+    checar();
+  });
+}
+
+async function gerarPDFCartas(){
+  const ids = Array.from(document.querySelectorAll('.carta-select-checkbox:checked')).map(cb=>cb.dataset.id);
+  if(!ids.length){ alert('Selecione ao menos uma carta para gerar o PDF.'); return; }
+  if(typeof window.jspdf==='undefined' || typeof html2canvas==='undefined'){
+    alert('As bibliotecas de PDF ainda estão carregando. Tente novamente em alguns segundos.');
+    return;
+  }
+
+  const btn = document.getElementById('btn-gerar-pdf');
+  const textoOriginal = btn.textContent;
+  btn.disabled = true;
+
+  const renderArea = document.getElementById('pdf-render-area');
+  renderArea.innerHTML = '';
+
+  try {
+    const cartas = ids.map(id => G.adminCartas.find(c=>c.id===id)).filter(Boolean);
+    const imagens = [];
+
+    for(let i=0;i<cartas.length;i++){
+      btn.textContent = `⏳ Renderizando ${i+1}/${cartas.length}...`;
+      const el = gerarCartaEl(cartas[i], false); // mantém a proporção natural (200px), resolução vem do scale abaixo
+      renderArea.innerHTML = '';
+      renderArea.appendChild(el);
+      await esperarElementoCarregado(el, '.carta-avatar-wrap img');
+      await new Promise(r=>setTimeout(r,150)); // pequena folga para a bandeira/fundo terminarem de carregar
+      const canvas = await html2canvas(el, { scale:4, backgroundColor:null, useCORS:true });
+      imagens.push({ data: canvas.toDataURL('image/png'), ratio: canvas.width/canvas.height });
+    }
+    renderArea.innerHTML = '';
+
+    btn.textContent = '📄 Montando PDF...';
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit:'cm', format:'a3', orientation:'portrait' });
+    const pageW = 29.7, pageH = 42;
+    const cardW = 5, cardH = 8;
+    const gap = parseFloat(document.getElementById('pdf-gap-cm').value) || 0;
+
+    const cols = Math.max(1, Math.floor((pageW + gap) / (cardW + gap)));
+    const rows = Math.max(1, Math.floor((pageH + gap) / (cardH + gap)));
+    const larguraUsada = cols*cardW + (cols-1)*gap;
+    const alturaUsada  = rows*cardH + (rows-1)*gap;
+    const marginX = (pageW - larguraUsada)/2;
+    const marginY = (pageH - alturaUsada)/2;
+    const porPagina = cols*rows;
+    const cardRatioAlvo = cardW/cardH; // 5/7 ≈ 0.714
+
+    imagens.forEach((img,i)=>{
+      const pos = i % porPagina;
+      if(i>0 && pos===0) doc.addPage();
+      const col = pos % cols;
+      const row = Math.floor(pos/cols);
+      const x = marginX + col*(cardW+gap);
+      const y = marginY + row*(cardH+gap);
+
+      // encaixe "contain": preserva a proporção real da carta, sem esticar
+      let w, h;
+      if(img.ratio > cardRatioAlvo){
+        w = cardW; h = cardW/img.ratio;
+      } else {
+        h = cardH; w = cardH*img.ratio;
+      }
+      const offX = x + (cardW-w)/2;
+      const offY = y + (cardH-h)/2;
+      doc.addImage(img.data,'PNG',offX,offY,w,h);
+
+      // guia de corte no tamanho exato de 5×8cm
+      doc.setDrawColor(210);
+      doc.setLineWidth(0.01);
+      doc.rect(x,y,cardW,cardH);
+    });
+
+    doc.save(`cartas-supertrunfo-${new Date().toISOString().slice(0,10)}.pdf`);
+  } catch(e){
+    console.error('Erro ao gerar PDF:', e);
+    alert('Erro ao gerar o PDF. Veja o console para detalhes.');
+  } finally {
+    renderArea.innerHTML = '';
+    btn.disabled = false;
+    btn.textContent = textoOriginal;
+  }
+}
+
+function abrirModalCarta(id){
+  const carta = id ? (G.adminCartas||[]).find(c=>c.id===id) : null;
+  document.getElementById('carta-editor-titulo').textContent = carta ? '✏️ Editar Carta' : '🃏 Nova Carta';
+  document.getElementById('carta-editor-id').value = id || '';
+
+  const selAluno = document.getElementById('carta-editor-aluno');
+  if(carta){
+    if(carta.aluno_id){
+      const nomeAtual = G.adminAlunos.find(a=>a.id===carta.aluno_id)?.nome_completo || '—';
+      selAluno.innerHTML = `<option value="${carta.aluno_id}">${nomeAtual}</option>`;
+    } else {
+      selAluno.innerHTML = `<option value="">🖥️ Carta do sistema (sem aluno)</option>`;
+    }
+    selAluno.disabled = true;
+  } else {
+    selAluno.disabled = false;
+    selAluno.innerHTML = `<option value="">🖥️ Carta do sistema (sem aluno)</option>` + (G.adminAlunos||[]).map(a=>
+      `<option value="${a.id}">${a.nome_completo}${a.carta_criada?' (já tem carta — será substituída)':''}</option>`
+    ).join('');
+  }
+
+  document.getElementById('carta-editor-apelido').value = carta?.apelido || '';
+
+  const avatarAtual = carta?.avatar_config?.avatarId || null;
+  G.cartaEditorState = {
+    paisCodigo: carta?.pais_codigo || null,
+    avatarId: avatarAtual,
+    avatarGenero: avatarAtual ? generoDoAvatar(avatarAtual) : 'menino',
+  };
+  document.getElementById('carta-editor-busca-pais').value = '';
+  renderizarPaisesCartaEditor('');
+  renderAvatarGridCartaEditor();
+  atualizarPreviewCartaEditor();
+
+  ['chute','passe','desarme','tecnica','visao'].forEach(k=>{
+    document.getElementById('carta-editor-'+k).value = carta?.[k] ?? 40;
+  });
+  document.getElementById('carta-editor-ativa').checked = carta ? carta.ativa!==false : true;
+
+  const err=document.getElementById('carta-editor-erro');
+  err.style.display='none'; err.textContent='';
+  mostrarModal('modal-carta-editor');
+}
+
+function renderizarPaisesCartaEditor(filtro=''){
+  const g = document.getElementById('carta-editor-pais-grid');
+  g.innerHTML = PAISES.filter(p=>p.n.toLowerCase().includes(filtro.toLowerCase())).map(p=>`
+    <div class="pais-item ${G.cartaEditorState.paisCodigo===p.c?'selecionado':''}" onclick="selPaisCartaEditor('${p.c}')">
+      <div class="pais-bandeira">${p.e}</div>
+      <div class="pais-nome">${p.n}</div>
+    </div>`).join('');
+}
+function filtrarPaisesCartaEditor(){
+  renderizarPaisesCartaEditor(document.getElementById('carta-editor-busca-pais').value);
+}
+function selPaisCartaEditor(c){
+  G.cartaEditorState.paisCodigo = c;
+  renderizarPaisesCartaEditor(document.getElementById('carta-editor-busca-pais').value);
+  atualizarPreviewCartaEditor();
+}
+
+function renderAvatarGridCartaEditor(){
+  document.querySelectorAll('#carta-editor-genero-toggle .genero-btn').forEach(b=>
+    b.classList.toggle('ativo', b.dataset.genero===G.cartaEditorState.avatarGenero)
+  );
+  const lista = Object.entries(AVATARES).filter(([aid])=>generoDoAvatar(aid)===G.cartaEditorState.avatarGenero);
+  document.getElementById('carta-editor-avatar-grid').innerHTML = lista.map(([aid,info])=>`
+    <div class="avatar-card ${G.cartaEditorState.avatarId===aid?'selecionado':''}" onclick="setAvatarCartaEditor('${aid}')">
+      <img src="${info.arquivo}" alt="${info.label}" loading="lazy">
+      <div class="avatar-card-label">${info.label}</div>
+    </div>`).join('');
+}
+function setGeneroCartaEditor(g){
+  G.cartaEditorState.avatarGenero = g;
+  renderAvatarGridCartaEditor();
+}
+function setAvatarCartaEditor(id){
+  G.cartaEditorState.avatarId = id;
+  renderAvatarGridCartaEditor();
+  atualizarPreviewCartaEditor();
+}
+async function atualizarPreviewCartaEditor(){
+  const wrap = document.getElementById('carta-editor-preview');
+  if(!G.cartaEditorState.avatarId){
+    wrap.innerHTML = '<div style="font-size:11px;color:var(--cinza4);text-align:center;padding:8px">Escolha um avatar</div>';
+    return;
+  }
+  wrap.innerHTML = '<div style="font-size:20px">⏳</div>';
+  try{
+    const paisObj = PAISES.find(p=>p.c===G.cartaEditorState.paisCodigo) || PAISES.find(p=>p.c==='BR');
+    const dataUrl = await compostar(G.cartaEditorState.avatarId, paisObj.arq);
+    wrap.innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;object-position:top;border-radius:50%">`;
+  } catch(e){
+    wrap.innerHTML = '<div style="font-size:20px">😊</div>';
+    console.warn('Preview do admin falhou:', e);
+  }
+}
+
+async function salvarCartaAdmin(){
+  const id = document.getElementById('carta-editor-id').value;
+  const alunoIdRaw = document.getElementById('carta-editor-aluno').value;
+  const alunoId = alunoIdRaw || null; // vazio = carta do sistema, sem aluno
+  const apelido = document.getElementById('carta-editor-apelido').value.trim();
+  const paisCodigo = G.cartaEditorState?.paisCodigo;
+  const avatarId = G.cartaEditorState?.avatarId;
+  const ativa = document.getElementById('carta-editor-ativa').checked;
+  const err = document.getElementById('carta-editor-erro');
+  err.style.display='none';
+
+  if(!apelido||!paisCodigo||!avatarId){
+    err.textContent='Preencha todos os campos (não esqueça de escolher a seleção e o avatar).';err.style.display='block';return;
+  }
+
+  const attrs={};
+  for(const k of ['chute','passe','desarme','tecnica','visao']){
+    const v=parseInt(document.getElementById('carta-editor-'+k).value);
+    if(isNaN(v)||v<40||v>200){
+      err.textContent=`O atributo "${k}" deve estar entre 40 e 200.`;err.style.display='block';return;
+    }
+    attrs[k]=v;
+  }
+
+  const pais = PAISES.find(p=>p.c===paisCodigo);
+  const payload = {
+    aluno_id: alunoId, apelido,
+    pais_codigo: pais.c, pais_nome: pais.n,
+    avatar_config: { avatarId },
+    ...attrs, ativa,
+  };
+
+  if(id){
+    await sb.update('cartas', payload, `id=eq.${id}`);
+  } else {
+    if(alunoId){
+      const antigas = (G.adminCartas||[]).filter(c=>c.aluno_id===alunoId && c.ativa!==false);
+      for(const antiga of antigas){ await sb.update('cartas',{ativa:false},`id=eq.${antiga.id}`); }
+    }
+    const res = await sb.insert('cartas', payload);
+    if(!res?.[0]?.id){
+      err.textContent='Erro ao salvar. Se for uma carta do sistema, confirme que a coluna aluno_id no Supabase aceita valor nulo (veja instruções do professor/dev).';
+      err.style.display='block';
+      return;
+    }
+    if(alunoId){ await sb.update('alunos',{carta_criada:true},`id=eq.${alunoId}`); }
+  }
+
+  fecharModal('modal-carta-editor');
+  await carregarCartasAdmin();
+  await carregarAdmin();
+}
+
+async function excluirCartaAdmin(id){
+  const carta = (G.adminCartas||[]).find(c=>c.id===id);
+  if(!confirm(`Excluir a carta "${carta?.apelido||''}" permanentemente?`))return;
+  await sb.delete('cartas',`id=eq.${id}`);
+  if(carta && carta.aluno_id){
+    const restantes = await sb.select('cartas',`aluno_id=eq.${carta.aluno_id}&ativa=eq.true`);
+    if(!restantes?.length){ await sb.update('alunos',{carta_criada:false},`id=eq.${carta.aluno_id}`); }
+  }
+  await carregarCartasAdmin();
+  await carregarAdmin();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GERAÇÃO AUTOMÁTICA DE CARTAS (país, avatar e atributos aleatórios)
+// ═══════════════════════════════════════════════════════════════
+const APELIDOS_ALEATORIOS = [
+  'Trovão','Relâmpago','Foguete','Fera','Craque','Águia','Furacão','Tigre',
+  'Fenômeno','Bala','Ciclone','Mago','Muralha','Flecha','Titã','Coringa',
+  'Vulcão','Raio','Camisa 10','Artilheiro','Bólido','Coruja','Leão','Pantera'
+];
+
+function distribuirAtributosAleatorio(total){
+  const chaves=['chute','passe','desarme','tecnica','visao'];
+  const valores=[40,40,40,40,40];
+  const capacidade=[160,160,160,160,160]; // até o máximo de 200 cada
+  let restante = Math.max(0, total-200);
+  while(restante>0){
+    const idxDisponiveis=chaves.map((_,i)=>i).filter(i=>capacidade[i]>0);
+    if(!idxDisponiveis.length) break;
+    const i = idxDisponiveis[Math.floor(Math.random()*idxDisponiveis.length)];
+    const inc = Math.min(restante, capacidade[i], 1+Math.floor(Math.random()*10));
+    valores[i]+=inc; capacidade[i]-=inc; restante-=inc;
+  }
+  const obj={}; chaves.forEach((k,i)=>obj[k]=valores[i]);
+  return obj;
+}
+
+async function gerarCartasAutomaticas(){
+  const semCarta = (G.adminAlunos||[]).filter(a=>!a.carta_criada);
+  if(!semCarta.length){ alert('Todos os alunos já têm carta criada! 🎉'); return; }
+  if(!confirm(`Gerar cartas automáticas (país, avatar e atributos aleatórios) para ${semCarta.length} aluno(s) sem carta?`)) return;
+
+  const btn = document.getElementById('btn-gerar-auto');
+  const original = btn.textContent;
+  btn.disabled = true;
+
+  const avatarIds = Object.keys(AVATARES);
+  let sucesso = 0;
+
+  for(let i=0;i<semCarta.length;i++){
+    const aluno = semCarta[i];
+    btn.textContent = `⏳ Criando ${i+1}/${semCarta.length}...`;
+    const pais = PAISES[Math.floor(Math.random()*PAISES.length)];
+    const avatarId = avatarIds[Math.floor(Math.random()*avatarIds.length)];
+    const apelido = APELIDOS_ALEATORIOS[Math.floor(Math.random()*APELIDOS_ALEATORIOS.length)];
+    const attrs = distribuirAtributosAleatorio(aluno.pontuacao_total);
+
+    const payload = {
+      aluno_id: aluno.id, apelido,
+      pais_codigo: pais.c, pais_nome: pais.n,
+      avatar_config: { avatarId },
+      ...attrs, ativa: true,
+    };
+    const res = await sb.insert('cartas', payload);
+    if(res?.[0]?.id){
+      await sb.update('alunos',{carta_criada:true},`id=eq.${aluno.id}`);
+      sucesso++;
+    }
+  }
+
+  btn.disabled = false;
+  btn.textContent = original;
+  alert(`✅ ${sucesso} de ${semCarta.length} carta(s) criada(s) com sucesso!`);
+  await carregarCartasAdmin();
+  await carregarAdmin();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CARDS DE CRAQUES — cartas do sistema, sem aluno vinculado (aluno_id null)
+// ═══════════════════════════════════════════════════════════════
+const CRAQUES_SISTEMA = [
+  { apelido:'Messi',            pais:'AR',  avatarId:'menino1',  chute:190, passe:200, desarme:60,  tecnica:200, visao:195 },
+  { apelido:'Neymar Jr.',       pais:'BR',  avatarId:'menino5',  chute:180, passe:180, desarme:55,  tecnica:200, visao:175 },
+  { apelido:'Cristiano Ronaldo',pais:'PT',  avatarId:'menino9',  chute:200, passe:150, desarme:70,  tecnica:180, visao:160 },
+  { apelido:'Erling Haaland',   pais:'NO',  avatarId:'menino13', chute:200, passe:110, desarme:90,  tecnica:150, visao:120 },
+  { apelido:'Kylian Mbappé',    pais:'FR',  avatarId:'menino17', chute:195, passe:150, desarme:70,  tecnica:185, visao:160 },
+  { apelido:'Mohamed Salah',    pais:'EG',  avatarId:'menino21', chute:185, passe:155, desarme:65,  tecnica:175, visao:150 },
+  { apelido:'Vinícius Jr.',     pais:'BR',  avatarId:'menino3',  chute:170, passe:140, desarme:60,  tecnica:190, visao:145 },
+  { apelido:'Luka Modrić',      pais:'HR',  avatarId:'menino7',  chute:140, passe:195, desarme:110, tecnica:185, visao:200 },
+  { apelido:'Kevin De Bruyne',  pais:'BE',  avatarId:'menino11', chute:170, passe:200, desarme:90,  tecnica:170, visao:195 },
+  { apelido:'Harry Kane',       pais:'ENG', avatarId:'menino15', chute:195, passe:160, desarme:75,  tecnica:160, visao:170 },
+  { apelido:'Virgil van Dijk',  pais:'NL',  avatarId:'menino19', chute:100, passe:150, desarme:200, tecnica:140, visao:170 },
+];
+
+async function criarCardsCraques(){
+  const jaExistentes = (G.adminCartas||[]).filter(c=>!c.aluno_id).map(c=>c.apelido);
+  const novos = CRAQUES_SISTEMA.filter(cr=>!jaExistentes.includes(cr.apelido));
+  if(!novos.length){
+    alert('Todos os cards de craques já foram criados! Você pode editá-los ou excluí-los na lista de cartas.');
+    return;
+  }
+  if(!confirm(`Criar ${novos.length} card(s) de craques do sistema (${novos.map(c=>c.apelido).join(', ')})?`)) return;
+
+  const btn = document.getElementById('btn-gerar-craques');
+  const original = btn.textContent;
+  btn.disabled = true;
+  let sucesso = 0;
+
+  for(let i=0;i<novos.length;i++){
+    const cr = novos[i];
+    btn.textContent = `⏳ Criando ${i+1}/${novos.length}...`;
+    const pais = PAISES.find(p=>p.c===cr.pais);
+    if(!pais){ continue; }
+    const payload = {
+      aluno_id: null,
+      apelido: cr.apelido,
+      pais_codigo: pais.c, pais_nome: pais.n,
+      avatar_config: { avatarId: cr.avatarId },
+      chute: cr.chute, passe: cr.passe, desarme: cr.desarme, tecnica: cr.tecnica, visao: cr.visao,
+      ativa: true,
+    };
+    const res = await sb.insert('cartas', payload);
+    if(res?.[0]?.id) sucesso++;
+  }
+
+  btn.disabled = false;
+  btn.textContent = original;
+
+  if(sucesso===0){
+    alert('Não foi possível criar os cards. Confirme que você rodou o comando SQL para permitir aluno_id nulo na tabela "cartas" (ALTER TABLE cartas ALTER COLUMN aluno_id DROP NOT NULL;).');
+  } else {
+    alert(`✅ ${sucesso} de ${novos.length} card(s) de craques criado(s) com sucesso!`);
+  }
+
+  await carregarCartasAdmin();
+  await carregarAdmin();
+}
+
 async function carregarPartidasAdmin(){
   const [ps,al]=await Promise.all([sb.select('partidas','order=created_at.desc&limit=50'),sb.select('alunos','')]);
   const ma=Object.fromEntries((al||[]).map(a=>[a.id,a.nome_completo]));
