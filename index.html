@@ -149,6 +149,8 @@ input,select{font-family:var(--font)}
 .escolha-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 .btn-attr-jogo{padding:10px 18px;background:rgba(255,255,255,0.15);backdrop-filter:blur(4px);color:var(--branco);border-radius:20px;font-size:13px;font-weight:700;border:2px solid rgba(255,255,255,0.3);cursor:pointer;transition:all 0.15s}
 .btn-attr-jogo:hover{background:rgba(255,255,255,0.3);border-color:var(--amarelo);color:var(--amarelo)}
+.btn-attr-jogo:disabled{opacity:0.35;cursor:not-allowed;filter:grayscale(1)}
+.btn-attr-jogo:disabled:hover{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:var(--branco)}
 .resultado-box{background:rgba(255,255,255,0.95);border-radius:var(--radius);padding:20px 28px;text-align:center;width:100%;max-width:360px;box-shadow:var(--sombra)}
 .resultado-box .emoji{font-size:40px;margin-bottom:8px}
 .resultado-box .msg{font-size:18px;font-weight:800;color:var(--preto)}
@@ -324,6 +326,11 @@ input,select{font-family:var(--font)}
   <div class="secao-titulo"><h2>3. Distribuir Pontos ⚡</h2>
     <p>Você tem <strong id="titulo-pts-total">—</strong> pontos. Mín. 40 e máx. 200 por atributo.</p></div>
   <div class="card-criador">
+    <div class="opcao-secao" style="margin-bottom:20px">
+      <label>Posição em campo</label>
+      <div class="opcao-chips" id="op-posicao"></div>
+      <p id="posicao-desc" style="font-size:12px;color:var(--cinza4);margin-top:8px"></p>
+    </div>
     <div class="pontos-bar"><span class="label">Pontos restantes</span><span class="valor" id="pts-restantes">—</span></div>
     <div id="attrs-lista"></div>
     <div style="margin-top:20px;display:flex;justify-content:flex-end">
@@ -353,11 +360,67 @@ input,select{font-family:var(--font)}
   <div class="header-aluno">
     <button class="btn-secundario" onclick="irPara('tela-menu')">← Voltar</button>
     <div class="nome-usuario">Jogar</div><div></div></div>
+  <div class="secao-titulo"><h2>Escolha o modo de jogo</h2></div>
+  <div class="menu-grid" style="max-width:460px">
+    <div class="menu-item" onclick="irPara('tela-modo-amistoso')">
+      <div class="icone">🤝</div><div class="titulo">Amistoso</div><div class="desc">Monte um baralho e jogue vs CPU ou colega</div></div>
+    <div class="menu-item" onclick="abrirModoCopa()">
+      <div class="icone">🏆</div><div class="titulo">Copa</div><div class="desc">4 fases eliminatórias vs CPU</div></div>
+    <div class="menu-item" onclick="irPara('tela-recorde-intro')">
+      <div class="icone">🔥</div><div class="titulo">Recorde</div><div class="desc">Quantas vitórias seguidas você consegue?</div></div>
+  </div>
+</div>
+
+<!-- AMISTOSO -->
+<div id="tela-modo-amistoso" class="tela">
+  <div class="header-aluno">
+    <button class="btn-secundario" onclick="irPara('tela-jogar-menu')">← Voltar</button>
+    <div class="nome-usuario">Amistoso</div><div></div></div>
   <div class="menu-grid" style="max-width:400px">
     <div class="menu-item" onclick="iniciarCPU()">
       <div class="icone">🤖</div><div class="titulo">vs Computador</div><div class="desc">Jogue contra a CPU</div></div>
     <div class="menu-item" onclick="irPara('tela-online')">
       <div class="icone">👥</div><div class="titulo">Online</div><div class="desc">Desafie um colega</div></div>
+  </div>
+</div>
+
+<!-- COPA -->
+<div id="tela-copa-bracket" class="tela">
+  <div class="header-aluno">
+    <button class="btn-secundario" onclick="irPara('tela-jogar-menu')">← Voltar</button>
+    <div class="nome-usuario">Modo Copa</div><div></div></div>
+  <div class="secao-titulo"><h2>🏆 Sua Copa</h2><p id="copa-bracket-resumo">Carregando...</p></div>
+  <div id="copa-bracket-lista" class="menu-grid" style="max-width:600px;grid-template-columns:1fr 1fr"></div>
+  <div id="copa-nova-wrap" class="hidden" style="margin-top:16px">
+    <button class="btn-primario" style="width:auto;padding:12px 28px" onclick="novaCopa()">🔄 Iniciar nova Copa</button>
+  </div>
+</div>
+
+<!-- RECORDE -->
+<div id="tela-recorde-intro" class="tela">
+  <div class="header-aluno">
+    <button class="btn-secundario" onclick="irPara('tela-jogar-menu')">← Voltar</button>
+    <div class="nome-usuario">Modo Recorde</div><div></div></div>
+  <div class="sala-card" style="max-width:420px">
+    <div style="font-size:36px;margin-bottom:8px">🔥</div>
+    <div style="font-size:16px;font-weight:800;margin-bottom:8px">Quantas vitórias seguidas você consegue?</div>
+    <p style="font-size:13px;color:var(--cinza4);margin-bottom:20px;line-height:1.5">Sua carta enfrenta adversários aleatórios, um de cada vez. Vença e continue a sequência — perca uma rodada e a sequência acaba. Seu resultado fica salvo no ranking!</p>
+    <button class="btn-primario" onclick="iniciarModoRecorde()">▶️ Começar</button>
+    <button class="btn-secundario" style="margin-top:10px;width:100%" onclick="irPara('tela-recorde-ranking');carregarRankingRecorde()">🏆 Ver ranking</button>
+  </div>
+</div>
+
+<div id="tela-recorde-ranking" class="tela">
+  <div class="header-aluno">
+    <button class="btn-secundario" onclick="irPara('tela-recorde-intro')">← Voltar</button>
+    <div class="nome-usuario">Ranking — Modo Recorde</div><div></div></div>
+  <div class="card-criador" style="max-width:600px">
+    <h3 style="margin-bottom:10px">🙋 Seus melhores recordes</h3>
+    <div style="overflow-x:auto"><table class="tabela-admin"><thead><tr><th>#</th><th>Sequência</th><th>Data</th></tr></thead>
+    <tbody id="ranking-pessoal"></tbody></table></div>
+    <h3 style="margin:22px 0 10px">🌎 Ranking geral da turma</h3>
+    <div style="overflow-x:auto"><table class="tabela-admin"><thead><tr><th>#</th><th>Aluno</th><th>Sequência</th></tr></thead>
+    <tbody id="ranking-geral"></tbody></table></div>
   </div>
 </div>
 
@@ -433,13 +496,14 @@ input,select{font-family:var(--font)}
   <div class="escolha-wrap" id="escolha-wrap">
     <div class="escolha-titulo">Qual atributo você quer jogar?</div>
     <div class="escolha-btns">
-      <button class="btn-attr-jogo" onclick="jogar('chute')">⚽ Chute</button>
-      <button class="btn-attr-jogo" onclick="jogar('passe')">🎯 Passe</button>
-      <button class="btn-attr-jogo" onclick="jogar('desarme')">🛡️ Desarme</button>
-      <button class="btn-attr-jogo" onclick="jogar('tecnica')">✨ Técnica</button>
-      <button class="btn-attr-jogo" onclick="jogar('visao')">👁️ Visão</button>
+      <button class="btn-attr-jogo" id="btn-attr-chute" onclick="jogar('chute')">⚽ Chute</button>
+      <button class="btn-attr-jogo" id="btn-attr-passe" onclick="jogar('passe')">🎯 Passe</button>
+      <button class="btn-attr-jogo" id="btn-attr-desarme" onclick="jogar('desarme')">🛡️ Desarme</button>
+      <button class="btn-attr-jogo" id="btn-attr-tecnica" onclick="jogar('tecnica')">✨ Técnica</button>
+      <button class="btn-attr-jogo" id="btn-attr-visao" onclick="jogar('visao')">👁️ Visão</button>
     </div>
   </div>
+  <div class="escolha-wrap hidden" id="defesa-wrap"></div>
   <div id="resultado-wrap" class="hidden" style="width:100%;max-width:600px;display:flex;justify-content:center;margin-top:8px">
     <div class="resultado-box">
       <div class="emoji" id="res-emoji">🏆</div>
@@ -574,6 +638,10 @@ input,select{font-family:var(--font)}
             <div class="avatar-preview-circulo" id="carta-editor-preview" style="width:120px;height:120px;overflow:hidden;display:flex;align-items:center;justify-content:center"></div>
           </div>
         </div>
+      </div>
+      <div class="campo" style="grid-column:1/-1">
+        <label>Posição</label>
+        <select id="carta-editor-posicao"></select>
       </div>
       <div class="campo"><label>Chute</label><input type="number" id="carta-editor-chute" min="40" max="200"></div>
       <div class="campo"><label>Passe</label><input type="number" id="carta-editor-passe" min="40" max="200"></div>
@@ -1154,13 +1222,17 @@ async function compostar(avatarId, paisNome) {
 // ═══════════════════════════════════════════════════════════════
 let G = {
   aluno: null,
-  criacao: { apelido:'', pais:null, avatarId:'menino1', avatarGenero:'menino', chute:40,passe:40,desarme:40,tecnica:40,visao:40 },
+  criacao: { apelido:'', pais:null, avatarId:'menino1', avatarGenero:'menino', posicao:'atacante', chute:40,passe:40,desarme:40,tecnica:40,visao:40 },
   jogo: {
-    modo:'cpu',
+    modo:'cpu', contexto:'amistoso',
     baralhoJ1:[], baralhoJ2:[],     // 10 cartas de cada lado, na ordem das rodadas
     rodada:0, vitoriasJ1:0, vitoriasJ2:0,
+    atacante:'j1', atributoRodadaAnterior:null, atributoBloqueadoNestaRodada:null,
+    multiplicador:1, ultimaHabilidadeJ1:-99, ultimaHabilidadeJ2:-99, _ultimoVencedor:null,
     partidaId:null, codigoSala:null, souJogador1:true, ws:null,
     modoPendente:null, baralhoDisponiveis:[], selecaoBaralho:new Set(),
+    copaAtual:null, copaId:null, copaFase:null,
+    recordeAtual:0, recordeCartaJogador:null, recordePool:[],
   },
   adminAlunos: [],
   adminCartas: [],
@@ -1174,6 +1246,20 @@ const ATTRS = [
   {k:'tecnica',label:'Técnica',      icon:'✨',cor:'#f57c00'},
   {k:'visao',  label:'Visão de Jogo',icon:'👁️',cor:'#7b1fa2'},
 ];
+
+const POSICOES = [
+  {k:'goleiro',  label:'Goleiro',  icon:'🧤', hab:'bloqueio'},
+  {k:'defensor', label:'Defensor', icon:'🛡️', hab:'bloqueio'},
+  {k:'meia',     label:'Meia',     icon:'🎯', hab:'pular'},
+  {k:'atacante', label:'Atacante', icon:'⚽', hab:'pular'},
+];
+function habilidadeDaPosicao(pos){
+  const p = POSICOES.find(x=>x.k===pos);
+  return p ? p.hab : null;
+}
+function infoPosicao(pos){
+  return POSICOES.find(x=>x.k===pos) || POSICOES[3];
+}
 
 // ═══════════════════════════════════════════════════════════════
 // NAVEGAÇÃO
@@ -1310,8 +1396,20 @@ function irParaAtributos(){irPara('tela-atributos');iniciarAtributos()}
 function iniciarAtributos(){
   document.getElementById('titulo-pts-total').textContent=G.aluno.pontuacao_total;
   ATTRS.forEach(a=>G.criacao[a.k]=40);
+  renderPosicoes();
   renderAttrs();
 }
+
+function renderPosicoes(){
+  document.getElementById('op-posicao').innerHTML = POSICOES.map(p=>
+    `<button class="chip ${G.criacao.posicao===p.k?'ativo':''}" onclick="setPosicao('${p.k}')">${p.icon} ${p.label}</button>`
+  ).join('');
+  const info = infoPosicao(G.criacao.posicao);
+  document.getElementById('posicao-desc').textContent = info.hab==='bloqueio'
+    ? '🛡️ Quando sua carta for desafiada, você pode BLOQUEAR o atributo escolhido (menos em rodadas seguidas).'
+    : '⏭️ Quando sua carta for desafiada, você pode PULAR a rodada — a próxima vale o dobro (menos em rodadas seguidas).';
+}
+function setPosicao(k){ G.criacao.posicao=k; renderPosicoes(); }
 
 function renderAttrs(){
   const total=G.aluno.pontuacao_total;
@@ -1368,6 +1466,7 @@ async function salvarCarta(){
     aluno_id:G.aluno.id, apelido:G.criacao.apelido,
     pais_codigo:G.criacao.pais.c, pais_nome:G.criacao.pais.n,
     avatar_config: { avatarId: G.criacao.avatarId },
+    posicao: G.criacao.posicao,
     chute:G.criacao.chute, passe:G.criacao.passe,
     desarme:G.criacao.desarme, tecnica:G.criacao.tecnica, visao:G.criacao.visao,
   });
@@ -1385,6 +1484,7 @@ function gerarCartaEl(carta, grande=false){
   const pais=PAISES.find(p=>p.c===carta.pais_codigo)||{c1:'#1a9e4a',c2:'#ffdf00',e:'🌍',n:'—',arq:''};
   const total=carta.chute+carta.passe+carta.desarme+carta.tecnica+carta.visao;
   const cfg=carta.avatar_config||{avatarId:'menino1'};
+  const posInfo = infoPosicao(carta.posicao||'atacante');
   const div=document.createElement('div');
   div.className='carta-visual';
   if(grande)div.style.width='240px';
@@ -1406,7 +1506,7 @@ function gerarCartaEl(carta, grande=false){
     </div>
     <div class="carta-body">
       <div class="carta-nome">${carta.apelido}</div>
-      <div class="carta-pais">${pais.n}</div>
+      <div class="carta-pais">${pais.n} · ${posInfo.icon} ${posInfo.label}</div>
       <div class="carta-divider"></div>
       <div class="carta-attrs">
         ${ATTRS.map(a=>`
@@ -1554,26 +1654,39 @@ async function confirmarBaralho(){
   const escolhidas = G.jogo.baralhoDisponiveis.filter(c=>G.jogo.selecaoBaralho.has(c.id));
   G.jogo.baralhoJ1 = [...escolhidas].sort(()=>Math.random()-0.5);
 
-  if(G.jogo.modoPendente==='cpu'){
+  if(G.jogo.modoPendente==='cpu' || G.jogo.modoPendente==='copa'){
     const restantes = G.jogo.baralhoDisponiveis.filter(c=>!G.jogo.selecaoBaralho.has(c.id));
     const pool = restantes.length>=10 ? restantes : G.jogo.baralhoDisponiveis;
     G.jogo.baralhoJ2 = [...pool].sort(()=>Math.random()-0.5).slice(0,10);
     G.jogo.modo='cpu';
+    G.jogo.contexto = G.jogo.modoPendente==='copa' ? 'copa' : 'amistoso';
     document.getElementById('placar-n1').textContent=G.aluno.nome_completo.split(' ')[0];
-    document.getElementById('placar-n2').textContent='🤖 CPU';
+    document.getElementById('placar-n2').textContent = G.jogo.contexto==='copa' ? ('🤖 '+labelFaseCopa(G.jogo.copaFase)) : '🤖 CPU';
     iniciarPartidaFixa();
   } else {
+    G.jogo.contexto='amistoso';
     await enviarBaralhoOnline();
   }
 }
 
 // ═══════════════════════════════════════════════════════════════
-// PARTIDA — 10 rodadas fixas (carta 1 vs carta 1, carta 2 vs carta 2...)
+// PARTIDA — 10 rodadas fixas, atacante alterna conforme quem venceu
+// (regra clássica: quem ganha a rodada escolhe o próximo atributo)
 // ═══════════════════════════════════════════════════════════════
-function iniciarPartidaFixa(){
+function resetEstadoRodadas(){
   G.jogo.rodada = 0;
   G.jogo.vitoriasJ1 = 0;
   G.jogo.vitoriasJ2 = 0;
+  G.jogo.atacante = 'j1';
+  G.jogo.atributoRodadaAnterior = null;
+  G.jogo.atributoBloqueadoNestaRodada = null;
+  G.jogo.multiplicador = 1;
+  G.jogo.ultimaHabilidadeJ1 = -99;
+  G.jogo.ultimaHabilidadeJ2 = -99;
+}
+
+function iniciarPartidaFixa(){
+  resetEstadoRodadas();
   const btnProx = document.getElementById('btn-proxima-rodada');
   btnProx.onclick = proximaRodada;
   btnProx.textContent = 'Próxima rodada →';
@@ -1583,20 +1696,120 @@ function iniciarPartidaFixa(){
 }
 
 function atualizarPlacarFixo(){
+  if(G.jogo.contexto==='recorde'){
+    document.getElementById('placar-c1').textContent = G.jogo.recordeAtual;
+    document.getElementById('placar-c2').textContent = '—';
+    return;
+  }
   document.getElementById('placar-c1').textContent=G.jogo.vitoriasJ1;
   document.getElementById('placar-c2').textContent=G.jogo.vitoriasJ2;
 }
 
+function podeUsarHabilidade(lado, rodadaAtual){
+  const chave = lado==='j1' ? 'ultimaHabilidadeJ1' : 'ultimaHabilidadeJ2';
+  const ultima = G.jogo[chave];
+  return ultima < 0 || (rodadaAtual - ultima) >= 2;
+}
+function marcarUsoHabilidade(lado, rodadaAtual){
+  G.jogo[lado==='j1' ? 'ultimaHabilidadeJ1' : 'ultimaHabilidadeJ2'] = rodadaAtual;
+}
+function labelAttr(attr){ return ATTRS.find(a=>a.k===attr)?.label || attr; }
+function labelFaseCopa(fase){
+  return {oitavas:'Oitavas',quartas:'Quartas',semi:'Semifinal',final:'Final'}[fase] || 'CPU';
+}
+
+function ehModoComCPU(){
+  return G.jogo.modo==='cpu'; // amistoso vs CPU, copa e recorde sempre usam modo 'cpu'
+}
+
 function mostrarRodadaAtual(){
   const r = G.jogo.rodada;
-  if(r>=10){ fimJogo(); return; }
-  document.getElementById('jogo-status').textContent=`Rodada ${r+1} de 10 — Escolha um atributo.`;
+  if(G.jogo.contexto!=='recorde' && r>=10){ fimJogo(); return; }
+  G.jogo.atributoBloqueadoNestaRodada = null;
   document.getElementById('jogo-c1').innerHTML='';
   document.getElementById('jogo-c2').innerHTML='';
   document.getElementById('jogo-c1').appendChild(gerarCartaEl(G.jogo.baralhoJ1[r],false));
   document.getElementById('jogo-c2').appendChild(gerarCartaJogoCPU());
-  document.getElementById('escolha-wrap').classList.remove('hidden');
   document.getElementById('resultado-wrap').classList.add('hidden');
+  document.getElementById('defesa-wrap').classList.add('hidden');
+  document.getElementById('escolha-wrap').classList.add('hidden');
+
+  const multTxt = G.jogo.multiplicador>1 ? ' 🔥 Essa rodada vale DOBRO!' : '';
+  const tituloRodada = G.jogo.contexto==='recorde' ? `Sequência: ${G.jogo.recordeAtual}` : `Rodada ${r+1} de 10`;
+
+  if(G.jogo.atacante==='j1'){
+    document.getElementById('jogo-status').textContent = `${tituloRodada} — Escolha um atributo.${multTxt}`;
+    montarBotoesAtributo();
+    document.getElementById('escolha-wrap').classList.remove('hidden');
+  } else {
+    document.getElementById('jogo-status').textContent = `${tituloRodada} — O adversário está escolhendo...${multTxt}`;
+    setTimeout(()=>turnoAtacanteCPU(), 900);
+  }
+}
+
+function montarBotoesAtributo(){
+  ATTRS.forEach(a=>{
+    const btn = document.getElementById('btn-attr-'+a.k);
+    if(!btn) return;
+    btn.disabled = (a.k === G.jogo.atributoRodadaAnterior) || (a.k === G.jogo.atributoBloqueadoNestaRodada);
+  });
+}
+
+function cpuEscolherAtributo(carta, ...excluir){
+  const bloqueados = excluir.flat().filter(Boolean);
+  const chaves = ATTRS.map(a=>a.k).filter(k=>!bloqueados.includes(k));
+  chaves.sort((a,b)=>carta[b]-carta[a]);
+  return chaves[0] || ATTRS[0].k;
+}
+
+function turnoAtacanteCPU(){
+  const r = G.jogo.rodada;
+  const cartaAtacante = G.jogo.baralhoJ2[r];
+  const attr = cpuEscolherAtributo(cartaAtacante, G.jogo.atributoRodadaAnterior);
+  processarAtaqueCPU(attr);
+}
+
+function processarAtaqueCPU(attr){
+  const r = G.jogo.rodada;
+  const cartaDefensora = G.jogo.baralhoJ1[r];
+  const cartaAtacante = G.jogo.baralhoJ2[r];
+  const habilidade = (G.jogo.contexto!=='recorde') ? habilidadeDaPosicao(cartaDefensora.posicao) : null;
+  const podeUsar = habilidade && podeUsarHabilidade('j1', r);
+
+  if(podeUsar){
+    mostrarPromptDefesa(attr, habilidade, (decisao)=>{
+      if(decisao==='bloquear'){
+        marcarUsoHabilidade('j1', r);
+        const novoAttr = cpuEscolherAtributo(cartaAtacante, G.jogo.atributoRodadaAnterior, attr);
+        document.getElementById('jogo-status').textContent = `Você bloqueou ${labelAttr(attr)}! O adversário escolheu outro atributo.`;
+        setTimeout(()=>resolverRodada(novoAttr), 1200);
+      } else if(decisao==='pular'){
+        marcarUsoHabilidade('j1', r);
+        pularRodada();
+      } else {
+        resolverRodada(attr);
+      }
+    });
+  } else {
+    resolverRodada(attr);
+  }
+}
+
+function mostrarPromptDefesa(attr, habilidade, callback){
+  document.getElementById('escolha-wrap').classList.add('hidden');
+  const wrap = document.getElementById('defesa-wrap');
+  wrap.classList.remove('hidden');
+  const label = labelAttr(attr);
+  let html = `<div class="escolha-titulo">O adversário desafiou sua carta em <b>${label}</b>!</div><div class="escolha-btns">`;
+  if(habilidade==='bloqueio'){
+    html += `<button class="btn-attr-jogo" id="btn-defesa-sim">🛡️ Bloquear</button>`;
+  } else if(habilidade==='pular'){
+    html += `<button class="btn-attr-jogo" id="btn-defesa-sim">⏭️ Pular rodada (a próxima vale dobro)</button>`;
+  }
+  html += `<button class="btn-attr-jogo" id="btn-defesa-nao">✅ Aceitar o desafio</button></div>`;
+  wrap.innerHTML = html;
+  document.getElementById('btn-defesa-sim').onclick=()=>{ wrap.classList.add('hidden'); callback(habilidade==='bloqueio'?'bloquear':'pular'); };
+  document.getElementById('btn-defesa-nao').onclick=()=>{ wrap.classList.add('hidden'); callback('aceitar'); };
 }
 
 function gerarCartaJogoCPU(){
@@ -1618,6 +1831,48 @@ function gerarCartaJogoCPU(){
 
 function jogar(attr){
   const r = G.jogo.rodada;
+  const cartaDefensora = G.jogo.baralhoJ2[r];
+  const cartaAtacante = G.jogo.baralhoJ1[r];
+  const habilidade = (G.jogo.contexto!=='recorde' && ehModoComCPU()) ? habilidadeDaPosicao(cartaDefensora.posicao) : null;
+
+  if(habilidade && podeUsarHabilidade('j2', r)){
+    const cpuPerderia = cartaDefensora[attr] < cartaAtacante[attr];
+    const vaiUsar = cpuPerderia && Math.random() < 0.7;
+    if(vaiUsar){
+      marcarUsoHabilidade('j2', r);
+      if(habilidade==='bloqueio'){
+        G.jogo.atributoBloqueadoNestaRodada = attr;
+        document.getElementById('jogo-status').textContent = `O adversário bloqueou ${labelAttr(attr)}! Escolha outro atributo.`;
+        montarBotoesAtributo();
+        document.getElementById('escolha-wrap').classList.remove('hidden');
+        return;
+      } else {
+        document.getElementById('jogo-status').textContent = `O adversário pulou a rodada! A próxima vale dobro.`;
+        pularRodada();
+        return;
+      }
+    }
+  }
+  resolverRodada(attr);
+}
+
+function pularRodada(){
+  document.getElementById('escolha-wrap').classList.add('hidden');
+  document.getElementById('defesa-wrap').classList.add('hidden');
+  document.getElementById('resultado-wrap').classList.remove('hidden');
+  document.getElementById('res-emoji').textContent='⏭️';
+  document.getElementById('res-msg').textContent='Rodada pulada!';
+  document.getElementById('res-sub').textContent='A próxima rodada vale o DOBRO.';
+  G.jogo.multiplicador = 2;
+  G.jogo.atributoRodadaAnterior = null;
+  G.jogo.rodada++;
+  atualizarPlacarFixo();
+  const btnProx = document.getElementById('btn-proxima-rodada');
+  btnProx.textContent = G.jogo.contexto==='recorde' ? 'Próximo desafio →' : (G.jogo.rodada>=10 ? '🏁 Ver resultado final' : 'Próxima rodada →');
+}
+
+function resolverRodada(attr){
+  const r = G.jogo.rodada;
   const c1=G.jogo.baralhoJ1[r], c2=G.jogo.baralhoJ2[r];
   const v1=c1[attr], v2=c2[attr];
   document.getElementById('jogo-c2').innerHTML='';
@@ -1628,47 +1883,249 @@ function jogar(attr){
     if((isJ1&&v1>v2)||(!isJ1&&v2>v1))el.classList.add('vencedor');
   });
   document.getElementById('escolha-wrap').classList.add('hidden');
+  document.getElementById('defesa-wrap').classList.add('hidden');
   document.getElementById('resultado-wrap').classList.remove('hidden');
-  const lbl=ATTRS.find(a=>a.k===attr)?.label;
+
+  const pontos = G.jogo.multiplicador;
+  const lbl = labelAttr(attr);
+  let vencedor='empate';
   if(v1>v2){
-    G.jogo.vitoriasJ1++;
+    vencedor='j1'; G.jogo.vitoriasJ1+=pontos;
     document.getElementById('res-emoji').textContent='🏆';
-    document.getElementById('res-msg').textContent='Você ganhou essa rodada!';
+    document.getElementById('res-msg').textContent = pontos>1 ? `Você ganhou essa rodada (vale ${pontos}x)!` : 'Você ganhou essa rodada!';
     document.getElementById('res-sub').textContent=`${lbl}: ${v1} vs ${v2}`;
   } else if(v2>v1){
-    G.jogo.vitoriasJ2++;
+    vencedor='j2'; G.jogo.vitoriasJ2+=pontos;
     document.getElementById('res-emoji').textContent='😮';
-    document.getElementById('res-msg').textContent=(G.jogo.modo==='cpu'?'CPU':'Seu adversário')+' ganhou essa rodada!';
+    document.getElementById('res-msg').textContent=(G.jogo.modo==='cpu'?'O adversário':'Seu adversário')+' ganhou essa rodada'+(pontos>1?` (valeu ${pontos}x)`:'')+'!';
     document.getElementById('res-sub').textContent=`${lbl}: ${v2} vs ${v1}`;
   } else {
     document.getElementById('res-emoji').textContent='🤝';
     document.getElementById('res-msg').textContent='Empate nessa rodada!';
     document.getElementById('res-sub').textContent=`${lbl}: ${v1} = ${v2}`;
   }
+
+  G.jogo.atributoRodadaAnterior = attr;
+  G.jogo.multiplicador = 1;
+  if(vencedor!=='empate') G.jogo.atacante = vencedor;
+  G.jogo._ultimoVencedor = vencedor;
   atualizarPlacarFixo();
   G.jogo.rodada++;
   const btnProx = document.getElementById('btn-proxima-rodada');
-  btnProx.textContent = G.jogo.rodada>=10 ? '🏁 Ver resultado final' : 'Próxima rodada →';
+  btnProx.textContent = G.jogo.contexto==='recorde' ? 'Próximo desafio →' : (G.jogo.rodada>=10 ? '🏁 Ver resultado final' : 'Próxima rodada →');
 }
 
-function proximaRodada(){ mostrarRodadaAtual(); }
+function proximaRodada(){
+  if(G.jogo.contexto==='recorde'){ proximaRodadaRecorde(); return; }
+  mostrarRodadaAtual();
+}
 
 function fimJogo(){
   document.getElementById('escolha-wrap').classList.add('hidden');
+  document.getElementById('defesa-wrap').classList.add('hidden');
   document.getElementById('resultado-wrap').classList.remove('hidden');
   const v1=G.jogo.vitoriasJ1, v2=G.jogo.vitoriasJ2;
   let emoji, msg;
   if(v1>v2){ emoji='🏆'; msg='Você venceu a partida!'; }
-  else if(v2>v1){ emoji='😢'; msg=(G.jogo.modo==='cpu'?'CPU':'Seu adversário')+' venceu a partida!'; }
+  else if(v2>v1){ emoji='😢'; msg=(G.jogo.modo==='cpu'?'O adversário':'Seu adversário')+' venceu a partida!'; }
   else { emoji='🤝'; msg='A partida empatou!'; }
   document.getElementById('res-emoji').textContent=emoji;
   document.getElementById('res-msg').textContent=msg;
   document.getElementById('res-sub').textContent=`Placar final: ${v1} × ${v2} (10 rodadas)`;
   const btn=document.querySelector('#resultado-wrap .btn-primario');
-  btn.textContent='← Voltar ao menu';
-  btn.onclick=()=>irPara('tela-menu');
+
+  if(G.jogo.contexto==='copa'){
+    const resultado = v1>v2 ? 'vitoria' : 'derrota';
+    registrarResultadoCopa(resultado);
+    btn.textContent='← Voltar pra Copa';
+    btn.onclick=()=>{ abrirModoCopa(); };
+  } else {
+    btn.textContent='← Voltar ao menu';
+    btn.onclick=()=>irPara('tela-menu');
+  }
 }
-function sairJogo(){fecharModal('modal-sair-jogo');irPara('tela-menu')}
+function sairJogo(){
+  fecharModal('modal-sair-jogo');
+  if(G.jogo.contexto==='copa' && G.jogo.copaFase){
+    registrarResultadoCopa('derrota');
+  }
+  irPara('tela-menu');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MODO COPA — 4 fases eliminatórias vs CPU, progresso salvo
+// ═══════════════════════════════════════════════════════════════
+const FASES_COPA = [
+  {k:'oitavas', label:'Oitavas de Final'},
+  {k:'quartas', label:'Quartas de Final'},
+  {k:'semi',    label:'Semifinal'},
+  {k:'final',   label:'Final'},
+];
+
+async function abrirModoCopa(){
+  if(!G.aluno.carta_criada){ alert('Crie sua carta antes de jogar!'); return; }
+  let copas = await sb.select('copas', `aluno_id=eq.${G.aluno.id}&concluida=eq.false&order=created_at.desc&limit=1`);
+  let copa = copas?.[0];
+  if(!copa){
+    const res = await sb.insert('copas', { aluno_id:G.aluno.id, fase_atual:'oitavas' });
+    copa = res?.[0];
+  }
+  G.jogo.copaAtual = copa;
+  renderBracketCopa();
+  irPara('tela-copa-bracket');
+}
+
+function renderBracketCopa(){
+  const copa = G.jogo.copaAtual;
+  const ordem = FASES_COPA.map(f=>f.k);
+  const idxAtual = ordem.indexOf(copa.fase_atual);
+
+  document.getElementById('copa-bracket-lista').innerHTML = FASES_COPA.map((f,i)=>{
+    const resultado = copa['resultado_'+f.k];
+    let status, cor, clique='';
+    if(resultado==='vitoria'){ status='✅ Vencida'; cor='var(--verde2)'; }
+    else if(resultado==='derrota'){ status='❌ Perdida'; cor='var(--vermelho)'; }
+    else if(!copa.concluida && i===idxAtual){ status='▶️ Disponível'; cor='var(--verde)'; clique=`onclick="iniciarFaseCopa('${f.k}')"`; }
+    else { status='🔒 Bloqueada'; cor='var(--cinza4)'; }
+    return `<div class="menu-item" style="border-color:${cor};cursor:${clique?'pointer':'default'}" ${clique}>
+      <div class="titulo">${f.label}</div>
+      <div class="desc" style="color:${cor};font-weight:700">${status}</div>
+    </div>`;
+  }).join('');
+
+  const resumo = document.getElementById('copa-bracket-resumo');
+  const novaWrap = document.getElementById('copa-nova-wrap');
+  if(copa.concluida){
+    resumo.textContent = copa.campeao ? '🏆 Parabéns, você é o campeão dessa Copa!' : 'Você foi eliminado nessa Copa.';
+    novaWrap.classList.remove('hidden');
+  } else {
+    resumo.textContent = 'Vença as 4 fases pra ser campeão! Pode sair e continuar depois — mas desistir no meio de uma partida conta como derrota daquela fase.';
+    novaWrap.classList.add('hidden');
+  }
+}
+
+async function iniciarFaseCopa(fase){
+  G.jogo.copaId = G.jogo.copaAtual.id;
+  G.jogo.copaFase = fase;
+  await abrirMontagemBaralho('copa');
+}
+
+async function novaCopa(){
+  const res = await sb.insert('copas', { aluno_id:G.aluno.id, fase_atual:'oitavas' });
+  G.jogo.copaAtual = res?.[0];
+  renderBracketCopa();
+}
+
+async function registrarResultadoCopa(resultado){
+  const fase = G.jogo.copaFase;
+  const copaId = G.jogo.copaId;
+  if(!fase || !copaId) return;
+  const payload = {};
+  payload['resultado_'+fase] = resultado;
+  if(resultado==='derrota'){
+    payload.concluida = true;
+    payload.campeao = false;
+  } else {
+    const ordem = FASES_COPA.map(f=>f.k);
+    const idx = ordem.indexOf(fase);
+    if(idx===3){ payload.concluida = true; payload.campeao = true; }
+    else { payload.fase_atual = ordem[idx+1]; }
+  }
+  const res = await sb.update('copas', payload, `id=eq.${copaId}`);
+  if(res?.[0]) G.jogo.copaAtual = res[0];
+  G.jogo.copaFase = null;
+  G.jogo.copaId = null;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MODO RECORDE — sequência infinita de vitórias, carta contra carta
+// ═══════════════════════════════════════════════════════════════
+async function iniciarModoRecorde(){
+  const cartas = await sb.select('cartas','ativa=eq.true');
+  const minhaCarta = (cartas||[]).find(c=>c.aluno_id===G.aluno.id);
+  if(!minhaCarta){ alert('Crie sua carta antes de jogar o Modo Recorde!'); return; }
+  const pool = (cartas||[]).filter(c=>c.id!==minhaCarta.id);
+  if(pool.length<1){ alert('Ainda não há cartas suficientes no sistema pra jogar esse modo.'); return; }
+
+  G.jogo.contexto = 'recorde';
+  G.jogo.modo = 'cpu';
+  G.jogo.recordeCartaJogador = minhaCarta;
+  G.jogo.recordePool = pool;
+  G.jogo.recordeAtual = 0;
+  G.jogo.atributoRodadaAnterior = null;
+  G.jogo.atributoBloqueadoNestaRodada = null;
+  G.jogo.atacante = 'j1';
+  G.jogo.multiplicador = 1;
+  G.jogo.ultimaHabilidadeJ1 = -99;
+  G.jogo.ultimaHabilidadeJ2 = -99;
+
+  document.getElementById('placar-n1').textContent = G.aluno.nome_completo.split(' ')[0];
+  document.getElementById('placar-n2').textContent = '🔥 Sequência';
+  const btnProx = document.getElementById('btn-proxima-rodada');
+  btnProx.onclick = proximaRodada;
+  btnProx.textContent = 'Próximo desafio →';
+
+  irPara('tela-jogo');
+  proximoDueloRecorde();
+}
+
+function proximoDueloRecorde(){
+  const pool = G.jogo.recordePool;
+  const adversario = pool[Math.floor(Math.random()*pool.length)];
+  G.jogo.baralhoJ1 = [G.jogo.recordeCartaJogador];
+  G.jogo.baralhoJ2 = [adversario];
+  G.jogo.rodada = 0;
+  atualizarPlacarFixo();
+  mostrarRodadaAtual();
+}
+
+async function proximaRodadaRecorde(){
+  const vencedor = G.jogo._ultimoVencedor;
+  if(vencedor==='j2'){
+    await finalizarRecorde();
+  } else {
+    if(vencedor==='j1') G.jogo.recordeAtual++;
+    proximoDueloRecorde();
+  }
+}
+
+async function finalizarRecorde(){
+  const streak = G.jogo.recordeAtual;
+  await sb.insert('recordes', { aluno_id: G.aluno.id, sequencia: streak });
+  document.getElementById('escolha-wrap').classList.add('hidden');
+  document.getElementById('defesa-wrap').classList.add('hidden');
+  document.getElementById('resultado-wrap').classList.remove('hidden');
+  document.getElementById('res-emoji').textContent = streak>0 ? '🔥' : '😢';
+  document.getElementById('res-msg').textContent = `Sua sequência acabou em ${streak} vitória${streak===1?'':'s'} seguida${streak===1?'':'s'}!`;
+  document.getElementById('res-sub').textContent = 'Toque no botão pra ver o ranking.';
+  const btn = document.querySelector('#resultado-wrap .btn-primario');
+  btn.textContent = '🏆 Ver ranking';
+  btn.onclick = ()=>{ irPara('tela-recorde-ranking'); carregarRankingRecorde(); };
+}
+
+async function carregarRankingRecorde(){
+  document.getElementById('ranking-pessoal').innerHTML = '<tr><td colspan="3">Carregando...</td></tr>';
+  document.getElementById('ranking-geral').innerHTML = '<tr><td colspan="3">Carregando...</td></tr>';
+
+  const meus = await sb.select('recordes', `aluno_id=eq.${G.aluno.id}&order=sequencia.desc&limit=10`);
+  document.getElementById('ranking-pessoal').innerHTML = (meus||[]).length
+    ? meus.map((r,i)=>`<tr><td>${i+1}º</td><td>${r.sequencia} vitórias</td><td>${new Date(r.created_at).toLocaleDateString('pt-BR')}</td></tr>`).join('')
+    : '<tr><td colspan="3" style="color:var(--cinza4)">Você ainda não tem tentativas.</td></tr>';
+
+  const [todos, alunos] = await Promise.all([
+    sb.select('recordes', 'order=sequencia.desc&limit=200'),
+    sb.select('alunos', ''),
+  ]);
+  const nomeMap = Object.fromEntries((alunos||[]).map(a=>[a.id,a.nome_completo]));
+  const melhores = {};
+  (todos||[]).forEach(r=>{
+    if(melhores[r.aluno_id]===undefined || r.sequencia>melhores[r.aluno_id]) melhores[r.aluno_id]=r.sequencia;
+  });
+  const lista = Object.entries(melhores).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  document.getElementById('ranking-geral').innerHTML = lista.length
+    ? lista.map(([id,seq],i)=>`<tr><td>${i+1}º</td><td>${nomeMap[id]||'—'}</td><td>${seq} vitórias</td></tr>`).join('')
+    : '<tr><td colspan="3" style="color:var(--cinza4)">Ninguém jogou esse modo ainda.</td></tr>';
+}
 
 // ═══════════════════════════════════════════════════════════════
 // ONLINE
@@ -2022,6 +2479,12 @@ function abrirModalCarta(id){
   renderAvatarGridCartaEditor();
   atualizarPreviewCartaEditor();
 
+  const selPosicao = document.getElementById('carta-editor-posicao');
+  const posicaoAtual = carta?.posicao || 'atacante';
+  selPosicao.innerHTML = POSICOES.map(p=>
+    `<option value="${p.k}" ${posicaoAtual===p.k?'selected':''}>${p.icon} ${p.label}</option>`
+  ).join('');
+
   ['chute','passe','desarme','tecnica','visao'].forEach(k=>{
     document.getElementById('carta-editor-'+k).value = carta?.[k] ?? 40;
   });
@@ -2113,10 +2576,12 @@ async function salvarCartaAdmin(){
   }
 
   const pais = PAISES.find(p=>p.c===paisCodigo);
+  const posicao = document.getElementById('carta-editor-posicao').value;
   const payload = {
     aluno_id: alunoId, apelido,
     pais_codigo: pais.c, pais_nome: pais.n,
     avatar_config: { avatarId },
+    posicao,
     ...attrs, ativa,
   };
 
@@ -2196,12 +2661,14 @@ async function gerarCartasAutomaticas(){
     const pais = PAISES[Math.floor(Math.random()*PAISES.length)];
     const avatarId = avatarIds[Math.floor(Math.random()*avatarIds.length)];
     const apelido = APELIDOS_ALEATORIOS[Math.floor(Math.random()*APELIDOS_ALEATORIOS.length)];
+    const posicao = POSICOES[Math.floor(Math.random()*POSICOES.length)].k;
     const attrs = distribuirAtributosAleatorio(aluno.pontuacao_total);
 
     const payload = {
       aluno_id: aluno.id, apelido,
       pais_codigo: pais.c, pais_nome: pais.n,
       avatar_config: { avatarId },
+      posicao,
       ...attrs, ativa: true,
     };
     const res = await sb.insert('cartas', payload);
@@ -2222,20 +2689,20 @@ async function gerarCartasAutomaticas(){
 // CARDS DE CRAQUES — cartas do sistema, sem aluno vinculado (aluno_id null)
 // ═══════════════════════════════════════════════════════════════
 const CRAQUES_SISTEMA = [
-  { apelido:'Messi',            pais:'AR',  avatarId:'menino31', chute:190, passe:200, desarme:60,  tecnica:200, visao:195 },
-  { apelido:'Neymar Jr.',       pais:'BR',  avatarId:'menino41', chute:180, passe:180, desarme:55,  tecnica:200, visao:175 },
-  { apelido:'Cristiano Ronaldo',pais:'PT',  avatarId:'menino27', chute:200, passe:150, desarme:70,  tecnica:180, visao:160 },
-  { apelido:'Erling Haaland',   pais:'NO',  avatarId:'menino26', chute:200, passe:110, desarme:90,  tecnica:150, visao:120 },
-  { apelido:'Kylian Mbappé',    pais:'FR',  avatarId:'menino24', chute:195, passe:150, desarme:70,  tecnica:185, visao:160 },
-  { apelido:'Mohamed Salah',    pais:'EG',  avatarId:'menino33', chute:185, passe:155, desarme:65,  tecnica:175, visao:150 },
-  { apelido:'Vinícius Jr.',     pais:'BR',  avatarId:'menino34', chute:170, passe:140, desarme:60,  tecnica:190, visao:145 },
-  { apelido:'Luka Modrić',      pais:'HR',  avatarId:'menino37', chute:140, passe:195, desarme:110, tecnica:185, visao:200 },
-  { apelido:'Kevin De Bruyne',  pais:'BE',  avatarId:'menino30', chute:170, passe:200, desarme:90,  tecnica:170, visao:195 },
-  { apelido:'Harry Kane',       pais:'ENG', avatarId:'menino28', chute:195, passe:160, desarme:75,  tecnica:160, visao:170 },
-  { apelido:'Virgil van Dijk',  pais:'NL',  avatarId:'menino43', chute:100, passe:150, desarme:200, tecnica:140, visao:170 },
-  { apelido:'Marta',            pais:'BR',  avatarId:'menina26', chute:195, passe:150, desarme:55,  tecnica:195, visao:165 },
-  { apelido:'Alexia Putellas',  pais:'ES',  avatarId:'menina27', chute:155, passe:195, desarme:95,  tecnica:180, visao:195 },
-  { apelido:'Alex Morgan',      pais:'US',  avatarId:'menina28', chute:185, passe:145, desarme:60,  tecnica:170, visao:150 },
+  { apelido:'Messi',            pais:'AR',  avatarId:'menino31', posicao:'atacante', chute:190, passe:200, desarme:60,  tecnica:200, visao:195 },
+  { apelido:'Neymar Jr.',       pais:'BR',  avatarId:'menino41', posicao:'atacante', chute:180, passe:180, desarme:55,  tecnica:200, visao:175 },
+  { apelido:'Cristiano Ronaldo',pais:'PT',  avatarId:'menino27', posicao:'atacante', chute:200, passe:150, desarme:70,  tecnica:180, visao:160 },
+  { apelido:'Erling Haaland',   pais:'NO',  avatarId:'menino26', posicao:'atacante', chute:200, passe:110, desarme:90,  tecnica:150, visao:120 },
+  { apelido:'Kylian Mbappé',    pais:'FR',  avatarId:'menino24', posicao:'atacante', chute:195, passe:150, desarme:70,  tecnica:185, visao:160 },
+  { apelido:'Mohamed Salah',    pais:'EG',  avatarId:'menino33', posicao:'atacante', chute:185, passe:155, desarme:65,  tecnica:175, visao:150 },
+  { apelido:'Vinícius Jr.',     pais:'BR',  avatarId:'menino34', posicao:'atacante', chute:170, passe:140, desarme:60,  tecnica:190, visao:145 },
+  { apelido:'Luka Modrić',      pais:'HR',  avatarId:'menino37', posicao:'meia',     chute:140, passe:195, desarme:110, tecnica:185, visao:200 },
+  { apelido:'Kevin De Bruyne',  pais:'BE',  avatarId:'menino30', posicao:'meia',     chute:170, passe:200, desarme:90,  tecnica:170, visao:195 },
+  { apelido:'Harry Kane',       pais:'ENG', avatarId:'menino28', posicao:'atacante', chute:195, passe:160, desarme:75,  tecnica:160, visao:170 },
+  { apelido:'Virgil van Dijk',  pais:'NL',  avatarId:'menino43', posicao:'defensor', chute:100, passe:150, desarme:200, tecnica:140, visao:170 },
+  { apelido:'Marta',            pais:'BR',  avatarId:'menina26', posicao:'atacante', chute:195, passe:150, desarme:55,  tecnica:195, visao:165 },
+  { apelido:'Alexia Putellas',  pais:'ES',  avatarId:'menina27', posicao:'meia',     chute:155, passe:195, desarme:95,  tecnica:180, visao:195 },
+  { apelido:'Alex Morgan',      pais:'US',  avatarId:'menina28', posicao:'atacante', chute:185, passe:145, desarme:60,  tecnica:170, visao:150 },
 ];
 
 
@@ -2263,6 +2730,7 @@ async function criarCardsCraques(){
       apelido: cr.apelido,
       pais_codigo: pais.c, pais_nome: pais.n,
       avatar_config: { avatarId: cr.avatarId },
+      posicao: cr.posicao || 'atacante',
       chute: cr.chute, passe: cr.passe, desarme: cr.desarme, tecnica: cr.tecnica, visao: cr.visao,
       ativa: true,
     };
