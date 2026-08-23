@@ -1964,15 +1964,30 @@ const FASES_COPA = [
 
 async function abrirModoCopa(){
   if(!G.aluno.carta_criada){ alert('Crie sua carta antes de jogar!'); return; }
-  let copas = await sb.select('copas', `aluno_id=eq.${G.aluno.id}&concluida=eq.false&order=created_at.desc&limit=1`);
-  let copa = copas?.[0];
-  if(!copa){
-    const res = await sb.insert('copas', { aluno_id:G.aluno.id, fase_atual:'oitavas' });
-    copa = res?.[0];
+  try {
+    let copas = await sb.select('copas', `aluno_id=eq.${G.aluno.id}&concluida=eq.false&order=created_at.desc&limit=1`);
+    if(!Array.isArray(copas)){
+      console.error('Resposta inesperada da tabela copas:', copas);
+      alert('Não consegui acessar o Modo Copa. É provável que a tabela "copas" ainda não exista no Supabase — peça ao professor pra rodar o SQL de configuração desse modo.');
+      return;
+    }
+    let copa = copas[0];
+    if(!copa){
+      const res = await sb.insert('copas', { aluno_id:G.aluno.id, fase_atual:'oitavas' });
+      if(!Array.isArray(res) || !res[0]){
+        console.error('Falha ao criar copa:', res);
+        alert('Não consegui criar sua Copa. Verifique se a tabela "copas" existe no Supabase (peça ao professor pra rodar o SQL de configuração).');
+        return;
+      }
+      copa = res[0];
+    }
+    G.jogo.copaAtual = copa;
+    renderBracketCopa();
+    irPara('tela-copa-bracket');
+  } catch(e) {
+    console.error('Erro no Modo Copa:', e);
+    alert('Ocorreu um erro ao abrir o Modo Copa. Veja o console do navegador (F12) para detalhes.');
   }
-  G.jogo.copaAtual = copa;
-  renderBracketCopa();
-  irPara('tela-copa-bracket');
 }
 
 function renderBracketCopa(){
@@ -2116,9 +2131,9 @@ async function carregarRankingRecorde(){
     sb.select('recordes', 'order=sequencia.desc&limit=200'),
     sb.select('alunos', ''),
   ]);
-  const nomeMap = Object.fromEntries((alunos||[]).map(a=>[a.id,a.nome_completo]));
+  const nomeMap = Object.fromEntries((Array.isArray(alunos)?alunos:[]).map(a=>[a.id,a.nome_completo]));
   const melhores = {};
-  (todos||[]).forEach(r=>{
+  (Array.isArray(todos)?todos:[]).forEach(r=>{
     if(melhores[r.aluno_id]===undefined || r.sequencia>melhores[r.aluno_id]) melhores[r.aluno_id]=r.sequencia;
   });
   const lista = Object.entries(melhores).sort((a,b)=>b[1]-a[1]).slice(0,10);
