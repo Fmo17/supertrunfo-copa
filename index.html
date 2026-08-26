@@ -354,6 +354,33 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
   width:auto;max-width:none;align-self:flex-end;
   padding:8px 14px;gap:10px;border-radius:30px;margin-bottom:18px;
 }
+#tela-minha-carta{
+  background:
+    linear-gradient(180deg, rgba(6,10,20,.6) 0%, rgba(6,10,20,.78) 50%, rgba(10,17,32,.95) 100%),
+    url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/sala-quadros.jpg');
+  background-size:cover;background-position:center;background-attachment:fixed;
+}
+#tela-quiz{
+  background:
+    linear-gradient(180deg, rgba(6,10,20,.6) 0%, rgba(6,10,20,.78) 50%, rgba(10,17,32,.95) 100%),
+    url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/sala-trofeu.jpg');
+  background-size:cover;background-position:center;background-attachment:fixed;
+}
+#tela-jogar-menu{
+  background:
+    linear-gradient(180deg, rgba(6,10,20,.55) 0%, rgba(6,10,20,.75) 50%, rgba(10,17,32,.95) 100%),
+    url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/torcida-estadio.jpg');
+  background-size:cover;background-position:center;background-attachment:fixed;
+}
+#tela-baralho{
+  background:
+    linear-gradient(180deg, rgba(6,10,20,.6) 0%, rgba(6,10,20,.78) 50%, rgba(10,17,32,.95) 100%),
+    url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/campo-equipe.jpg');
+  background-size:cover;background-position:center;background-attachment:fixed;
+}
+#tela-minha-carta .header-aluno,#tela-quiz .header-aluno,#tela-jogar-menu .header-aluno,#tela-baralho .header-aluno{
+  background:rgba(20,30,51,.82);backdrop-filter:blur(14px);
+}
 #tela-menu .header-aluno > div:first-child{display:none}
 #tela-menu .nome-usuario{font-size:12px}
 #tela-menu #menu-pts-info{display:none}
@@ -391,6 +418,8 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
 .menu-item-foto:has(.menu-foto-overlay--ciano):hover{box-shadow:var(--glow-ciano)}
 .menu-foto-overlay--verde{background:linear-gradient(0deg, rgba(5,20,12,.95) 0%, rgba(22,193,114,.35) 55%, transparent 100%)}
 .menu-item-foto:has(.menu-foto-overlay--verde):hover{box-shadow:var(--glow-verde)}
+.menu-foto-overlay--vermelho{background:linear-gradient(0deg, rgba(25,5,8,.95) 0%, rgba(255,77,109,.35) 55%, transparent 100%)}
+.menu-item-foto:has(.menu-foto-overlay--vermelho):hover{box-shadow:0 0 22px rgba(255,77,109,.45)}
 
 @media(max-width:900px){
   .menu-item-foto{aspect-ratio:3/4}
@@ -567,13 +596,25 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     <button class="btn-secundario" onclick="irPara('tela-menu')">← Voltar</button>
     <div class="nome-usuario">Jogar</div><div></div></div>
   <div class="secao-titulo"><h2>Escolha o modo de jogo</h2></div>
-  <div class="menu-grid" style="max-width:460px">
-    <div class="menu-item" onclick="irPara('tela-modo-amistoso')">
-      <div class="icone">🤝</div><div class="titulo">Amistoso</div><div class="desc">Monte um baralho e jogue vs CPU ou colega</div></div>
-    <div class="menu-item" onclick="abrirModoCopa()">
-      <div class="icone">🏆</div><div class="titulo">Copa</div><div class="desc">4 fases eliminatórias vs CPU</div></div>
-    <div class="menu-item" onclick="irPara('tela-recorde-intro')">
-      <div class="icone">🔥</div><div class="titulo">Recorde</div><div class="desc">Quantas vitórias seguidas você consegue?</div></div>
+  <div class="menu-grid-fotos" style="max-width:900px;grid-template-columns:repeat(3,1fr)">
+    <div class="menu-item-foto" onclick="irPara('tela-modo-amistoso')" style="background:linear-gradient(150deg,#0a2733,#0d3f52)">
+      <div class="menu-foto-overlay menu-foto-overlay--ciano">
+        <div class="titulo">🤝 Amistoso</div>
+        <div class="desc">Monte um baralho e jogue vs CPU ou colega</div>
+      </div>
+    </div>
+    <div class="menu-item-foto" onclick="abrirModoCopa()" style="background:linear-gradient(150deg,#332405,#4d3708)">
+      <div class="menu-foto-overlay menu-foto-overlay--dourado">
+        <div class="titulo">🏆 Copa</div>
+        <div class="desc">4 fases eliminatórias vs CPU</div>
+      </div>
+    </div>
+    <div class="menu-item-foto" onclick="irPara('tela-recorde-intro')" style="background:linear-gradient(150deg,#330a10,#4d0d18)">
+      <div class="menu-foto-overlay menu-foto-overlay--vermelho">
+        <div class="titulo">🔥 Recorde</div>
+        <div class="desc">Quantas vitórias seguidas você consegue?</div>
+      </div>
+    </div>
   </div>
 </div>
 
