@@ -792,9 +792,12 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
   </div>
   <div class="admin-painel" id="painel-quiz">
     <div class="admin-card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <h3 style="margin-bottom:0">🧠 Perguntas do Quiz</h3>
-        <button class="btn-primario" style="width:auto;padding:10px 20px" onclick="abrirModalQuizPergunta()">+ Nova Pergunta</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn-secundario" id="btn-importar-quiz" onclick="importarPerguntasProntas()">📥 Importar perguntas prontas (Austrália)</button>
+          <button class="btn-primario" style="width:auto;padding:10px 20px" onclick="abrirModalQuizPergunta()">+ Nova Pergunta</button>
+        </div>
       </div>
       <div style="overflow-x:auto"><table class="tabela-admin"><thead><tr><th>Pergunta</th><th>Correta</th><th>Ativa</th><th>Ação</th></tr></thead>
       <tbody id="tbody-quiz-perguntas"></tbody></table></div>
@@ -3301,6 +3304,67 @@ async function carregarPartidasAdmin(){
 // ═══════════════════════════════════════════════════════════════
 // ADMIN — GERENCIAR PERGUNTAS DO QUIZ
 // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// PERGUNTAS PRONTAS — Austrália, Copa do Mundo e Cultura Esportiva (30)
+// ═══════════════════════════════════════════════════════════════
+const QUIZ_PERGUNTAS_PRONTAS = [
+  { pergunta:'Qual é o nome da seleção masculina de futebol da Austrália?', opcao_a:'Matildas', opcao_b:'Socceroos', opcao_c:'Wallabies', opcao_d:'Kangaroos', correta:1 },
+  { pergunta:'Quais são as cores nacionais usadas pela Austrália em muitos uniformes esportivos?', opcao_a:'Azul e branco', opcao_b:'Vermelho e preto', opcao_c:'Verde e dourado', opcao_d:'Roxo e amarelo', correta:2 },
+  { pergunta:'A flor que inspira as cores verde e dourado da Austrália é chamada de:', opcao_a:'Rosa vermelha', opcao_b:'Acácia-dourada', opcao_c:'Girassol-do-deserto', opcao_d:'Lírio australiano', correta:1 },
+  { pergunta:'Qual animal aparece como símbolo importante da Austrália?', opcao_a:'Leão', opcao_b:'Urso polar', opcao_c:'Canguru', opcao_d:'Panda', correta:2 },
+  { pergunta:'O emu é:', opcao_a:'Uma ave típica da Austrália', opcao_b:'Um peixe australiano', opcao_c:'Um tipo de árvore', opcao_d:'Um estádio de futebol', correta:0 },
+  { pergunta:'O que significa "G\u2019day"?', opcao_a:'Obrigado', opcao_b:'Até amanhã', opcao_c:'Olá / bom dia', opcao_d:'Desculpa', correta:2 },
+  { pergunta:'O que significa "mate" na linguagem australiana?', opcao_a:'Professor', opcao_b:'Amigo ou companheiro', opcao_c:'Inimigo', opcao_d:'Juiz', correta:1 },
+  { pergunta:'Qual esporte é muito associado às praias australianas?', opcao_a:'Surfe', opcao_b:'Esqui no gelo', opcao_c:'Beisebol no gelo', opcao_d:'Sumô', correta:0 },
+  { pergunta:'Qual seleção feminina de futebol é famosa na Austrália?', opcao_a:'Matildas', opcao_b:'Socceroos', opcao_c:'All Blacks', opcao_d:'Wallabies', correta:0 },
+  { pergunta:'A Austrália fica em qual região do mundo?', opcao_a:'Europa', opcao_b:'Oceania', opcao_c:'América do Sul', opcao_d:'África', correta:1 },
+  { pergunta:'Por que as cores da Austrália são verde e dourado?', opcao_a:'Porque representam apenas o oceano', opcao_b:'Porque são as cores da bandeira do Brasil', opcao_c:'Porque lembram a acácia-dourada, flor símbolo nacional', opcao_d:'Porque foram escolhidas por sorteio', correta:2 },
+  { pergunta:'O dourado nas cores australianas pode representar:', opcao_a:'Praias, riquezas naturais e vitórias esportivas', opcao_b:'Apenas o gelo das montanhas', opcao_c:'Apenas a noite australiana', opcao_d:'Tristeza e derrota', correta:0 },
+  { pergunta:'O verde nas cores australianas pode representar:', opcao_a:'Florestas, campos e natureza', opcao_b:'Neve e gelo', opcao_c:'Desertos sem vida', opcao_d:'Apenas o uniforme militar', correta:0 },
+  { pergunta:'O que é "mateship"?', opcao_a:'Uma comida típica australiana', opcao_b:'Uma dança tradicional', opcao_c:'Companheirismo, amizade e ajuda ao próximo', opcao_d:'Um tipo de campeonato', correta:2 },
+  { pergunta:'A expressão "No worries, mate" significa:', opcao_a:'Estou preocupado, amigo', opcao_b:'Sem problemas, amigo', opcao_c:'Vamos correr, amigo', opcao_d:'Boa noite, amigo', correta:1 },
+  { pergunta:'A expressão "How ya going?" é usada para perguntar:', opcao_a:'Quanto custa?', opcao_b:'Como você está?', opcao_c:'Onde fica o estádio?', opcao_d:'Qual é o placar?', correta:1 },
+  { pergunta:'Qual destas ideias combina mais com o modo de vida australiano?', opcao_a:'Vida sempre fechada dentro de casa', opcao_b:'Pouco contato com esportes', opcao_c:'Atividades ao ar livre, esportes e natureza', opcao_d:'Proibição de esportes nas escolas', correta:2 },
+  { pergunta:'Na Austrália, o futebol:', opcao_a:'É o único esporte praticado', opcao_b:'Divide espaço com outros esportes populares', opcao_c:'Não existe', opcao_d:'É praticado apenas no inverno', correta:1 },
+  { pergunta:'Qual desses esportes também é muito popular na Austrália?', opcao_a:'Críquete', opcao_b:'Curling de areia', opcao_c:'Capoeira australiana', opcao_d:'Hóquei subaquático obrigatório', correta:0 },
+  { pergunta:'Qual jogador é considerado um dos grandes nomes do futebol australiano?', opcao_a:'Tim Cahill', opcao_b:'Pelé', opcao_c:'Cristiano Ronaldo', opcao_d:'Mbappé', correta:0 },
+  { pergunta:'Por que o futebol não tem o mesmo domínio na Austrália que tem no Brasil?', opcao_a:'Porque os australianos não gostam de esportes', opcao_b:'Porque o futebol divide atenção com críquete, rugby, futebol australiano, natação, tênis e surfe', opcao_c:'Porque o país não tem campos', opcao_d:'Porque é proibido jogar futebol na escola', correta:1 },
+  { pergunta:'Qual é uma boa comparação entre Brasil e Austrália em relação ao futebol?', opcao_a:'Nos dois países, o futebol é proibido', opcao_b:'No Brasil, o futebol é muito dominante; na Austrália, ele divide espaço com vários esportes', opcao_c:'Na Austrália só existe futebol e no Brasil só existe surfe', opcao_d:'Nenhum dos dois países gosta de Copa do Mundo', correta:1 },
+  { pergunta:'O que o canguru e o emu representam simbolicamente no escudo/brasão australiano?', opcao_a:'A ideia de seguir em frente', opcao_b:'A ideia de voltar ao passado', opcao_c:'A ideia de não praticar esportes', opcao_d:'A ideia de viver no gelo', correta:0 },
+  { pergunta:'Qual personalidade australiana ficou conhecida no futebol feminino mundial?', opcao_a:'Sam Kerr', opcao_b:'Marta Vieira da Silva', opcao_c:'Serena Williams', opcao_d:'Rebeca Andrade', correta:0 },
+  { pergunta:'Cathy Freeman é lembrada na Austrália principalmente por ser:', opcao_a:'Nadadora olímpica', opcao_b:'Jogadora de futebol', opcao_c:'Atleta olímpica e símbolo de representatividade', opcao_d:'Técnica da seleção masculina', correta:2 },
+  { pergunta:'Qual característica climática ajuda a explicar a forte relação da Austrália com esportes ao ar livre?', opcao_a:'O país possui muitas áreas costeiras, praias e espaços naturais', opcao_b:'O país é totalmente coberto por neve o ano inteiro', opcao_c:'O país não tem parques nem praias', opcao_d:'O país tem clima igual em todas as regiões', correta:0 },
+  { pergunta:'Por que estudar a Austrália no tema Copa do Mundo pode ir além do futebol?', opcao_a:'Porque permite falar de cultura, clima, esporte, símbolos, hábitos e modo de vida', opcao_b:'Porque não existe futebol na Austrália', opcao_c:'Porque a Copa do Mundo não envolve países', opcao_d:'Porque só se deve falar de uniformes', correta:0 },
+  { pergunta:'O "fair go" na cultura australiana está ligado à ideia de:', opcao_a:'Oportunidade justa para todos', opcao_b:'Vitória a qualquer custo', opcao_c:'Desrespeito aos adversários', opcao_d:'Abandono do trabalho em equipe', correta:0 },
+  { pergunta:'Qual alternativa representa melhor o estilo "laid-back" associado aos australianos?', opcao_a:'Um jeito mais tranquilo, informal e descontraído', opcao_b:'Um modo agressivo e fechado de viver', opcao_c:'Uma regra rígida de silêncio', opcao_d:'Uma obrigação escolar', correta:0 },
+  { pergunta:'Em um trabalho escolar sobre Austrália e Copa do Mundo, qual seria o melhor título?', opcao_a:'Austrália: futebol, cultura e paixão pelo esporte', opcao_b:'Austrália: um país sem esportes', opcao_c:'Austrália: somente neve e gelo', opcao_d:'Austrália: o país que não participa de competições', correta:0 },
+];
+
+async function importarPerguntasProntas(){
+  if(!confirm(`Importar ${QUIZ_PERGUNTAS_PRONTAS.length} perguntas prontas sobre Austrália/Copa? Perguntas com o mesmo texto de alguma já cadastrada serão puladas.`)) return;
+
+  const btn = document.getElementById('btn-importar-quiz');
+  const original = btn.textContent;
+  btn.disabled = true;
+
+  const existentes = await sb.select('quiz_perguntas', '');
+  const textosExistentes = new Set((Array.isArray(existentes)?existentes:[]).map(p=>p.pergunta.trim()));
+
+  let importadas = 0, puladas = 0;
+  for(let i=0;i<QUIZ_PERGUNTAS_PRONTAS.length;i++){
+    const q = QUIZ_PERGUNTAS_PRONTAS[i];
+    btn.textContent = `⏳ Importando ${i+1}/${QUIZ_PERGUNTAS_PRONTAS.length}...`;
+    if(textosExistentes.has(q.pergunta.trim())){ puladas++; continue; }
+    const res = await sb.insert('quiz_perguntas', { ...q, ativa:true });
+    if(res?.[0]) importadas++;
+  }
+
+  btn.disabled = false;
+  btn.textContent = original;
+  alert(`✅ ${importadas} pergunta(s) importada(s)!${puladas?` (${puladas} já existiam e foram puladas)`:''}`);
+  carregarQuizAdmin();
+}
+
 async function carregarQuizAdmin(){
   const tbody = document.getElementById('tbody-quiz-perguntas');
   tbody.innerHTML = '<tr><td colspan="4">Carregando...</td></tr>';
