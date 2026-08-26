@@ -732,6 +732,7 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     <button class="admin-nav-btn" onclick="adminAba('alunos')">👥 Alunos</button>
     <button class="admin-nav-btn" onclick="adminAba('cartas')">🃏 Cartas</button>
     <button class="admin-nav-btn" onclick="adminAba('partidas')">🎮 Partidas</button>
+    <button class="admin-nav-btn" onclick="adminAba('quiz')">🧠 Quiz</button>
   </div>
   <div class="admin-painel ativo" id="painel-geral">
     <div class="admin-card"><h3>📊 Resumo da turma</h3>
@@ -788,6 +789,16 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     <div class="admin-card"><h3>🎮 Histórico de partidas</h3>
       <div style="overflow-x:auto"><table class="tabela-admin"><thead><tr><th>J1</th><th>J2</th><th>Modo</th><th>Vencedor</th><th>Data</th></tr></thead>
       <tbody id="tbody-partidas"></tbody></table></div></div>
+  </div>
+  <div class="admin-painel" id="painel-quiz">
+    <div class="admin-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <h3 style="margin-bottom:0">🧠 Perguntas do Quiz</h3>
+        <button class="btn-primario" style="width:auto;padding:10px 20px" onclick="abrirModalQuizPergunta()">+ Nova Pergunta</button>
+      </div>
+      <div style="overflow-x:auto"><table class="tabela-admin"><thead><tr><th>Pergunta</th><th>Correta</th><th>Ativa</th><th>Ação</th></tr></thead>
+      <tbody id="tbody-quiz-perguntas"></tbody></table></div>
+    </div>
   </div>
 </div>
 
@@ -863,6 +874,41 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     <div class="modal-btns" style="margin-top:16px">
       <button class="btn-secundario" onclick="fecharModal('modal-carta-editor')">Cancelar</button>
       <button class="btn-primario" style="flex:1" onclick="salvarCartaAdmin()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-quiz-pergunta">
+  <div class="modal modal-lg">
+    <h3 id="quiz-pergunta-titulo">🧠 Nova Pergunta</h3>
+    <input type="hidden" id="quiz-pergunta-id">
+    <div class="form-admin">
+      <div class="campo" style="grid-column:1/-1">
+        <label>Pergunta</label>
+        <input type="text" id="quiz-pergunta-texto" placeholder="Ex: Em que ano foi a primeira Copa do Mundo?">
+      </div>
+      <div class="campo"><label>Opção A</label><input type="text" id="quiz-opcao-a"></div>
+      <div class="campo"><label>Opção B</label><input type="text" id="quiz-opcao-b"></div>
+      <div class="campo"><label>Opção C</label><input type="text" id="quiz-opcao-c"></div>
+      <div class="campo"><label>Opção D</label><input type="text" id="quiz-opcao-d"></div>
+      <div class="campo" style="grid-column:1/-1">
+        <label>Resposta correta</label>
+        <select id="quiz-pergunta-correta">
+          <option value="0">Opção A</option>
+          <option value="1">Opção B</option>
+          <option value="2">Opção C</option>
+          <option value="3">Opção D</option>
+        </select>
+      </div>
+      <div class="campo" style="display:flex;align-items:center;gap:8px;margin-top:8px">
+        <input type="checkbox" id="quiz-pergunta-ativa" style="width:auto" checked>
+        <label style="margin:0;text-transform:none;font-size:13px;color:var(--preto)">Pergunta ativa (pode cair no quiz)</label>
+      </div>
+    </div>
+    <div id="quiz-pergunta-erro" class="msg-erro" style="text-align:left"></div>
+    <div class="modal-btns" style="margin-top:16px">
+      <button class="btn-secundario" onclick="fecharModal('modal-quiz-pergunta')">Cancelar</button>
+      <button class="btn-primario" style="flex:1" onclick="salvarQuizPergunta()">💾 Salvar</button>
     </div>
   </div>
 </div>
@@ -1442,8 +1488,10 @@ let G = {
   },
   adminAlunos: [],
   adminCartas: [],
+  adminQuizPerguntas: [],
   cartaEditorState: { paisCodigo:null, avatarId:null, avatarGenero:'menino' },
-  quiz: { indice:0, acertos:0, pontosGanhos:0, perguntas:[], cartaAtual:null, pontosRestantes:0, extras:{} }
+  quiz: { tentativa:null, perguntaAtual:null, timerId:null, deadline:0 },
+  bonusQuiz: { carta:null, pontosRestantes:0, extras:{} }
 };
 
 const ATTRS = [
@@ -1469,155 +1517,193 @@ function infoPosicao(pos){
 }
 
 // ═══════════════════════════════════════════════════════════════
-// QUIZ — perguntas de EXEMPLO (troque pelos temas definitivos depois).
-// Cada acerto vale PONTOS_POR_ACERTO pontos, aplicados na carta do aluno.
+// QUIZ — perguntas cadastradas pelo professor (tabela quiz_perguntas).
+// Regras: 45s por pergunta, 2 tentativas/dia, cronômetro guardado no
+// banco (sobrevive a fechar o app), marcos de sequência (5/10/20/30
+// acertos seguidos = +10/+20/+30/+40 pontos, teto de 100 no total).
+// Os pontos ficam disponíveis pra distribuir na tela "Minha Carta".
 // ═══════════════════════════════════════════════════════════════
-const PONTOS_POR_ACERTO = 10;
-const QUIZ_PERGUNTAS = [
-  { pergunta:'Quantos jogadores um time tem em campo, sem contar os reservas?', opcoes:['9','10','11','12'], correta:2 },
-  { pergunta:'Em que país foi disputada a primeira Copa do Mundo, em 1930?', opcoes:['Brasil','Uruguai','Itália','França'], correta:1 },
-  { pergunta:'Quantas vezes o Brasil já foi campeão mundial?', opcoes:['3','4','5','6'], correta:2 },
-  { pergunta:'Quanto tempo dura uma partida de futebol, sem contar acréscimos?', opcoes:['80 minutos','90 minutos','100 minutos','120 minutos'], correta:1 },
-  { pergunta:'A Copa do Mundo de 2026 vai ser sediada por quais países?', opcoes:['Brasil, Argentina e Uruguai','EUA, México e Canadá','Alemanha e França','Catar e Arábia Saudita'], correta:1 },
-  { pergunta:'Qual desses NÃO é um cartão usado pelo árbitro?', opcoes:['Amarelo','Vermelho','Azul','Nenhum, os dois primeiros existem'], correta:2 },
-];
+const QUIZ_TEMPO_SEGUNDOS = 45;
+const QUIZ_MARCOS = [{limite:5,bonus:10},{limite:10,bonus:20},{limite:20,bonus:30},{limite:30,bonus:40}];
 
-function iniciarQuiz(){
-  G.quiz = {
-    indice:0, acertos:0, pontosGanhos:0,
-    perguntas:[...QUIZ_PERGUNTAS].sort(()=>Math.random()-0.5).slice(0,5),
-    cartaAtual:null, pontosRestantes:0, extras:{chute:0,passe:0,desarme:0,tecnica:0,visao:0},
-  };
+function hojeISO(){ return new Date().toISOString().slice(0,10); }
+
+async function iniciarQuiz(){
   irPara('tela-quiz');
-  renderQuizIntro();
-}
+  document.getElementById('quiz-container').innerHTML = '<p style="text-align:center;color:var(--cinza4)">Carregando...</p>';
 
-function renderQuizIntro(){
+  const hoje = hojeISO();
+  const tentativas = await sb.select('quiz_tentativas', `aluno_id=eq.${G.aluno.id}&data=eq.${hoje}&order=created_at.asc`);
+  const lista = Array.isArray(tentativas) ? tentativas : [];
+  const emAndamento = lista.find(t=>!t.finalizada);
+
+  if(emAndamento){
+    G.quiz.tentativa = emAndamento;
+    await retomarTentativaQuiz();
+    return;
+  }
+
+  if(lista.length>=2){
+    document.getElementById('quiz-container').innerHTML = `
+      <div style="text-align:center">
+        <div style="font-size:40px;margin-bottom:10px">⏳</div>
+        <h3 style="margin-bottom:8px">Você já usou suas 2 tentativas de hoje</h3>
+        <p style="color:var(--cinza4);font-size:13px;margin-bottom:20px">Volta amanhã pra tentar de novo!</p>
+        <button class="btn-secundario" onclick="irPara('tela-menu')">Voltar ao menu</button>
+      </div>`;
+    return;
+  }
+
   document.getElementById('quiz-container').innerHTML = `
     <div style="text-align:center">
       <div style="font-size:40px;margin-bottom:10px">🧠</div>
       <h3 style="margin-bottom:10px">Quiz</h3>
-      <p style="color:var(--cinza4);font-size:13px;margin-bottom:20px">
-        ${G.quiz.perguntas.length} perguntas. Cada acerto vale ${PONTOS_POR_ACERTO} pontos pra deixar sua carta mais forte!
+      <p style="color:var(--cinza4);font-size:13px;margin-bottom:8px">
+        A cada 5 acertos seguidos você ganha pontos bônus pra sua carta (5→+10, 10→+20, 20→+30, 30→+40).
+        Errar ou o tempo acabar (${QUIZ_TEMPO_SEGUNDOS}s por pergunta) encerra a tentativa.
       </p>
-      <button class="btn-primario" onclick="mostrarPerguntaQuiz()">Começar →</button>
+      <p style="color:var(--cinza4);font-size:12px;margin-bottom:20px">Tentativa ${lista.length+1} de 2 hoje</p>
+      <button class="btn-primario" onclick="criarTentativaQuiz()">Começar →</button>
     </div>`;
 }
 
-function mostrarPerguntaQuiz(){
-  const q = G.quiz.perguntas[G.quiz.indice];
-  if(!q){ finalizarQuiz(); return; }
-  document.getElementById('quiz-container').innerHTML = `
-    <p style="font-size:12px;color:var(--cinza4);margin-bottom:8px">Pergunta ${G.quiz.indice+1} de ${G.quiz.perguntas.length}</p>
-    <h3 style="margin-bottom:18px">${q.pergunta}</h3>
-    <div style="display:flex;flex-direction:column;gap:10px">
-      ${q.opcoes.map((op,i)=>`<button class="btn-secundario" style="text-align:left;padding:12px 16px;width:100%" onclick="responderQuiz(${i})">${op}</button>`).join('')}
-    </div>`;
+async function criarTentativaQuiz(){
+  const res = await sb.insert('quiz_tentativas', { aluno_id:G.aluno.id, data:hojeISO(), sequencia_atual:0 });
+  if(!res?.[0]){ alert('Erro ao iniciar o quiz. Tente novamente.'); irPara('tela-menu'); return; }
+  G.quiz.tentativa = res[0];
+  await proximaPerguntaQuiz();
 }
 
-function responderQuiz(escolha){
-  const q = G.quiz.perguntas[G.quiz.indice];
-  const certo = escolha===q.correta;
-  if(certo){ G.quiz.acertos++; G.quiz.pontosGanhos += PONTOS_POR_ACERTO; }
-  const ultima = (G.quiz.indice+1) >= G.quiz.perguntas.length;
-  document.getElementById('quiz-container').innerHTML = `
-    <div style="text-align:center">
-      <div style="font-size:40px;margin-bottom:10px">${certo?'✅':'❌'}</div>
-      <h3 style="margin-bottom:6px">${certo?'Isso aí!':'Não foi dessa vez'}</h3>
-      <p style="color:var(--cinza4);font-size:13px;margin-bottom:20px">Resposta certa: ${q.opcoes[q.correta]}</p>
-      <button class="btn-primario" onclick="proximaPerguntaQuiz()">${ultima?'Ver resultado':'Próxima pergunta'} →</button>
-    </div>`;
-}
-
-function proximaPerguntaQuiz(){
-  G.quiz.indice++;
-  mostrarPerguntaQuiz();
-}
-
-async function finalizarQuiz(){
-  const ganhos = G.quiz.pontosGanhos;
-  if(ganhos<=0){
+async function retomarTentativaQuiz(){
+  const t = G.quiz.tentativa;
+  if(t.pergunta_atual_id){
+    const perguntas = await sb.select('quiz_perguntas', `id=eq.${t.pergunta_atual_id}`);
+    const pergunta = perguntas?.[0];
+    if(!pergunta){ await proximaPerguntaQuiz(); return; }
+    const decorridoSeg = Math.floor((Date.now() - new Date(t.pergunta_iniciada_em).getTime())/1000);
+    const restante = QUIZ_TEMPO_SEGUNDOS - decorridoSeg;
+    G.quiz.perguntaAtual = pergunta;
+    if(restante<=0){
+      await responderQuiz(-1);
+    } else {
+      mostrarPerguntaNaTela(pergunta, restante);
+    }
+  } else {
     document.getElementById('quiz-container').innerHTML = `
       <div style="text-align:center">
-        <div style="font-size:40px;margin-bottom:10px">🙂</div>
-        <h3 style="margin-bottom:6px">Você acertou ${G.quiz.acertos} de ${G.quiz.perguntas.length}</h3>
-        <p style="color:var(--cinza4);font-size:13px;margin-bottom:20px">Não dessa vez — tenta de novo daqui a pouco!</p>
-        <button class="btn-primario" onclick="irPara('tela-menu')">Voltar ao menu</button>
+        <div style="font-size:40px;margin-bottom:10px">▶️</div>
+        <h3 style="margin-bottom:6px">Sequência atual: ${t.sequencia_atual}</h3>
+        <p style="color:var(--cinza4);font-size:13px;margin-bottom:20px">Continue de onde parou.</p>
+        <button class="btn-primario" onclick="proximaPerguntaQuiz()">Próxima pergunta →</button>
       </div>`;
+  }
+}
+
+async function proximaPerguntaQuiz(){
+  const t = G.quiz.tentativa;
+  const usadas = t.perguntas_respondidas || [];
+  const filtro = usadas.length ? `&id=not.in.(${usadas.join(',')})` : '';
+  let perguntas = await sb.select('quiz_perguntas', `ativa=eq.true${filtro}`);
+  if(!Array.isArray(perguntas) || !perguntas.length){
+    perguntas = await sb.select('quiz_perguntas', 'ativa=eq.true'); // acabaram perguntas novas, reaproveita
+  }
+  if(!Array.isArray(perguntas) || !perguntas.length){
+    document.getElementById('quiz-container').innerHTML = `<div style="text-align:center;color:var(--cinza4)">
+      <p style="margin-bottom:16px">O professor ainda não cadastrou perguntas no quiz. Volte mais tarde!</p>
+      <button class="btn-secundario" onclick="irPara('tela-menu')">Voltar ao menu</button></div>`;
     return;
   }
+  const pergunta = perguntas[Math.floor(Math.random()*perguntas.length)];
+  const agora = new Date().toISOString();
+  const res = await sb.update('quiz_tentativas', { pergunta_atual_id: pergunta.id, pergunta_iniciada_em: agora }, `id=eq.${t.id}`);
+  if(res?.[0]) G.quiz.tentativa = res[0];
+  G.quiz.perguntaAtual = pergunta;
+  mostrarPerguntaNaTela(pergunta, QUIZ_TEMPO_SEGUNDOS);
+}
+
+function mostrarPerguntaNaTela(pergunta, segundosRestantes){
+  clearInterval(G.quiz.timerId);
+  G.quiz.deadline = Date.now() + segundosRestantes*1000;
+
+  const opcoes = [pergunta.opcao_a,pergunta.opcao_b,pergunta.opcao_c,pergunta.opcao_d];
+  document.getElementById('quiz-container').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <span style="font-size:12px;color:var(--cinza4)">Sequência: ${G.quiz.tentativa.sequencia_atual}</span>
+      <span id="quiz-timer" style="font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--amarelo)">${segundosRestantes}s</span>
+    </div>
+    <h3 style="margin-bottom:18px">${pergunta.pergunta}</h3>
+    <div style="display:flex;flex-direction:column;gap:10px" id="quiz-opcoes">
+      ${opcoes.map((op,i)=>`<button class="btn-secundario" style="text-align:left;padding:12px 16px;width:100%" onclick="responderQuiz(${i})">${op}</button>`).join('')}
+    </div>`;
+
+  G.quiz.timerId = setInterval(()=>{
+    const restante = Math.ceil((G.quiz.deadline - Date.now())/1000);
+    const timerEl = document.getElementById('quiz-timer');
+    if(!timerEl){ clearInterval(G.quiz.timerId); return; }
+    if(restante<=0){
+      clearInterval(G.quiz.timerId);
+      timerEl.textContent = '0s';
+      responderQuiz(-1);
+    } else {
+      timerEl.textContent = restante+'s';
+      if(restante<=10) timerEl.style.color = 'var(--vermelho)';
+    }
+  }, 250);
+}
+
+async function responderQuiz(escolha){
+  clearInterval(G.quiz.timerId);
+  const t = G.quiz.tentativa;
+  const pergunta = G.quiz.perguntaAtual;
+  const certo = escolha === pergunta.correta;
+  const novasRespondidas = [...(t.perguntas_respondidas||[]), pergunta.id];
+  const payload = { pergunta_atual_id:null, pergunta_iniciada_em:null, perguntas_respondidas:novasRespondidas };
+
+  let mensagemBonus = '';
+  if(certo){
+    payload.sequencia_atual = t.sequencia_atual + 1;
+    mensagemBonus = await checarMilestoneQuiz(payload.sequencia_atual);
+  } else {
+    payload.sequencia_atual = 0;
+    payload.finalizada = true;
+  }
+
+  const res = await sb.update('quiz_tentativas', payload, `id=eq.${t.id}`);
+  if(res?.[0]) G.quiz.tentativa = res[0];
+
+  mostrarResultadoRodadaQuiz(certo, pergunta, escolha===-1, mensagemBonus);
+}
+
+async function checarMilestoneQuiz(sequenciaAtual){
+  const alunoAtual = (await sb.select('alunos', `id=eq.${G.aluno.id}`))?.[0];
+  if(!alunoAtual) return '';
+  const melhor = alunoAtual.quiz_melhor_sequencia || 0;
+  const ganhos = alunoAtual.quiz_pontos_ganhos || 0;
+  const marco = QUIZ_MARCOS.find(m => sequenciaAtual===m.limite && melhor<m.limite && ganhos<100);
+  if(!marco) return '';
+  const payload = {
+    quiz_melhor_sequencia: sequenciaAtual,
+    quiz_pontos_ganhos: ganhos + marco.bonus,
+    quiz_pontos_disponiveis: (alunoAtual.quiz_pontos_disponiveis||0) + marco.bonus,
+  };
+  const res = await sb.update('alunos', payload, `id=eq.${G.aluno.id}`);
+  if(res?.[0]) G.aluno = {...G.aluno, ...res[0]};
+  return `🎉 Marco de ${sequenciaAtual} acertos seguidos! +${marco.bonus} pontos bônus!`;
+}
+
+function mostrarResultadoRodadaQuiz(certo, pergunta, tempoEsgotou, mensagemBonus){
+  const opcoes = [pergunta.opcao_a,pergunta.opcao_b,pergunta.opcao_c,pergunta.opcao_d];
   document.getElementById('quiz-container').innerHTML = `
     <div style="text-align:center">
-      <div style="font-size:40px;margin-bottom:10px">🏆</div>
-      <h3 style="margin-bottom:6px">Você acertou ${G.quiz.acertos} de ${G.quiz.perguntas.length}</h3>
-      <p style="color:var(--verde2);font-weight:800;font-size:20px;margin-bottom:20px">+${ganhos} pontos pra sua carta!</p>
-      <button class="btn-primario" onclick="abrirDistribuirPontosQuiz(${ganhos})">Aplicar na minha carta →</button>
+      <div style="font-size:40px;margin-bottom:10px">${certo?'✅':(tempoEsgotou?'⏰':'❌')}</div>
+      <h3 style="margin-bottom:6px">${certo?'Isso aí!':(tempoEsgotou?'Tempo esgotado!':'Não foi dessa vez')}</h3>
+      <p style="color:var(--cinza4);font-size:13px;margin-bottom:10px">Resposta certa: ${opcoes[pergunta.correta]}</p>
+      ${mensagemBonus?`<p style="color:var(--verde2);font-weight:800;font-size:15px;margin-bottom:16px">${mensagemBonus}</p>`:''}
+      ${certo
+        ? `<button class="btn-primario" onclick="proximaPerguntaQuiz()">Próxima pergunta →</button>`
+        : `<p style="color:var(--cinza4);font-size:13px;margin-bottom:16px">Sua tentativa acabou por aqui. Os pontos que você já ganhou continuam disponíveis pra usar na sua carta.</p><button class="btn-secundario" onclick="irPara('tela-menu')">Voltar ao menu</button>`
+      }
     </div>`;
-}
-
-async function abrirDistribuirPontosQuiz(pontos){
-  const cartas = await sb.select('cartas', `aluno_id=eq.${G.aluno.id}&ativa=eq.true`);
-  const carta = cartas?.[0];
-  if(!carta){ alert('Você precisa ter uma carta criada pra aplicar os pontos!'); irPara('tela-menu'); return; }
-  G.quiz.cartaAtual = carta;
-  G.quiz.pontosRestantes = pontos;
-  G.quiz.extras = {chute:0,passe:0,desarme:0,tecnica:0,visao:0};
-  renderDistribuirPontosQuiz();
-}
-
-function renderDistribuirPontosQuiz(){
-  document.getElementById('quiz-container').innerHTML = `
-    <h3 style="margin-bottom:6px">Distribua seus pontos</h3>
-    <p style="color:var(--cinza4);font-size:13px;margin-bottom:14px">Pontos restantes: <strong id="quiz-pts-restantes" style="color:var(--verde2)">${G.quiz.pontosRestantes}</strong></p>
-    <div id="quiz-attrs-lista"></div>
-    <button class="btn-primario" style="margin-top:16px" onclick="salvarPontosQuiz()">💾 Salvar na minha carta</button>
-  `;
-  renderQuizAttrs();
-}
-
-function renderQuizAttrs(){
-  const c = G.quiz.cartaAtual;
-  document.getElementById('quiz-attrs-lista').innerHTML = ATTRS.map(a=>{
-    const atual = c[a.k] + G.quiz.extras[a.k];
-    return `<div class="attr-row">
-      <div class="attr-icone">${a.icon}</div>
-      <div class="attr-info"><div class="attr-nome">${a.label}</div>
-        <div class="attr-barra-wrap"><div class="attr-barra" style="width:${(atual/200)*100}%;background:${a.cor}"></div></div>
-      </div>
-      <div class="attr-ctrl">
-        <button class="btn-attr" onclick="ajustarQuizAttr('${a.k}',-1)">−</button>
-        <span class="attr-val">${atual}</span>
-        <button class="btn-attr" onclick="ajustarQuizAttr('${a.k}',1)">+</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function ajustarQuizAttr(k,delta){
-  const c = G.quiz.cartaAtual;
-  const atual = c[k] + G.quiz.extras[k];
-  if(delta>0){
-    if(G.quiz.pontosRestantes<=0 || atual>=200) return;
-    G.quiz.extras[k]++; G.quiz.pontosRestantes--;
-  } else {
-    if(G.quiz.extras[k]<=0) return;
-    G.quiz.extras[k]--; G.quiz.pontosRestantes++;
-  }
-  document.getElementById('quiz-pts-restantes').textContent = G.quiz.pontosRestantes;
-  renderQuizAttrs();
-}
-
-async function salvarPontosQuiz(){
-  const c = G.quiz.cartaAtual;
-  const payload = {};
-  ATTRS.forEach(a=>{ payload[a.k] = c[a.k] + G.quiz.extras[a.k]; });
-  const res = await sb.update('cartas', payload, `id=eq.${c.id}`);
-  if(res?.[0]){
-    alert('🎉 Carta atualizada com sucesso!');
-    irPara('tela-menu');
-  } else {
-    alert('Erro ao salvar. Tente novamente.');
-  }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1895,7 +1981,11 @@ async function verMinhaCarta(){
   irPara('tela-minha-carta');
   const wrap=document.getElementById('minha-carta-wrap');
   wrap.innerHTML='<div style="color:var(--cinza4);padding:20px">Carregando...</div>';
-  const cartas=await sb.select('cartas',`aluno_id=eq.${G.aluno.id}&ativa=eq.true`);
+  const [cartas, alunos] = await Promise.all([
+    sb.select('cartas',`aluno_id=eq.${G.aluno.id}&ativa=eq.true`),
+    sb.select('alunos', `id=eq.${G.aluno.id}`),
+  ]);
+  if(Array.isArray(alunos) && alunos[0]) G.aluno = {...G.aluno, ...alunos[0]};
   if(!cartas?.length){
     wrap.innerHTML=`<div style="text-align:center;padding:40px">
       <div style="font-size:48px;margin-bottom:12px">🃏</div>
@@ -1905,6 +1995,79 @@ async function verMinhaCarta(){
   }
   wrap.innerHTML='';
   wrap.appendChild(gerarCartaEl(cartas[0],true));
+
+  const pontosDisponiveis = G.aluno.quiz_pontos_disponiveis || 0;
+  if(pontosDisponiveis>0){
+    const bloco = document.createElement('div');
+    bloco.className='card-criador';
+    bloco.style.maxWidth='420px';
+    bloco.id='minha-carta-bonus';
+    wrap.appendChild(bloco);
+    G.bonusQuiz = { carta: cartas[0], pontosRestantes: pontosDisponiveis, extras: {chute:0,passe:0,desarme:0,tecnica:0,visao:0} };
+    renderBonusQuizMinhaCarta();
+  }
+}
+
+function renderBonusQuizMinhaCarta(){
+  const bloco = document.getElementById('minha-carta-bonus');
+  if(!bloco) return;
+  bloco.innerHTML = `
+    <h3 style="margin-bottom:6px">🧠 Pontos do Quiz</h3>
+    <p style="color:var(--cinza4);font-size:13px;margin-bottom:14px">Você tem <strong id="bonus-quiz-restantes" style="color:var(--verde2)">${G.bonusQuiz.pontosRestantes}</strong> ponto(s) pra distribuir na sua carta.</p>
+    <div id="bonus-quiz-attrs"></div>
+    <button class="btn-primario" style="margin-top:16px" onclick="salvarBonusQuizMinhaCarta()">💾 Salvar na carta</button>
+  `;
+  renderBonusQuizAttrs();
+}
+
+function renderBonusQuizAttrs(){
+  const c = G.bonusQuiz.carta;
+  document.getElementById('bonus-quiz-attrs').innerHTML = ATTRS.map(a=>{
+    const atual = c[a.k] + G.bonusQuiz.extras[a.k];
+    return `<div class="attr-row">
+      <div class="attr-icone">${a.icon}</div>
+      <div class="attr-info"><div class="attr-nome">${a.label}</div>
+        <div class="attr-barra-wrap"><div class="attr-barra" style="width:${(atual/200)*100}%;background:${a.cor}"></div></div>
+      </div>
+      <div class="attr-ctrl">
+        <button class="btn-attr" onclick="ajustarBonusQuizAttr('${a.k}',-1)">−</button>
+        <span class="attr-val">${atual}</span>
+        <button class="btn-attr" onclick="ajustarBonusQuizAttr('${a.k}',1)">+</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function ajustarBonusQuizAttr(k, delta){
+  const c = G.bonusQuiz.carta;
+  const atual = c[k] + G.bonusQuiz.extras[k];
+  if(delta>0){
+    if(G.bonusQuiz.pontosRestantes<=0 || atual>=200) return;
+    G.bonusQuiz.extras[k]++; G.bonusQuiz.pontosRestantes--;
+  } else {
+    if(G.bonusQuiz.extras[k]<=0) return;
+    G.bonusQuiz.extras[k]--; G.bonusQuiz.pontosRestantes++;
+  }
+  document.getElementById('bonus-quiz-restantes').textContent = G.bonusQuiz.pontosRestantes;
+  renderBonusQuizAttrs();
+}
+
+async function salvarBonusQuizMinhaCarta(){
+  const c = G.bonusQuiz.carta;
+  const usados = Object.values(G.bonusQuiz.extras).reduce((s,v)=>s+v,0);
+  if(usados<=0){ alert('Distribua pelo menos 1 ponto antes de salvar.'); return; }
+  const payloadCarta = {};
+  ATTRS.forEach(a=>{ payloadCarta[a.k] = c[a.k] + G.bonusQuiz.extras[a.k]; });
+
+  const resCarta = await sb.update('cartas', payloadCarta, `id=eq.${c.id}`);
+  if(!resCarta?.[0]){ alert('Erro ao salvar. Tente novamente.'); return; }
+
+  const novoDisponivel = Math.max(0, (G.aluno.quiz_pontos_disponiveis||0) - usados);
+  const resAluno = await sb.update('alunos', {quiz_pontos_disponiveis: novoDisponivel}, `id=eq.${G.aluno.id}`);
+  if(resAluno?.[0]) G.aluno = {...G.aluno, ...resAluno[0]};
+
+  alert('🎉 Carta atualizada com sucesso!');
+  verMinhaCarta();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2603,11 +2766,12 @@ function loginAdmin(){
 }
 function sairAdmin(){irPara('tela-login')}
 function adminAba(id){
-  document.querySelectorAll('.admin-nav-btn').forEach((b,i)=>b.classList.toggle('ativo',['geral','alunos','cartas','partidas'][i]===id));
+  document.querySelectorAll('.admin-nav-btn').forEach((b,i)=>b.classList.toggle('ativo',['geral','alunos','cartas','partidas','quiz'][i]===id));
   document.querySelectorAll('.admin-painel').forEach(p=>p.classList.remove('ativo'));
   document.getElementById('painel-'+id).classList.add('ativo');
   if(id==='cartas')carregarCartasAdmin();
   if(id==='partidas')carregarPartidasAdmin();
+  if(id==='quiz')carregarQuizAdmin();
 }
 async function carregarAdmin(){
   const [alunos,cartas,partidas]=await Promise.all([
@@ -3132,6 +3296,81 @@ async function carregarPartidasAdmin(){
     <td><span class="badge badge-azul">${p.modo==='cpu'?'vs CPU':'Online'}</span></td>
     <td>${ma[p.vencedor_id]||'—'}</td>
     <td>${new Date(p.created_at).toLocaleDateString('pt-BR')}</td></tr>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN — GERENCIAR PERGUNTAS DO QUIZ
+// ═══════════════════════════════════════════════════════════════
+async function carregarQuizAdmin(){
+  const tbody = document.getElementById('tbody-quiz-perguntas');
+  tbody.innerHTML = '<tr><td colspan="4">Carregando...</td></tr>';
+  const perguntas = await sb.select('quiz_perguntas', 'order=created_at.desc');
+  G.adminQuizPerguntas = Array.isArray(perguntas) ? perguntas : [];
+  if(!G.adminQuizPerguntas.length){
+    tbody.innerHTML = '<tr><td colspan="4" style="color:var(--cinza4)">Nenhuma pergunta cadastrada ainda.</td></tr>';
+    return;
+  }
+  const LETRAS = ['A','B','C','D'];
+  tbody.innerHTML = G.adminQuizPerguntas.map(p=>`
+    <tr>
+      <td>${p.pergunta}</td>
+      <td><span class="badge badge-azul">${LETRAS[p.correta]}</span></td>
+      <td><span class="badge ${p.ativa?'badge-sim':'badge-nao'}">${p.ativa?'✅ Sim':'❌ Não'}</span></td>
+      <td style="white-space:nowrap">
+        <button class="btn-secundario" style="font-size:11px;padding:4px 8px" onclick="abrirModalQuizPergunta('${p.id}')">Editar</button>
+        <button class="btn-secundario" style="font-size:11px;padding:4px 8px;color:var(--vermelho)" onclick="excluirQuizPergunta('${p.id}')">Excluir</button>
+      </td>
+    </tr>`).join('');
+}
+
+function abrirModalQuizPergunta(id){
+  const pergunta = id ? (G.adminQuizPerguntas||[]).find(p=>p.id===id) : null;
+  document.getElementById('quiz-pergunta-titulo').textContent = pergunta ? '✏️ Editar Pergunta' : '🧠 Nova Pergunta';
+  document.getElementById('quiz-pergunta-id').value = id || '';
+  document.getElementById('quiz-pergunta-texto').value = pergunta?.pergunta || '';
+  document.getElementById('quiz-opcao-a').value = pergunta?.opcao_a || '';
+  document.getElementById('quiz-opcao-b').value = pergunta?.opcao_b || '';
+  document.getElementById('quiz-opcao-c').value = pergunta?.opcao_c || '';
+  document.getElementById('quiz-opcao-d').value = pergunta?.opcao_d || '';
+  document.getElementById('quiz-pergunta-correta').value = pergunta ? String(pergunta.correta) : '0';
+  document.getElementById('quiz-pergunta-ativa').checked = pergunta ? pergunta.ativa!==false : true;
+  const err = document.getElementById('quiz-pergunta-erro');
+  err.style.display='none'; err.textContent='';
+  mostrarModal('modal-quiz-pergunta');
+}
+
+async function salvarQuizPergunta(){
+  const id = document.getElementById('quiz-pergunta-id').value;
+  const pergunta = document.getElementById('quiz-pergunta-texto').value.trim();
+  const a = document.getElementById('quiz-opcao-a').value.trim();
+  const b = document.getElementById('quiz-opcao-b').value.trim();
+  const c = document.getElementById('quiz-opcao-c').value.trim();
+  const d = document.getElementById('quiz-opcao-d').value.trim();
+  const correta = parseInt(document.getElementById('quiz-pergunta-correta').value);
+  const ativa = document.getElementById('quiz-pergunta-ativa').checked;
+  const err = document.getElementById('quiz-pergunta-erro');
+  err.style.display='none';
+
+  if(!pergunta||!a||!b||!c||!d){
+    err.textContent='Preencha a pergunta e as 4 opções.'; err.style.display='block'; return;
+  }
+
+  const payload = { pergunta, opcao_a:a, opcao_b:b, opcao_c:c, opcao_d:d, correta, ativa };
+  const res = id
+    ? await sb.update('quiz_perguntas', payload, `id=eq.${id}`)
+    : await sb.insert('quiz_perguntas', payload);
+
+  if(!res?.[0]){
+    err.textContent='Erro ao salvar. Confirme que a tabela "quiz_perguntas" existe no Supabase.'; err.style.display='block'; return;
+  }
+  fecharModal('modal-quiz-pergunta');
+  carregarQuizAdmin();
+}
+
+async function excluirQuizPergunta(id){
+  if(!confirm('Excluir essa pergunta permanentemente?')) return;
+  await sb.delete('quiz_perguntas', `id=eq.${id}`);
+  carregarQuizAdmin();
 }
 
 // INIT
