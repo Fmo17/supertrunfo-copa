@@ -347,14 +347,51 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
   background-size:cover;
   background-position:center;
   background-attachment:fixed;
+  padding-left:16px;padding-right:16px;
 }
-#tela-menu .header-aluno{background:rgba(20,30,51,.82);backdrop-filter:blur(14px)}
+#tela-menu .header-aluno{
+  background:rgba(20,30,51,.82);backdrop-filter:blur(14px);
+  width:auto;max-width:none;align-self:flex-end;
+  padding:8px 14px;gap:10px;border-radius:30px;margin-bottom:18px;
+}
+#tela-minha-carta{
+  background:
+    linear-gradient(180deg, rgba(6,10,20,.6) 0%, rgba(6,10,20,.78) 50%, rgba(10,17,32,.95) 100%),
+    url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/sala-quadros.jpg');
+  background-size:cover;background-position:center;background-attachment:fixed;
+}
+#tela-quiz{
+  background:
+    linear-gradient(180deg, rgba(6,10,20,.6) 0%, rgba(6,10,20,.78) 50%, rgba(10,17,32,.95) 100%),
+    url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/sala-trofeu.jpg');
+  background-size:cover;background-position:center;background-attachment:fixed;
+}
+#tela-jogar-menu{
+  background:
+    linear-gradient(180deg, rgba(6,10,20,.55) 0%, rgba(6,10,20,.75) 50%, rgba(10,17,32,.95) 100%),
+    url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/torcida-estadio.jpg');
+  background-size:cover;background-position:center;background-attachment:fixed;
+}
+#tela-baralho{
+  background:
+    linear-gradient(180deg, rgba(6,10,20,.6) 0%, rgba(6,10,20,.78) 50%, rgba(10,17,32,.95) 100%),
+    url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/campo-equipe.jpg');
+  background-size:cover;background-position:center;background-attachment:fixed;
+}
+#tela-minha-carta .header-aluno,#tela-quiz .header-aluno,#tela-jogar-menu .header-aluno,#tela-baralho .header-aluno{
+  background:rgba(20,30,51,.82);backdrop-filter:blur(14px);
+}
+#tela-menu .header-aluno > div:first-child{display:none}
+#tela-menu .nome-usuario{font-size:12px}
+#tela-menu #menu-pts-info{display:none}
+#tela-menu .pontos-badge{font-size:11px;padding:3px 9px}
+#tela-menu .btn-sair{font-size:11px;padding:4px 9px}
 .menu-grid-fotos{
-  width:100%;max-width:900px;display:grid;
-  grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px;
+  width:100%;max-width:1180px;display:grid;
+  grid-template-columns:repeat(4,1fr);gap:16px;margin-top:8px;
 }
 .menu-item-foto{
-  position:relative;aspect-ratio:3/4.6;border-radius:18px;overflow:hidden;
+  position:relative;aspect-ratio:3/4.4;min-height:260px;border-radius:18px;overflow:hidden;
   background-size:cover;background-position:center;cursor:pointer;
   border:1px solid rgba(255,255,255,.12);
   box-shadow:var(--sombra);
@@ -362,15 +399,15 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
 }
 .menu-item-foto:hover{transform:translateY(-6px) scale(1.03)}
 .menu-foto-overlay{
-  position:absolute;left:0;right:0;bottom:0;padding:16px 12px 14px;
-  display:flex;flex-direction:column;gap:2px;
+  position:absolute;left:0;right:0;bottom:0;padding:18px 14px 16px;
+  display:flex;flex-direction:column;gap:3px;
 }
 .menu-foto-overlay .titulo{
-  font-family:var(--font-display);font-size:15px;font-weight:700;color:#fff;
+  font-family:var(--font-display);font-size:17px;font-weight:700;color:#fff;
   text-transform:uppercase;letter-spacing:.4px;text-shadow:0 2px 8px rgba(0,0,0,.6);
 }
 .menu-foto-overlay .desc{
-  font-size:10.5px;color:rgba(255,255,255,.82);line-height:1.3;
+  font-size:11px;color:rgba(255,255,255,.85);line-height:1.3;
   text-shadow:0 1px 4px rgba(0,0,0,.6);
 }
 .menu-foto-overlay--dourado{background:linear-gradient(0deg, rgba(20,10,0,.95) 0%, rgba(255,197,61,.35) 55%, transparent 100%);box-shadow:inset 0 -60px 40px -20px rgba(255,197,61,.15)}
@@ -381,10 +418,16 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
 .menu-item-foto:has(.menu-foto-overlay--ciano):hover{box-shadow:var(--glow-ciano)}
 .menu-foto-overlay--verde{background:linear-gradient(0deg, rgba(5,20,12,.95) 0%, rgba(22,193,114,.35) 55%, transparent 100%)}
 .menu-item-foto:has(.menu-foto-overlay--verde):hover{box-shadow:var(--glow-verde)}
+.menu-foto-overlay--vermelho{background:linear-gradient(0deg, rgba(25,5,8,.95) 0%, rgba(255,77,109,.35) 55%, transparent 100%)}
+.menu-item-foto:has(.menu-foto-overlay--vermelho):hover{box-shadow:0 0 22px rgba(255,77,109,.45)}
 
+@media(max-width:900px){
+  .menu-item-foto{aspect-ratio:3/4}
+}
 @media(max-width:700px){
   .menu-grid-fotos{grid-template-columns:repeat(2,1fr)}
-  .menu-item-foto{aspect-ratio:3/3.6}
+  .menu-item-foto{aspect-ratio:3/3.6;min-height:190px}
+  .menu-foto-overlay .titulo{font-size:15px}
 }
 </style>
 </head>
@@ -449,6 +492,15 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
       </div>
     </div>
   </div>
+</div>
+
+<!-- QUIZ -->
+<div id="tela-quiz" class="tela">
+  <div class="header-aluno">
+    <button class="btn-secundario" onclick="irPara('tela-menu')">← Voltar</button>
+    <div class="nome-usuario">Quiz</div><div></div>
+  </div>
+  <div class="card-criador" id="quiz-container" style="max-width:520px"></div>
 </div>
 
 <!-- CRIAR — PASSO 1 -->
@@ -544,13 +596,25 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     <button class="btn-secundario" onclick="irPara('tela-menu')">← Voltar</button>
     <div class="nome-usuario">Jogar</div><div></div></div>
   <div class="secao-titulo"><h2>Escolha o modo de jogo</h2></div>
-  <div class="menu-grid" style="max-width:460px">
-    <div class="menu-item" onclick="irPara('tela-modo-amistoso')">
-      <div class="icone">🤝</div><div class="titulo">Amistoso</div><div class="desc">Monte um baralho e jogue vs CPU ou colega</div></div>
-    <div class="menu-item" onclick="abrirModoCopa()">
-      <div class="icone">🏆</div><div class="titulo">Copa</div><div class="desc">4 fases eliminatórias vs CPU</div></div>
-    <div class="menu-item" onclick="irPara('tela-recorde-intro')">
-      <div class="icone">🔥</div><div class="titulo">Recorde</div><div class="desc">Quantas vitórias seguidas você consegue?</div></div>
+  <div class="menu-grid-fotos" style="max-width:900px;grid-template-columns:repeat(3,1fr)">
+    <div class="menu-item-foto" onclick="irPara('tela-modo-amistoso')" style="background:linear-gradient(150deg,#0a2733,#0d3f52)">
+      <div class="menu-foto-overlay menu-foto-overlay--ciano">
+        <div class="titulo">🤝 Amistoso</div>
+        <div class="desc">Monte um baralho e jogue vs CPU ou colega</div>
+      </div>
+    </div>
+    <div class="menu-item-foto" onclick="abrirModoCopa()" style="background:linear-gradient(150deg,#332405,#4d3708)">
+      <div class="menu-foto-overlay menu-foto-overlay--dourado">
+        <div class="titulo">🏆 Copa</div>
+        <div class="desc">4 fases eliminatórias vs CPU</div>
+      </div>
+    </div>
+    <div class="menu-item-foto" onclick="irPara('tela-recorde-intro')" style="background:linear-gradient(150deg,#330a10,#4d0d18)">
+      <div class="menu-foto-overlay menu-foto-overlay--vermelho">
+        <div class="titulo">🔥 Recorde</div>
+        <div class="desc">Quantas vitórias seguidas você consegue?</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -709,6 +773,7 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     <button class="admin-nav-btn" onclick="adminAba('alunos')">👥 Alunos</button>
     <button class="admin-nav-btn" onclick="adminAba('cartas')">🃏 Cartas</button>
     <button class="admin-nav-btn" onclick="adminAba('partidas')">🎮 Partidas</button>
+    <button class="admin-nav-btn" onclick="adminAba('quiz')">🧠 Quiz</button>
   </div>
   <div class="admin-painel ativo" id="painel-geral">
     <div class="admin-card"><h3>📊 Resumo da turma</h3>
@@ -765,6 +830,19 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     <div class="admin-card"><h3>🎮 Histórico de partidas</h3>
       <div style="overflow-x:auto"><table class="tabela-admin"><thead><tr><th>J1</th><th>J2</th><th>Modo</th><th>Vencedor</th><th>Data</th></tr></thead>
       <tbody id="tbody-partidas"></tbody></table></div></div>
+  </div>
+  <div class="admin-painel" id="painel-quiz">
+    <div class="admin-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <h3 style="margin-bottom:0">🧠 Perguntas do Quiz</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn-secundario" id="btn-importar-quiz" onclick="importarPerguntasProntas()">📥 Importar perguntas prontas (Austrália)</button>
+          <button class="btn-primario" style="width:auto;padding:10px 20px" onclick="abrirModalQuizPergunta()">+ Nova Pergunta</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto"><table class="tabela-admin"><thead><tr><th>Pergunta</th><th>Correta</th><th>Ativa</th><th>Ação</th></tr></thead>
+      <tbody id="tbody-quiz-perguntas"></tbody></table></div>
+    </div>
   </div>
 </div>
 
@@ -840,6 +918,41 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     <div class="modal-btns" style="margin-top:16px">
       <button class="btn-secundario" onclick="fecharModal('modal-carta-editor')">Cancelar</button>
       <button class="btn-primario" style="flex:1" onclick="salvarCartaAdmin()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-quiz-pergunta">
+  <div class="modal modal-lg">
+    <h3 id="quiz-pergunta-titulo">🧠 Nova Pergunta</h3>
+    <input type="hidden" id="quiz-pergunta-id">
+    <div class="form-admin">
+      <div class="campo" style="grid-column:1/-1">
+        <label>Pergunta</label>
+        <input type="text" id="quiz-pergunta-texto" placeholder="Ex: Em que ano foi a primeira Copa do Mundo?">
+      </div>
+      <div class="campo"><label>Opção A</label><input type="text" id="quiz-opcao-a"></div>
+      <div class="campo"><label>Opção B</label><input type="text" id="quiz-opcao-b"></div>
+      <div class="campo"><label>Opção C</label><input type="text" id="quiz-opcao-c"></div>
+      <div class="campo"><label>Opção D</label><input type="text" id="quiz-opcao-d"></div>
+      <div class="campo" style="grid-column:1/-1">
+        <label>Resposta correta</label>
+        <select id="quiz-pergunta-correta">
+          <option value="0">Opção A</option>
+          <option value="1">Opção B</option>
+          <option value="2">Opção C</option>
+          <option value="3">Opção D</option>
+        </select>
+      </div>
+      <div class="campo" style="display:flex;align-items:center;gap:8px;margin-top:8px">
+        <input type="checkbox" id="quiz-pergunta-ativa" style="width:auto" checked>
+        <label style="margin:0;text-transform:none;font-size:13px;color:var(--preto)">Pergunta ativa (pode cair no quiz)</label>
+      </div>
+    </div>
+    <div id="quiz-pergunta-erro" class="msg-erro" style="text-align:left"></div>
+    <div class="modal-btns" style="margin-top:16px">
+      <button class="btn-secundario" onclick="fecharModal('modal-quiz-pergunta')">Cancelar</button>
+      <button class="btn-primario" style="flex:1" onclick="salvarQuizPergunta()">💾 Salvar</button>
     </div>
   </div>
 </div>
@@ -1419,7 +1532,10 @@ let G = {
   },
   adminAlunos: [],
   adminCartas: [],
-  cartaEditorState: { paisCodigo:null, avatarId:null, avatarGenero:'menino' }
+  adminQuizPerguntas: [],
+  cartaEditorState: { paisCodigo:null, avatarId:null, avatarGenero:'menino' },
+  quiz: { tentativa:null, perguntaAtual:null, timerId:null, deadline:0 },
+  bonusQuiz: { carta:null, pontosRestantes:0, extras:{} }
 };
 
 const ATTRS = [
@@ -1442,6 +1558,196 @@ function habilidadeDaPosicao(pos){
 }
 function infoPosicao(pos){
   return POSICOES.find(x=>x.k===pos) || POSICOES[3];
+}
+
+// ═══════════════════════════════════════════════════════════════
+// QUIZ — perguntas cadastradas pelo professor (tabela quiz_perguntas).
+// Regras: 45s por pergunta, 2 tentativas/dia, cronômetro guardado no
+// banco (sobrevive a fechar o app), marcos de sequência (5/10/20/30
+// acertos seguidos = +10/+20/+30/+40 pontos, teto de 100 no total).
+// Os pontos ficam disponíveis pra distribuir na tela "Minha Carta".
+// ═══════════════════════════════════════════════════════════════
+const QUIZ_TEMPO_SEGUNDOS = 45;
+const QUIZ_MARCOS = [{limite:5,bonus:10},{limite:10,bonus:20},{limite:20,bonus:30},{limite:30,bonus:40}];
+
+function hojeISO(){ return new Date().toISOString().slice(0,10); }
+
+async function iniciarQuiz(){
+  irPara('tela-quiz');
+  document.getElementById('quiz-container').innerHTML = '<p style="text-align:center;color:var(--cinza4)">Carregando...</p>';
+
+  const hoje = hojeISO();
+  const tentativas = await sb.select('quiz_tentativas', `aluno_id=eq.${G.aluno.id}&data=eq.${hoje}&order=created_at.asc`);
+  const lista = Array.isArray(tentativas) ? tentativas : [];
+  const emAndamento = lista.find(t=>!t.finalizada);
+
+  if(emAndamento){
+    G.quiz.tentativa = emAndamento;
+    await retomarTentativaQuiz();
+    return;
+  }
+
+  if(lista.length>=2){
+    document.getElementById('quiz-container').innerHTML = `
+      <div style="text-align:center">
+        <div style="font-size:40px;margin-bottom:10px">⏳</div>
+        <h3 style="margin-bottom:8px">Você já usou suas 2 tentativas de hoje</h3>
+        <p style="color:var(--cinza4);font-size:13px;margin-bottom:20px">Volta amanhã pra tentar de novo!</p>
+        <button class="btn-secundario" onclick="irPara('tela-menu')">Voltar ao menu</button>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('quiz-container').innerHTML = `
+    <div style="text-align:center">
+      <div style="font-size:40px;margin-bottom:10px">🧠</div>
+      <h3 style="margin-bottom:10px">Quiz</h3>
+      <p style="color:var(--cinza4);font-size:13px;margin-bottom:8px">
+        A cada 5 acertos seguidos você ganha pontos bônus pra sua carta (5→+10, 10→+20, 20→+30, 30→+40).
+        Errar ou o tempo acabar (${QUIZ_TEMPO_SEGUNDOS}s por pergunta) encerra a tentativa.
+      </p>
+      <p style="color:var(--cinza4);font-size:12px;margin-bottom:20px">Tentativa ${lista.length+1} de 2 hoje</p>
+      <button class="btn-primario" onclick="criarTentativaQuiz()">Começar →</button>
+    </div>`;
+}
+
+async function criarTentativaQuiz(){
+  const res = await sb.insert('quiz_tentativas', { aluno_id:G.aluno.id, data:hojeISO(), sequencia_atual:0 });
+  if(!res?.[0]){ alert('Erro ao iniciar o quiz. Tente novamente.'); irPara('tela-menu'); return; }
+  G.quiz.tentativa = res[0];
+  await proximaPerguntaQuiz();
+}
+
+async function retomarTentativaQuiz(){
+  const t = G.quiz.tentativa;
+  if(t.pergunta_atual_id){
+    const perguntas = await sb.select('quiz_perguntas', `id=eq.${t.pergunta_atual_id}`);
+    const pergunta = perguntas?.[0];
+    if(!pergunta){ await proximaPerguntaQuiz(); return; }
+    const decorridoSeg = Math.floor((Date.now() - new Date(t.pergunta_iniciada_em).getTime())/1000);
+    const restante = QUIZ_TEMPO_SEGUNDOS - decorridoSeg;
+    G.quiz.perguntaAtual = pergunta;
+    if(restante<=0){
+      await responderQuiz(-1);
+    } else {
+      mostrarPerguntaNaTela(pergunta, restante);
+    }
+  } else {
+    document.getElementById('quiz-container').innerHTML = `
+      <div style="text-align:center">
+        <div style="font-size:40px;margin-bottom:10px">▶️</div>
+        <h3 style="margin-bottom:6px">Sequência atual: ${t.sequencia_atual}</h3>
+        <p style="color:var(--cinza4);font-size:13px;margin-bottom:20px">Continue de onde parou.</p>
+        <button class="btn-primario" onclick="proximaPerguntaQuiz()">Próxima pergunta →</button>
+      </div>`;
+  }
+}
+
+async function proximaPerguntaQuiz(){
+  const t = G.quiz.tentativa;
+  const usadas = t.perguntas_respondidas || [];
+  const filtro = usadas.length ? `&id=not.in.(${usadas.join(',')})` : '';
+  let perguntas = await sb.select('quiz_perguntas', `ativa=eq.true${filtro}`);
+  if(!Array.isArray(perguntas) || !perguntas.length){
+    perguntas = await sb.select('quiz_perguntas', 'ativa=eq.true'); // acabaram perguntas novas, reaproveita
+  }
+  if(!Array.isArray(perguntas) || !perguntas.length){
+    document.getElementById('quiz-container').innerHTML = `<div style="text-align:center;color:var(--cinza4)">
+      <p style="margin-bottom:16px">O professor ainda não cadastrou perguntas no quiz. Volte mais tarde!</p>
+      <button class="btn-secundario" onclick="irPara('tela-menu')">Voltar ao menu</button></div>`;
+    return;
+  }
+  const pergunta = perguntas[Math.floor(Math.random()*perguntas.length)];
+  const agora = new Date().toISOString();
+  const res = await sb.update('quiz_tentativas', { pergunta_atual_id: pergunta.id, pergunta_iniciada_em: agora }, `id=eq.${t.id}`);
+  if(res?.[0]) G.quiz.tentativa = res[0];
+  G.quiz.perguntaAtual = pergunta;
+  mostrarPerguntaNaTela(pergunta, QUIZ_TEMPO_SEGUNDOS);
+}
+
+function mostrarPerguntaNaTela(pergunta, segundosRestantes){
+  clearInterval(G.quiz.timerId);
+  G.quiz.deadline = Date.now() + segundosRestantes*1000;
+
+  const opcoes = [pergunta.opcao_a,pergunta.opcao_b,pergunta.opcao_c,pergunta.opcao_d];
+  document.getElementById('quiz-container').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <span style="font-size:12px;color:var(--cinza4)">Sequência: ${G.quiz.tentativa.sequencia_atual}</span>
+      <span id="quiz-timer" style="font-family:var(--font-display);font-weight:800;font-size:18px;color:var(--amarelo)">${segundosRestantes}s</span>
+    </div>
+    <h3 style="margin-bottom:18px">${pergunta.pergunta}</h3>
+    <div style="display:flex;flex-direction:column;gap:10px" id="quiz-opcoes">
+      ${opcoes.map((op,i)=>`<button class="btn-secundario" style="text-align:left;padding:12px 16px;width:100%" onclick="responderQuiz(${i})">${op}</button>`).join('')}
+    </div>`;
+
+  G.quiz.timerId = setInterval(()=>{
+    const restante = Math.ceil((G.quiz.deadline - Date.now())/1000);
+    const timerEl = document.getElementById('quiz-timer');
+    if(!timerEl){ clearInterval(G.quiz.timerId); return; }
+    if(restante<=0){
+      clearInterval(G.quiz.timerId);
+      timerEl.textContent = '0s';
+      responderQuiz(-1);
+    } else {
+      timerEl.textContent = restante+'s';
+      if(restante<=10) timerEl.style.color = 'var(--vermelho)';
+    }
+  }, 250);
+}
+
+async function responderQuiz(escolha){
+  clearInterval(G.quiz.timerId);
+  const t = G.quiz.tentativa;
+  const pergunta = G.quiz.perguntaAtual;
+  const certo = escolha === pergunta.correta;
+  const novasRespondidas = [...(t.perguntas_respondidas||[]), pergunta.id];
+  const payload = { pergunta_atual_id:null, pergunta_iniciada_em:null, perguntas_respondidas:novasRespondidas };
+
+  let mensagemBonus = '';
+  if(certo){
+    payload.sequencia_atual = t.sequencia_atual + 1;
+    mensagemBonus = await checarMilestoneQuiz(payload.sequencia_atual);
+  } else {
+    payload.sequencia_atual = 0;
+    payload.finalizada = true;
+  }
+
+  const res = await sb.update('quiz_tentativas', payload, `id=eq.${t.id}`);
+  if(res?.[0]) G.quiz.tentativa = res[0];
+
+  mostrarResultadoRodadaQuiz(certo, pergunta, escolha===-1, mensagemBonus);
+}
+
+async function checarMilestoneQuiz(sequenciaAtual){
+  const alunoAtual = (await sb.select('alunos', `id=eq.${G.aluno.id}`))?.[0];
+  if(!alunoAtual) return '';
+  const melhor = alunoAtual.quiz_melhor_sequencia || 0;
+  const ganhos = alunoAtual.quiz_pontos_ganhos || 0;
+  const marco = QUIZ_MARCOS.find(m => sequenciaAtual===m.limite && melhor<m.limite && ganhos<100);
+  if(!marco) return '';
+  const payload = {
+    quiz_melhor_sequencia: sequenciaAtual,
+    quiz_pontos_ganhos: ganhos + marco.bonus,
+    quiz_pontos_disponiveis: (alunoAtual.quiz_pontos_disponiveis||0) + marco.bonus,
+  };
+  const res = await sb.update('alunos', payload, `id=eq.${G.aluno.id}`);
+  if(res?.[0]) G.aluno = {...G.aluno, ...res[0]};
+  return `🎉 Marco de ${sequenciaAtual} acertos seguidos! +${marco.bonus} pontos bônus!`;
+}
+
+function mostrarResultadoRodadaQuiz(certo, pergunta, tempoEsgotou, mensagemBonus){
+  const opcoes = [pergunta.opcao_a,pergunta.opcao_b,pergunta.opcao_c,pergunta.opcao_d];
+  document.getElementById('quiz-container').innerHTML = `
+    <div style="text-align:center">
+      <div style="font-size:40px;margin-bottom:10px">${certo?'✅':(tempoEsgotou?'⏰':'❌')}</div>
+      <h3 style="margin-bottom:6px">${certo?'Isso aí!':(tempoEsgotou?'Tempo esgotado!':'Não foi dessa vez')}</h3>
+      <p style="color:var(--cinza4);font-size:13px;margin-bottom:10px">Resposta certa: ${opcoes[pergunta.correta]}</p>
+      ${mensagemBonus?`<p style="color:var(--verde2);font-weight:800;font-size:15px;margin-bottom:16px">${mensagemBonus}</p>`:''}
+      ${certo
+        ? `<button class="btn-primario" onclick="proximaPerguntaQuiz()">Próxima pergunta →</button>`
+        : `<p style="color:var(--cinza4);font-size:13px;margin-bottom:16px">Sua tentativa acabou por aqui. Os pontos que você já ganhou continuam disponíveis pra usar na sua carta.</p><button class="btn-secundario" onclick="irPara('tela-menu')">Voltar ao menu</button>`
+      }
+    </div>`;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1484,9 +1790,9 @@ function atualizarMenu(){
 
   const itemCriar = document.getElementById('menu-item-criar');
   if(a.carta_criada){
-    itemCriar.onclick = ()=>verMinhaCarta();
-    document.getElementById('menu-criar-titulo').textContent='Carta Criada';
-    document.getElementById('menu-criar-desc').textContent='Você já tem sua carta — toque para ver';
+    itemCriar.onclick = ()=>iniciarQuiz();
+    document.getElementById('menu-criar-titulo').textContent='Quiz';
+    document.getElementById('menu-criar-desc').textContent='Acerte perguntas e ganhe pontos extras';
   } else {
     itemCriar.onclick = ()=>irPara('tela-criar');
     document.getElementById('menu-criar-titulo').textContent='Criar Carta';
@@ -1719,7 +2025,11 @@ async function verMinhaCarta(){
   irPara('tela-minha-carta');
   const wrap=document.getElementById('minha-carta-wrap');
   wrap.innerHTML='<div style="color:var(--cinza4);padding:20px">Carregando...</div>';
-  const cartas=await sb.select('cartas',`aluno_id=eq.${G.aluno.id}&ativa=eq.true`);
+  const [cartas, alunos] = await Promise.all([
+    sb.select('cartas',`aluno_id=eq.${G.aluno.id}&ativa=eq.true`),
+    sb.select('alunos', `id=eq.${G.aluno.id}`),
+  ]);
+  if(Array.isArray(alunos) && alunos[0]) G.aluno = {...G.aluno, ...alunos[0]};
   if(!cartas?.length){
     wrap.innerHTML=`<div style="text-align:center;padding:40px">
       <div style="font-size:48px;margin-bottom:12px">🃏</div>
@@ -1729,6 +2039,79 @@ async function verMinhaCarta(){
   }
   wrap.innerHTML='';
   wrap.appendChild(gerarCartaEl(cartas[0],true));
+
+  const pontosDisponiveis = G.aluno.quiz_pontos_disponiveis || 0;
+  if(pontosDisponiveis>0){
+    const bloco = document.createElement('div');
+    bloco.className='card-criador';
+    bloco.style.maxWidth='420px';
+    bloco.id='minha-carta-bonus';
+    wrap.appendChild(bloco);
+    G.bonusQuiz = { carta: cartas[0], pontosRestantes: pontosDisponiveis, extras: {chute:0,passe:0,desarme:0,tecnica:0,visao:0} };
+    renderBonusQuizMinhaCarta();
+  }
+}
+
+function renderBonusQuizMinhaCarta(){
+  const bloco = document.getElementById('minha-carta-bonus');
+  if(!bloco) return;
+  bloco.innerHTML = `
+    <h3 style="margin-bottom:6px">🧠 Pontos do Quiz</h3>
+    <p style="color:var(--cinza4);font-size:13px;margin-bottom:14px">Você tem <strong id="bonus-quiz-restantes" style="color:var(--verde2)">${G.bonusQuiz.pontosRestantes}</strong> ponto(s) pra distribuir na sua carta.</p>
+    <div id="bonus-quiz-attrs"></div>
+    <button class="btn-primario" style="margin-top:16px" onclick="salvarBonusQuizMinhaCarta()">💾 Salvar na carta</button>
+  `;
+  renderBonusQuizAttrs();
+}
+
+function renderBonusQuizAttrs(){
+  const c = G.bonusQuiz.carta;
+  document.getElementById('bonus-quiz-attrs').innerHTML = ATTRS.map(a=>{
+    const atual = c[a.k] + G.bonusQuiz.extras[a.k];
+    return `<div class="attr-row">
+      <div class="attr-icone">${a.icon}</div>
+      <div class="attr-info"><div class="attr-nome">${a.label}</div>
+        <div class="attr-barra-wrap"><div class="attr-barra" style="width:${(atual/200)*100}%;background:${a.cor}"></div></div>
+      </div>
+      <div class="attr-ctrl">
+        <button class="btn-attr" onclick="ajustarBonusQuizAttr('${a.k}',-1)">−</button>
+        <span class="attr-val">${atual}</span>
+        <button class="btn-attr" onclick="ajustarBonusQuizAttr('${a.k}',1)">+</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function ajustarBonusQuizAttr(k, delta){
+  const c = G.bonusQuiz.carta;
+  const atual = c[k] + G.bonusQuiz.extras[k];
+  if(delta>0){
+    if(G.bonusQuiz.pontosRestantes<=0 || atual>=200) return;
+    G.bonusQuiz.extras[k]++; G.bonusQuiz.pontosRestantes--;
+  } else {
+    if(G.bonusQuiz.extras[k]<=0) return;
+    G.bonusQuiz.extras[k]--; G.bonusQuiz.pontosRestantes++;
+  }
+  document.getElementById('bonus-quiz-restantes').textContent = G.bonusQuiz.pontosRestantes;
+  renderBonusQuizAttrs();
+}
+
+async function salvarBonusQuizMinhaCarta(){
+  const c = G.bonusQuiz.carta;
+  const usados = Object.values(G.bonusQuiz.extras).reduce((s,v)=>s+v,0);
+  if(usados<=0){ alert('Distribua pelo menos 1 ponto antes de salvar.'); return; }
+  const payloadCarta = {};
+  ATTRS.forEach(a=>{ payloadCarta[a.k] = c[a.k] + G.bonusQuiz.extras[a.k]; });
+
+  const resCarta = await sb.update('cartas', payloadCarta, `id=eq.${c.id}`);
+  if(!resCarta?.[0]){ alert('Erro ao salvar. Tente novamente.'); return; }
+
+  const novoDisponivel = Math.max(0, (G.aluno.quiz_pontos_disponiveis||0) - usados);
+  const resAluno = await sb.update('alunos', {quiz_pontos_disponiveis: novoDisponivel}, `id=eq.${G.aluno.id}`);
+  if(resAluno?.[0]) G.aluno = {...G.aluno, ...resAluno[0]};
+
+  alert('🎉 Carta atualizada com sucesso!');
+  verMinhaCarta();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2427,11 +2810,12 @@ function loginAdmin(){
 }
 function sairAdmin(){irPara('tela-login')}
 function adminAba(id){
-  document.querySelectorAll('.admin-nav-btn').forEach((b,i)=>b.classList.toggle('ativo',['geral','alunos','cartas','partidas'][i]===id));
+  document.querySelectorAll('.admin-nav-btn').forEach((b,i)=>b.classList.toggle('ativo',['geral','alunos','cartas','partidas','quiz'][i]===id));
   document.querySelectorAll('.admin-painel').forEach(p=>p.classList.remove('ativo'));
   document.getElementById('painel-'+id).classList.add('ativo');
   if(id==='cartas')carregarCartasAdmin();
   if(id==='partidas')carregarPartidasAdmin();
+  if(id==='quiz')carregarQuizAdmin();
 }
 async function carregarAdmin(){
   const [alunos,cartas,partidas]=await Promise.all([
@@ -2956,6 +3340,142 @@ async function carregarPartidasAdmin(){
     <td><span class="badge badge-azul">${p.modo==='cpu'?'vs CPU':'Online'}</span></td>
     <td>${ma[p.vencedor_id]||'—'}</td>
     <td>${new Date(p.created_at).toLocaleDateString('pt-BR')}</td></tr>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ADMIN — GERENCIAR PERGUNTAS DO QUIZ
+// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// PERGUNTAS PRONTAS — Austrália, Copa do Mundo e Cultura Esportiva (30)
+// ═══════════════════════════════════════════════════════════════
+const QUIZ_PERGUNTAS_PRONTAS = [
+  { pergunta:'Qual é o nome da seleção masculina de futebol da Austrália?', opcao_a:'Matildas', opcao_b:'Socceroos', opcao_c:'Wallabies', opcao_d:'Kangaroos', correta:1 },
+  { pergunta:'Quais são as cores nacionais usadas pela Austrália em muitos uniformes esportivos?', opcao_a:'Azul e branco', opcao_b:'Vermelho e preto', opcao_c:'Verde e dourado', opcao_d:'Roxo e amarelo', correta:2 },
+  { pergunta:'A flor que inspira as cores verde e dourado da Austrália é chamada de:', opcao_a:'Rosa vermelha', opcao_b:'Acácia-dourada', opcao_c:'Girassol-do-deserto', opcao_d:'Lírio australiano', correta:1 },
+  { pergunta:'Qual animal aparece como símbolo importante da Austrália?', opcao_a:'Leão', opcao_b:'Urso polar', opcao_c:'Canguru', opcao_d:'Panda', correta:2 },
+  { pergunta:'O emu é:', opcao_a:'Uma ave típica da Austrália', opcao_b:'Um peixe australiano', opcao_c:'Um tipo de árvore', opcao_d:'Um estádio de futebol', correta:0 },
+  { pergunta:'O que significa "G\u2019day"?', opcao_a:'Obrigado', opcao_b:'Até amanhã', opcao_c:'Olá / bom dia', opcao_d:'Desculpa', correta:2 },
+  { pergunta:'O que significa "mate" na linguagem australiana?', opcao_a:'Professor', opcao_b:'Amigo ou companheiro', opcao_c:'Inimigo', opcao_d:'Juiz', correta:1 },
+  { pergunta:'Qual esporte é muito associado às praias australianas?', opcao_a:'Surfe', opcao_b:'Esqui no gelo', opcao_c:'Beisebol no gelo', opcao_d:'Sumô', correta:0 },
+  { pergunta:'Qual seleção feminina de futebol é famosa na Austrália?', opcao_a:'Matildas', opcao_b:'Socceroos', opcao_c:'All Blacks', opcao_d:'Wallabies', correta:0 },
+  { pergunta:'A Austrália fica em qual região do mundo?', opcao_a:'Europa', opcao_b:'Oceania', opcao_c:'América do Sul', opcao_d:'África', correta:1 },
+  { pergunta:'Por que as cores da Austrália são verde e dourado?', opcao_a:'Porque representam apenas o oceano', opcao_b:'Porque são as cores da bandeira do Brasil', opcao_c:'Porque lembram a acácia-dourada, flor símbolo nacional', opcao_d:'Porque foram escolhidas por sorteio', correta:2 },
+  { pergunta:'O dourado nas cores australianas pode representar:', opcao_a:'Praias, riquezas naturais e vitórias esportivas', opcao_b:'Apenas o gelo das montanhas', opcao_c:'Apenas a noite australiana', opcao_d:'Tristeza e derrota', correta:0 },
+  { pergunta:'O verde nas cores australianas pode representar:', opcao_a:'Florestas, campos e natureza', opcao_b:'Neve e gelo', opcao_c:'Desertos sem vida', opcao_d:'Apenas o uniforme militar', correta:0 },
+  { pergunta:'O que é "mateship"?', opcao_a:'Uma comida típica australiana', opcao_b:'Uma dança tradicional', opcao_c:'Companheirismo, amizade e ajuda ao próximo', opcao_d:'Um tipo de campeonato', correta:2 },
+  { pergunta:'A expressão "No worries, mate" significa:', opcao_a:'Estou preocupado, amigo', opcao_b:'Sem problemas, amigo', opcao_c:'Vamos correr, amigo', opcao_d:'Boa noite, amigo', correta:1 },
+  { pergunta:'A expressão "How ya going?" é usada para perguntar:', opcao_a:'Quanto custa?', opcao_b:'Como você está?', opcao_c:'Onde fica o estádio?', opcao_d:'Qual é o placar?', correta:1 },
+  { pergunta:'Qual destas ideias combina mais com o modo de vida australiano?', opcao_a:'Vida sempre fechada dentro de casa', opcao_b:'Pouco contato com esportes', opcao_c:'Atividades ao ar livre, esportes e natureza', opcao_d:'Proibição de esportes nas escolas', correta:2 },
+  { pergunta:'Na Austrália, o futebol:', opcao_a:'É o único esporte praticado', opcao_b:'Divide espaço com outros esportes populares', opcao_c:'Não existe', opcao_d:'É praticado apenas no inverno', correta:1 },
+  { pergunta:'Qual desses esportes também é muito popular na Austrália?', opcao_a:'Críquete', opcao_b:'Curling de areia', opcao_c:'Capoeira australiana', opcao_d:'Hóquei subaquático obrigatório', correta:0 },
+  { pergunta:'Qual jogador é considerado um dos grandes nomes do futebol australiano?', opcao_a:'Tim Cahill', opcao_b:'Pelé', opcao_c:'Cristiano Ronaldo', opcao_d:'Mbappé', correta:0 },
+  { pergunta:'Por que o futebol não tem o mesmo domínio na Austrália que tem no Brasil?', opcao_a:'Porque os australianos não gostam de esportes', opcao_b:'Porque o futebol divide atenção com críquete, rugby, futebol australiano, natação, tênis e surfe', opcao_c:'Porque o país não tem campos', opcao_d:'Porque é proibido jogar futebol na escola', correta:1 },
+  { pergunta:'Qual é uma boa comparação entre Brasil e Austrália em relação ao futebol?', opcao_a:'Nos dois países, o futebol é proibido', opcao_b:'No Brasil, o futebol é muito dominante; na Austrália, ele divide espaço com vários esportes', opcao_c:'Na Austrália só existe futebol e no Brasil só existe surfe', opcao_d:'Nenhum dos dois países gosta de Copa do Mundo', correta:1 },
+  { pergunta:'O que o canguru e o emu representam simbolicamente no escudo/brasão australiano?', opcao_a:'A ideia de seguir em frente', opcao_b:'A ideia de voltar ao passado', opcao_c:'A ideia de não praticar esportes', opcao_d:'A ideia de viver no gelo', correta:0 },
+  { pergunta:'Qual personalidade australiana ficou conhecida no futebol feminino mundial?', opcao_a:'Sam Kerr', opcao_b:'Marta Vieira da Silva', opcao_c:'Serena Williams', opcao_d:'Rebeca Andrade', correta:0 },
+  { pergunta:'Cathy Freeman é lembrada na Austrália principalmente por ser:', opcao_a:'Nadadora olímpica', opcao_b:'Jogadora de futebol', opcao_c:'Atleta olímpica e símbolo de representatividade', opcao_d:'Técnica da seleção masculina', correta:2 },
+  { pergunta:'Qual característica climática ajuda a explicar a forte relação da Austrália com esportes ao ar livre?', opcao_a:'O país possui muitas áreas costeiras, praias e espaços naturais', opcao_b:'O país é totalmente coberto por neve o ano inteiro', opcao_c:'O país não tem parques nem praias', opcao_d:'O país tem clima igual em todas as regiões', correta:0 },
+  { pergunta:'Por que estudar a Austrália no tema Copa do Mundo pode ir além do futebol?', opcao_a:'Porque permite falar de cultura, clima, esporte, símbolos, hábitos e modo de vida', opcao_b:'Porque não existe futebol na Austrália', opcao_c:'Porque a Copa do Mundo não envolve países', opcao_d:'Porque só se deve falar de uniformes', correta:0 },
+  { pergunta:'O "fair go" na cultura australiana está ligado à ideia de:', opcao_a:'Oportunidade justa para todos', opcao_b:'Vitória a qualquer custo', opcao_c:'Desrespeito aos adversários', opcao_d:'Abandono do trabalho em equipe', correta:0 },
+  { pergunta:'Qual alternativa representa melhor o estilo "laid-back" associado aos australianos?', opcao_a:'Um jeito mais tranquilo, informal e descontraído', opcao_b:'Um modo agressivo e fechado de viver', opcao_c:'Uma regra rígida de silêncio', opcao_d:'Uma obrigação escolar', correta:0 },
+  { pergunta:'Em um trabalho escolar sobre Austrália e Copa do Mundo, qual seria o melhor título?', opcao_a:'Austrália: futebol, cultura e paixão pelo esporte', opcao_b:'Austrália: um país sem esportes', opcao_c:'Austrália: somente neve e gelo', opcao_d:'Austrália: o país que não participa de competições', correta:0 },
+];
+
+async function importarPerguntasProntas(){
+  if(!confirm(`Importar ${QUIZ_PERGUNTAS_PRONTAS.length} perguntas prontas sobre Austrália/Copa? Perguntas com o mesmo texto de alguma já cadastrada serão puladas.`)) return;
+
+  const btn = document.getElementById('btn-importar-quiz');
+  const original = btn.textContent;
+  btn.disabled = true;
+
+  const existentes = await sb.select('quiz_perguntas', '');
+  const textosExistentes = new Set((Array.isArray(existentes)?existentes:[]).map(p=>p.pergunta.trim()));
+
+  let importadas = 0, puladas = 0;
+  for(let i=0;i<QUIZ_PERGUNTAS_PRONTAS.length;i++){
+    const q = QUIZ_PERGUNTAS_PRONTAS[i];
+    btn.textContent = `⏳ Importando ${i+1}/${QUIZ_PERGUNTAS_PRONTAS.length}...`;
+    if(textosExistentes.has(q.pergunta.trim())){ puladas++; continue; }
+    const res = await sb.insert('quiz_perguntas', { ...q, ativa:true });
+    if(res?.[0]) importadas++;
+  }
+
+  btn.disabled = false;
+  btn.textContent = original;
+  alert(`✅ ${importadas} pergunta(s) importada(s)!${puladas?` (${puladas} já existiam e foram puladas)`:''}`);
+  carregarQuizAdmin();
+}
+
+async function carregarQuizAdmin(){
+  const tbody = document.getElementById('tbody-quiz-perguntas');
+  tbody.innerHTML = '<tr><td colspan="4">Carregando...</td></tr>';
+  const perguntas = await sb.select('quiz_perguntas', 'order=created_at.desc');
+  G.adminQuizPerguntas = Array.isArray(perguntas) ? perguntas : [];
+  if(!G.adminQuizPerguntas.length){
+    tbody.innerHTML = '<tr><td colspan="4" style="color:var(--cinza4)">Nenhuma pergunta cadastrada ainda.</td></tr>';
+    return;
+  }
+  const LETRAS = ['A','B','C','D'];
+  tbody.innerHTML = G.adminQuizPerguntas.map(p=>`
+    <tr>
+      <td>${p.pergunta}</td>
+      <td><span class="badge badge-azul">${LETRAS[p.correta]}</span></td>
+      <td><span class="badge ${p.ativa?'badge-sim':'badge-nao'}">${p.ativa?'✅ Sim':'❌ Não'}</span></td>
+      <td style="white-space:nowrap">
+        <button class="btn-secundario" style="font-size:11px;padding:4px 8px" onclick="abrirModalQuizPergunta('${p.id}')">Editar</button>
+        <button class="btn-secundario" style="font-size:11px;padding:4px 8px;color:var(--vermelho)" onclick="excluirQuizPergunta('${p.id}')">Excluir</button>
+      </td>
+    </tr>`).join('');
+}
+
+function abrirModalQuizPergunta(id){
+  const pergunta = id ? (G.adminQuizPerguntas||[]).find(p=>p.id===id) : null;
+  document.getElementById('quiz-pergunta-titulo').textContent = pergunta ? '✏️ Editar Pergunta' : '🧠 Nova Pergunta';
+  document.getElementById('quiz-pergunta-id').value = id || '';
+  document.getElementById('quiz-pergunta-texto').value = pergunta?.pergunta || '';
+  document.getElementById('quiz-opcao-a').value = pergunta?.opcao_a || '';
+  document.getElementById('quiz-opcao-b').value = pergunta?.opcao_b || '';
+  document.getElementById('quiz-opcao-c').value = pergunta?.opcao_c || '';
+  document.getElementById('quiz-opcao-d').value = pergunta?.opcao_d || '';
+  document.getElementById('quiz-pergunta-correta').value = pergunta ? String(pergunta.correta) : '0';
+  document.getElementById('quiz-pergunta-ativa').checked = pergunta ? pergunta.ativa!==false : true;
+  const err = document.getElementById('quiz-pergunta-erro');
+  err.style.display='none'; err.textContent='';
+  mostrarModal('modal-quiz-pergunta');
+}
+
+async function salvarQuizPergunta(){
+  const id = document.getElementById('quiz-pergunta-id').value;
+  const pergunta = document.getElementById('quiz-pergunta-texto').value.trim();
+  const a = document.getElementById('quiz-opcao-a').value.trim();
+  const b = document.getElementById('quiz-opcao-b').value.trim();
+  const c = document.getElementById('quiz-opcao-c').value.trim();
+  const d = document.getElementById('quiz-opcao-d').value.trim();
+  const correta = parseInt(document.getElementById('quiz-pergunta-correta').value);
+  const ativa = document.getElementById('quiz-pergunta-ativa').checked;
+  const err = document.getElementById('quiz-pergunta-erro');
+  err.style.display='none';
+
+  if(!pergunta||!a||!b||!c||!d){
+    err.textContent='Preencha a pergunta e as 4 opções.'; err.style.display='block'; return;
+  }
+
+  const payload = { pergunta, opcao_a:a, opcao_b:b, opcao_c:c, opcao_d:d, correta, ativa };
+  const res = id
+    ? await sb.update('quiz_perguntas', payload, `id=eq.${id}`)
+    : await sb.insert('quiz_perguntas', payload);
+
+  if(!res?.[0]){
+    err.textContent='Erro ao salvar. Confirme que a tabela "quiz_perguntas" existe no Supabase.'; err.style.display='block'; return;
+  }
+  fecharModal('modal-quiz-pergunta');
+  carregarQuizAdmin();
+}
+
+async function excluirQuizPergunta(id){
+  if(!confirm('Excluir essa pergunta permanentemente?')) return;
+  await sb.delete('quiz_perguntas', `id=eq.${id}`);
+  carregarQuizAdmin();
 }
 
 // INIT
