@@ -305,11 +305,24 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
 
 #tela-login{
   background:
-    radial-gradient(900px 500px at 20% 0%,rgba(255,197,61,.18),transparent 55%),
-    radial-gradient(1000px 600px at 90% 100%,rgba(0,212,255,.15),transparent 55%),
-    linear-gradient(160deg,#0a1120 0%,#0d1b2e 45%,#0a1120 100%);
+    linear-gradient(180deg, rgba(6,10,20,.45) 0%, rgba(6,10,20,.65) 55%, rgba(10,17,32,.92) 100%),
+    url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/estadio-bg.jpg');
+  background-size:cover;
+  background-position:center;
 }
-.login-logo{filter:drop-shadow(0 0 18px rgba(255,197,61,.55))}
+.login-wrap{width:100%;max-width:460px;display:flex;flex-direction:column;align-items:center}
+.login-logo-destaque{
+  width:100%;max-width:420px;margin:0 auto 8px;display:block;
+  filter:drop-shadow(0 0 34px rgba(0,180,255,.6)) drop-shadow(0 0 16px rgba(140,80,255,.5));
+  animation:logo-flutua 4s ease-in-out infinite;
+}
+@keyframes logo-flutua{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.login-card{
+  background:rgba(20,30,51,.7);backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.1);width:100%;max-width:380px;
+  padding:28px 28px 24px;
+}
+.login-sub{font-size:13px;color:var(--cinza4);margin-bottom:20px;text-align:center;text-transform:uppercase;letter-spacing:1.5px}
 
 #tela-jogo{
   background:
@@ -325,6 +338,54 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     radial-gradient(900px 500px at 15% -10%,rgba(0,212,255,.16),transparent 55%),
     linear-gradient(160deg,#0a1120 0%,#0d1830 100%);
 }
+
+/* DASHBOARD DO ALUNO — fundo de campo de treino + cards de foto */
+#tela-menu{
+  background:
+    linear-gradient(180deg, rgba(6,10,20,.55) 0%, rgba(6,10,20,.72) 45%, rgba(10,17,32,.94) 100%),
+    url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/campo-treino.jpg');
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+}
+#tela-menu .header-aluno{background:rgba(20,30,51,.82);backdrop-filter:blur(14px)}
+.menu-grid-fotos{
+  width:100%;max-width:900px;display:grid;
+  grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px;
+}
+.menu-item-foto{
+  position:relative;aspect-ratio:3/4.6;border-radius:18px;overflow:hidden;
+  background-size:cover;background-position:center;cursor:pointer;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:var(--sombra);
+  transition:transform .2s,box-shadow .2s;
+}
+.menu-item-foto:hover{transform:translateY(-6px) scale(1.03)}
+.menu-foto-overlay{
+  position:absolute;left:0;right:0;bottom:0;padding:16px 12px 14px;
+  display:flex;flex-direction:column;gap:2px;
+}
+.menu-foto-overlay .titulo{
+  font-family:var(--font-display);font-size:15px;font-weight:700;color:#fff;
+  text-transform:uppercase;letter-spacing:.4px;text-shadow:0 2px 8px rgba(0,0,0,.6);
+}
+.menu-foto-overlay .desc{
+  font-size:10.5px;color:rgba(255,255,255,.82);line-height:1.3;
+  text-shadow:0 1px 4px rgba(0,0,0,.6);
+}
+.menu-foto-overlay--dourado{background:linear-gradient(0deg, rgba(20,10,0,.95) 0%, rgba(255,197,61,.35) 55%, transparent 100%);box-shadow:inset 0 -60px 40px -20px rgba(255,197,61,.15)}
+.menu-item-foto:has(.menu-foto-overlay--dourado):hover{box-shadow:var(--glow-dourado)}
+.menu-foto-overlay--roxo{background:linear-gradient(0deg, rgba(15,5,25,.95) 0%, rgba(155,89,255,.35) 55%, transparent 100%)}
+.menu-item-foto:has(.menu-foto-overlay--roxo):hover{box-shadow:0 0 22px rgba(155,89,255,.45)}
+.menu-foto-overlay--ciano{background:linear-gradient(0deg, rgba(5,15,25,.95) 0%, rgba(0,212,255,.35) 55%, transparent 100%)}
+.menu-item-foto:has(.menu-foto-overlay--ciano):hover{box-shadow:var(--glow-ciano)}
+.menu-foto-overlay--verde{background:linear-gradient(0deg, rgba(5,20,12,.95) 0%, rgba(22,193,114,.35) 55%, transparent 100%)}
+.menu-item-foto:has(.menu-foto-overlay--verde):hover{box-shadow:var(--glow-verde)}
+
+@media(max-width:700px){
+  .menu-grid-fotos{grid-template-columns:repeat(2,1fr)}
+  .menu-item-foto{aspect-ratio:3/3.6}
+}
 </style>
 </head>
 <body>
@@ -333,17 +394,18 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
 
 <!-- LOGIN -->
 <div id="tela-login" class="tela ativa">
-  <div class="login-card">
-    <div class="login-logo">⚽</div>
-    <div class="login-title">Super Trunfo</div>
-    <div class="login-sub">Copa do Mundo 2026</div>
-    <div class="campo"><label>Seu nome completo</label>
-      <input type="text" id="login-nome" placeholder="Ex: João Pedro Silva" autocomplete="name"></div>
-    <div class="campo"><label>Data de nascimento</label>
-      <input type="date" id="login-data"></div>
-    <button class="btn-primario" onclick="fazerLogin()">Entrar no jogo ⚡</button>
-    <div id="login-erro" class="msg-erro">Nome ou data não encontrados.</div>
-    <div class="login-admin-link" onclick="mostrarModal('modal-admin')">🔐 Acesso do professor</div>
+  <div class="login-wrap">
+    <img src="https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/logo-super-trunfo.png" alt="Super Trunfo" class="login-logo-destaque">
+    <div class="login-card">
+      <div class="login-sub">Copa do Mundo 2026</div>
+      <div class="campo"><label>Seu nome completo</label>
+        <input type="text" id="login-nome" placeholder="Ex: João Pedro Silva" autocomplete="name"></div>
+      <div class="campo"><label>Data de nascimento</label>
+        <input type="date" id="login-data"></div>
+      <button class="btn-primario" onclick="fazerLogin()">Entrar no jogo ⚡</button>
+      <div id="login-erro" class="msg-erro">Nome ou data não encontrados.</div>
+      <div class="login-admin-link" onclick="mostrarModal('modal-admin')">🔐 Acesso do professor</div>
+    </div>
   </div>
 </div>
 
@@ -357,19 +419,35 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
       <span class="pontos-badge" id="menu-pts-badge"></span>
       <button class="btn-sair" onclick="sair()">Sair</button></div>
   </div>
-  <div class="menu-grid">
-    <div class="menu-item" id="menu-item-criar" onclick="irPara('tela-criar')">
-      <div class="icone" id="menu-criar-icone">🃏</div><div class="titulo" id="menu-criar-titulo">Criar Carta</div>
-      <div class="desc" id="menu-criar-desc">Monte sua carta de jogador</div></div>
-    <div class="menu-item" onclick="verMinhaCarta()">
-      <div class="icone">👁️</div><div class="titulo">Minha Carta</div>
-      <div class="desc">Ver a carta que criei</div></div>
-    <div class="menu-item" onclick="irPara('tela-baralho')">
-      <div class="icone">📚</div><div class="titulo">Baralho</div>
-      <div class="desc">Cartas da turma</div></div>
-    <div class="menu-item" onclick="irPara('tela-jogar-menu')">
-      <div class="icone">🎮</div><div class="titulo">Jogar</div>
-      <div class="desc">Desafie colegas ou a CPU</div></div>
+  <div class="menu-grid-fotos">
+    <div class="menu-item-foto" id="menu-item-criar" onclick="irPara('tela-criar')"
+      style="background-image:url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/computador.jpg')">
+      <div class="menu-foto-overlay menu-foto-overlay--dourado">
+        <div class="titulo" id="menu-criar-titulo">Criar Carta</div>
+        <div class="desc" id="menu-criar-desc">Monte sua carta de jogador</div>
+      </div>
+    </div>
+    <div class="menu-item-foto" onclick="verMinhaCarta()"
+      style="background-image:url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/vestiario.jpg')">
+      <div class="menu-foto-overlay menu-foto-overlay--roxo">
+        <div class="titulo">Minha Carta</div>
+        <div class="desc">Ver a carta que criei</div>
+      </div>
+    </div>
+    <div class="menu-item-foto" onclick="irPara('tela-baralho')"
+      style="background-image:url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/quadro-tatico.jpg')">
+      <div class="menu-foto-overlay menu-foto-overlay--ciano">
+        <div class="titulo">Baralho</div>
+        <div class="desc">Cartas da turma</div>
+      </div>
+    </div>
+    <div class="menu-item-foto" onclick="irPara('tela-jogar-menu')"
+      style="background-image:url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/tunel.jpg')">
+      <div class="menu-foto-overlay menu-foto-overlay--verde">
+        <div class="titulo">Jogar</div>
+        <div class="desc">Desafie colegas ou a CPU</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1407,12 +1485,10 @@ function atualizarMenu(){
   const itemCriar = document.getElementById('menu-item-criar');
   if(a.carta_criada){
     itemCriar.onclick = ()=>verMinhaCarta();
-    document.getElementById('menu-criar-icone').textContent='✅';
     document.getElementById('menu-criar-titulo').textContent='Carta Criada';
     document.getElementById('menu-criar-desc').textContent='Você já tem sua carta — toque para ver';
   } else {
     itemCriar.onclick = ()=>irPara('tela-criar');
-    document.getElementById('menu-criar-icone').textContent='🃏';
     document.getElementById('menu-criar-titulo').textContent='Criar Carta';
     document.getElementById('menu-criar-desc').textContent='Monte sua carta de jogador';
   }
