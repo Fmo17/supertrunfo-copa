@@ -317,6 +317,8 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
   animation:logo-flutua 4s ease-in-out infinite;
 }
 @keyframes logo-flutua{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.sorteio-girando{display:inline-block;animation:sorteio-spin 0.5s linear infinite}
+@keyframes sorteio-spin{0%{transform:rotateY(0deg) scale(1)}50%{transform:rotateY(180deg) scale(1.15)}100%{transform:rotateY(360deg) scale(1)}}
 .login-card{
   background:rgba(20,30,51,.7);backdrop-filter:blur(14px);
   border:1px solid rgba(255,255,255,.1);width:100%;max-width:380px;
@@ -734,6 +736,16 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
 </div>
 
 <!-- JOGO -->
+<!-- SORTEIO -->
+<div id="tela-sorteio" class="tela" style="justify-content:center">
+  <div class="sala-card" style="max-width:380px">
+    <div id="sorteio-moeda" style="font-size:64px;margin-bottom:16px">🪙</div>
+    <h3 id="sorteio-titulo" style="margin-bottom:8px">Sorteando quem começa...</h3>
+    <p id="sorteio-sub" style="color:var(--cinza4);font-size:13px;margin-bottom:20px"></p>
+    <button class="btn-primario hidden" id="btn-continuar-sorteio">Começar partida →</button>
+  </div>
+</div>
+
 <div id="tela-jogo" class="tela">
   <div class="jogo-placar">
     <div class="jinfo"><div class="jnome" id="placar-n1">Você</div><div class="jqtd" id="placar-c1">0</div><div style="font-size:10px;opacity:0.7">vitórias</div></div>
@@ -958,6 +970,30 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     <div class="modal-btns" style="margin-top:16px">
       <button class="btn-secundario" onclick="fecharModal('modal-quiz-pergunta')">Cancelar</button>
       <button class="btn-primario" style="flex:1" onclick="salvarQuizPergunta()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-aluno-editor">
+  <div class="modal">
+    <h3>✏️ Editar Aluno</h3>
+    <input type="hidden" id="aluno-editor-id">
+    <div class="campo" style="text-align:left">
+      <label>Nome completo</label>
+      <input type="text" id="aluno-editor-nome" placeholder="Nome completo">
+    </div>
+    <div class="campo" style="text-align:left">
+      <label>Data de nascimento</label>
+      <input type="date" id="aluno-editor-data">
+    </div>
+    <div class="campo" style="text-align:left">
+      <label>Pontuação (360–600)</label>
+      <input type="number" id="aluno-editor-pts" min="360" max="600" placeholder="Ex: 480">
+    </div>
+    <div id="aluno-editor-erro" class="msg-erro" style="text-align:left"></div>
+    <div class="modal-btns" style="margin-top:16px">
+      <button class="btn-secundario" onclick="fecharModal('modal-aluno-editor')">Cancelar</button>
+      <button class="btn-primario" style="flex:1" onclick="salvarAluno()">💾 Salvar</button>
     </div>
   </div>
 </div>
@@ -2231,7 +2267,7 @@ async function confirmarBaralho(){
     G.jogo.contexto = G.jogo.modoPendente==='copa' ? 'copa' : 'amistoso';
     document.getElementById('placar-n1').textContent=G.aluno.nome_completo.split(' ')[0];
     document.getElementById('placar-n2').textContent = G.jogo.contexto==='copa' ? ('🤖 '+labelFaseCopa(G.jogo.copaFase)) : '🤖 CPU';
-    iniciarPartidaFixa();
+    iniciarSorteio(null, (vencedor)=>iniciarPartidaFixa(vencedor));
   } else {
     G.jogo.contexto='amistoso';
     await enviarBaralhoOnline();
@@ -2242,11 +2278,40 @@ async function confirmarBaralho(){
 // PARTIDA — 10 rodadas fixas, atacante alterna conforme quem venceu
 // (regra clássica: quem ganha a rodada escolhe o próximo atributo)
 // ═══════════════════════════════════════════════════════════════
-function resetEstadoRodadas(){
+// ═══════════════════════════════════════════════════════════════
+// SORTEIO — decide quem escolhe o primeiro atributo da partida
+// ═══════════════════════════════════════════════════════════════
+function iniciarSorteio(vencedorForcado, aoConcluir){
+  irPara('tela-sorteio');
+  const moeda = document.getElementById('sorteio-moeda');
+  const titulo = document.getElementById('sorteio-titulo');
+  const sub = document.getElementById('sorteio-sub');
+  const btn = document.getElementById('btn-continuar-sorteio');
+
+  titulo.textContent = 'Sorteando quem começa...';
+  sub.textContent = '';
+  btn.classList.add('hidden');
+  moeda.textContent = '🪙';
+  moeda.classList.add('sorteio-girando');
+
+  const vencedor = vencedorForcado || (Math.random()<0.5 ? 'j1' : 'j2');
+
+  setTimeout(()=>{
+    moeda.classList.remove('sorteio-girando');
+    const euComeco = vencedor==='j1';
+    moeda.textContent = euComeco ? '🥇' : '🎯';
+    titulo.textContent = euComeco ? 'Você começa!' : (G.jogo.modo==='cpu' ? 'A CPU começa!' : 'O adversário começa!');
+    sub.textContent = euComeco ? 'Escolha o primeiro atributo da partida.' : 'Aguarde o primeiro desafio.';
+    btn.classList.remove('hidden');
+    btn.onclick = ()=>aoConcluir(vencedor);
+  }, 1600);
+}
+
+function resetEstadoRodadas(atacanteInicial){
   G.jogo.rodada = 0;
   G.jogo.vitoriasJ1 = 0;
   G.jogo.vitoriasJ2 = 0;
-  G.jogo.atacante = 'j1';
+  G.jogo.atacante = atacanteInicial || 'j1';
   G.jogo.atributoRodadaAnterior = null;
   G.jogo.atributoBloqueadoNestaRodada = null;
   G.jogo.multiplicador = 1;
@@ -2254,8 +2319,8 @@ function resetEstadoRodadas(){
   G.jogo.ultimaHabilidadeJ2 = -99;
 }
 
-function iniciarPartidaFixa(){
-  resetEstadoRodadas();
+function iniciarPartidaFixa(atacanteInicial){
+  resetEstadoRodadas(atacanteInicial);
   const btnProx = document.getElementById('btn-proxima-rodada');
   btnProx.onclick = proximaRodada;
   btnProx.textContent = 'Próxima rodada →';
@@ -2748,7 +2813,10 @@ async function enviarBaralhoOnline(){
   const outroPronto = souJ1 ? registro.pronto_j2 : registro.pronto_j1;
 
   const payload = { [campoBaralho]: idsBaralho, [campoPronto]: true };
-  if(outroPronto) payload.status = 'em_andamento';
+  if(outroPronto){
+    payload.status = 'em_andamento';
+    payload.sorteio_vencedor = Math.random()<0.5 ? 'jogador1' : 'jogador2';
+  }
   await sb.update('partidas', payload, `id=eq.${G.jogo.partidaId}`);
 
   if(outroPronto){
@@ -2794,7 +2862,10 @@ async function iniciarPartidaOnlineComRegistro(registro){
   G.jogo.modo='online';
   document.getElementById('placar-n1').textContent=G.aluno.nome_completo.split(' ')[0];
   document.getElementById('placar-n2').textContent='Adversário';
-  iniciarPartidaFixa();
+
+  const euSouVencedor = (registro.sorteio_vencedor==='jogador1') === G.jogo.souJogador1;
+  const atacanteLocal = euSouVencedor ? 'j1' : 'j2';
+  iniciarSorteio(atacanteLocal, (vencedor)=>iniciarPartidaFixa(vencedor));
 }
 
 function cancelarSala(){
@@ -2853,7 +2924,8 @@ async function carregarAdmin(){
     <tr><td><strong>${a.nome_completo}</strong></td><td>${a.data_nascimento}</td>
     <td><span class="badge badge-azul">⭐ ${a.pontuacao_total}</span></td>
     <td>${cartaInfo}</td>
-    <td><button class="btn-secundario" style="font-size:11px;padding:4px 8px" onclick="remAluno('${a.id}','${a.nome_completo}')">Remover</button></td>
+    <td><button class="btn-secundario" style="font-size:11px;padding:4px 8px" onclick="abrirModalAluno('${a.id}')">Editar</button>
+    <button class="btn-secundario" style="font-size:11px;padding:4px 8px" onclick="remAluno('${a.id}','${a.nome_completo}')">Remover</button></td>
     </tr>`;
   }).join('');
 }
@@ -2871,6 +2943,34 @@ async function cadastrarAluno(){
     document.getElementById('a-nome').value='';document.getElementById('a-data').value='';document.getElementById('a-pts').value='';
     carregarAdmin();
   } else {m.textContent='Erro. Verifique se já está cadastrado.';m.style.display='block';}
+}
+function abrirModalAluno(id){
+  const aluno = (G.adminAlunos||[]).find(a=>a.id===id);
+  if(!aluno){ alert('Aluno não encontrado. Atualize a página e tente de novo.'); return; }
+  document.getElementById('aluno-editor-id').value = aluno.id;
+  document.getElementById('aluno-editor-nome').value = aluno.nome_completo;
+  document.getElementById('aluno-editor-data').value = aluno.data_nascimento;
+  document.getElementById('aluno-editor-pts').value = aluno.pontuacao_total;
+  const err = document.getElementById('aluno-editor-erro');
+  err.style.display='none'; err.textContent='';
+  mostrarModal('modal-aluno-editor');
+}
+async function salvarAluno(){
+  const id = document.getElementById('aluno-editor-id').value;
+  const n = document.getElementById('aluno-editor-nome').value.trim();
+  const d = document.getElementById('aluno-editor-data').value;
+  const p = parseInt(document.getElementById('aluno-editor-pts').value);
+  const err = document.getElementById('aluno-editor-erro');
+  err.style.display='none';
+
+  if(!n||!d||!p){ err.textContent='Preencha tudo.'; err.style.display='block'; return; }
+  if(p<360||p>600){ err.textContent='Pontuação entre 360 e 600.'; err.style.display='block'; return; }
+
+  const res = await sb.update('alunos', {nome_completo:n, data_nascimento:d, pontuacao_total:p}, `id=eq.${id}`);
+  if(!res?.[0]){ err.textContent='Erro ao salvar. Tente novamente.'; err.style.display='block'; return; }
+
+  fecharModal('modal-aluno-editor');
+  carregarAdmin();
 }
 async function remAluno(id,n){
   if(!confirm(`Remover "${n}"?`))return;
