@@ -328,18 +328,20 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
 
 #tela-jogo{
   background:
-    radial-gradient(900px 500px at 10% -5%,rgba(22,193,114,.28),transparent 55%),
-    radial-gradient(900px 500px at 95% 100%,rgba(0,212,255,.18),transparent 55%),
-    linear-gradient(160deg,#0a1120 0%,#0d1f17 55%,#0a1120 100%);
+    linear-gradient(180deg, rgba(6,10,20,.6) 0%, rgba(6,10,20,.8) 55%, rgba(10,17,32,.96) 100%),
+    url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/torcida-estadio.jpg');
+  background-size:cover;background-position:center;background-attachment:fixed;
 }
 .jogo-placar{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(10px)}
 .jqtd{text-shadow:0 0 14px rgba(255,255,255,.35)}
 
 #tela-admin{
   background:
-    radial-gradient(900px 500px at 15% -10%,rgba(0,212,255,.16),transparent 55%),
-    linear-gradient(160deg,#0a1120 0%,#0d1830 100%);
+    linear-gradient(180deg, rgba(6,10,20,.65) 0%, rgba(6,10,20,.82) 55%, rgba(10,17,32,.97) 100%),
+    url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/campo-equipe.jpg');
+  background-size:cover;background-position:center;background-attachment:fixed;
 }
+#tela-admin .admin-header,#tela-admin .admin-nav-btn{backdrop-filter:blur(10px)}
 
 /* DASHBOARD DO ALUNO — fundo de campo de treino + cards de foto */
 #tela-menu{
@@ -356,13 +358,13 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
   width:auto;max-width:none;align-self:flex-end;
   padding:8px 14px;gap:10px;border-radius:30px;margin-bottom:18px;
 }
-#tela-minha-carta{
+#tela-minha-carta,#tela-online{
   background:
     linear-gradient(180deg, rgba(6,10,20,.6) 0%, rgba(6,10,20,.78) 50%, rgba(10,17,32,.95) 100%),
     url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/sala-quadros.jpg');
   background-size:cover;background-position:center;background-attachment:fixed;
 }
-#tela-quiz{
+#tela-quiz,#tela-sala{
   background:
     linear-gradient(180deg, rgba(6,10,20,.6) 0%, rgba(6,10,20,.78) 50%, rgba(10,17,32,.95) 100%),
     url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/sala-trofeu.jpg');
@@ -386,7 +388,7 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/campo-treino.jpg');
   background-size:cover;background-position:center;background-attachment:fixed;
 }
-#tela-modo-amistoso,#tela-recorde-intro,#tela-recorde-ranking{
+#tela-modo-amistoso,#tela-recorde-intro,#tela-recorde-ranking,#tela-montar-baralho,#tela-copa-bracket,#tela-sorteio{
   background:
     linear-gradient(180deg, rgba(6,10,20,.55) 0%, rgba(6,10,20,.75) 50%, rgba(10,17,32,.95) 100%),
     url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/torcida-estadio.jpg');
@@ -394,9 +396,11 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
 }
 #tela-minha-carta .header-aluno,#tela-quiz .header-aluno,#tela-jogar-menu .header-aluno,#tela-baralho .header-aluno,
 #tela-criar .header-aluno,#tela-avatar .header-aluno,#tela-atributos .header-aluno,
-#tela-modo-amistoso .header-aluno,#tela-recorde-intro .header-aluno,#tela-recorde-ranking .header-aluno{
+#tela-modo-amistoso .header-aluno,#tela-recorde-intro .header-aluno,#tela-recorde-ranking .header-aluno,
+#tela-montar-baralho .header-aluno,#tela-copa-bracket .header-aluno,#tela-online .header-aluno{
   background:rgba(20,30,51,.82);backdrop-filter:blur(14px);
 }
+#tela-sala .sala-card,#tela-online .sala-card{background:rgba(20,30,51,.85);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.1)}
 #tela-menu .header-aluno > div:first-child{display:none}
 #tela-menu .nome-usuario{font-size:12px}
 #tela-menu #menu-pts-info{display:none}
