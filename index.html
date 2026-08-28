@@ -380,7 +380,21 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/campo-equipe.jpg');
   background-size:cover;background-position:center;background-attachment:fixed;
 }
-#tela-minha-carta .header-aluno,#tela-quiz .header-aluno,#tela-jogar-menu .header-aluno,#tela-baralho .header-aluno{
+#tela-criar,#tela-avatar,#tela-atributos{
+  background:
+    linear-gradient(180deg, rgba(6,10,20,.6) 0%, rgba(6,10,20,.78) 50%, rgba(10,17,32,.95) 100%),
+    url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/campo-treino.jpg');
+  background-size:cover;background-position:center;background-attachment:fixed;
+}
+#tela-modo-amistoso,#tela-recorde-intro,#tela-recorde-ranking{
+  background:
+    linear-gradient(180deg, rgba(6,10,20,.55) 0%, rgba(6,10,20,.75) 50%, rgba(10,17,32,.95) 100%),
+    url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/torcida-estadio.jpg');
+  background-size:cover;background-position:center;background-attachment:fixed;
+}
+#tela-minha-carta .header-aluno,#tela-quiz .header-aluno,#tela-jogar-menu .header-aluno,#tela-baralho .header-aluno,
+#tela-criar .header-aluno,#tela-avatar .header-aluno,#tela-atributos .header-aluno,
+#tela-modo-amistoso .header-aluno,#tela-recorde-intro .header-aluno,#tela-recorde-ranking .header-aluno{
   background:rgba(20,30,51,.82);backdrop-filter:blur(14px);
 }
 #tela-menu .header-aluno > div:first-child{display:none}
@@ -803,7 +817,11 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     <div class="admin-card"><h3>⏳ Sem carta ainda</h3><div id="lista-sem-carta"></div></div>
   </div>
   <div class="admin-painel" id="painel-alunos">
-    <div class="admin-card"><h3>➕ Cadastrar aluno</h3>
+    <div class="admin-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+        <h3 style="margin-bottom:0">➕ Cadastrar aluno</h3>
+        <button class="btn-secundario" id="btn-importar-alunos" onclick="importarAlunosProntos()">📥 Importar turma 624 (24 alunos)</button>
+      </div>
       <div class="form-admin">
         <div class="campo"><label>Nome completo</label><input type="text" id="a-nome" placeholder="Nome completo"></div>
         <div class="campo"><label>Data de nascimento</label><input type="date" id="a-data"></div>
@@ -2929,6 +2947,63 @@ async function carregarAdmin(){
     </tr>`;
   }).join('');
 }
+// ═══════════════════════════════════════════════════════════════
+// ALUNOS PRONTOS — Turma 624/Tarde, E.M. Antônio Lopes da Fontoura
+// (excluídos transferidos/removidos da listagem original)
+// ═══════════════════════════════════════════════════════════════
+const ALUNOS_PONTUACAO_PADRAO = 480;
+const ALUNOS_PRONTOS = [
+  ['Ana Clara Costa Fonseca Rodrigues', '2014-08-11'],
+  ['Ana Luyza Pereira da Silva', '2015-01-05'],
+  ['Enzo Samuel de Souza Monteiro', '2014-08-21'],
+  ['Gabriel da Silva Soares', '2014-05-29'],
+  ['Gabrielle Braga Almeida', '2014-05-28'],
+  ['Kaio Passos da Silva', '2015-09-30'],
+  ['Laís de Barros Carvalho', '2014-10-20'],
+  ['Leticia Biancardi Isensee de Jesus', '2015-02-26'],
+  ['Livya da Veiga Muniz', '2013-02-18'],
+  ['Ludmila Vitória dos Santos Alvarenga', '2015-05-11'],
+  ['Maria Luiza Aquino Barbosa Marins', '2015-05-25'],
+  ['Matheus Vinícius Aleluia dos Santos', '2014-05-06'],
+  ['Miguel Bravo Muniz da Costa', '2015-12-30'],
+  ['Miguel Muniz Moreira', '2016-03-06'],
+  ['Mirella Rangel Vilela Ferreira', '2015-02-13'],
+  ['Nicolly Nery da Silva', '2014-08-19'],
+  ['Rychard Souza de Jesus', '2015-01-19'],
+  ['Samyra Freitas Martins', '2014-12-10'],
+  ['Sérgio Lukas Costa Lima', '2015-03-23'],
+  ['Valentina Rangel Areas', '2015-10-13'],
+  ['Yasmin Almeida dos Santos', '2015-12-10'],
+  ['Yuri Silva Pereira Ferreira', '2015-05-04'],
+  ['Isabele Maria Ribeiro Ramos', '2013-10-18'],
+  ['Ryan Silveira de Souza', '2014-03-13'],
+];
+
+async function importarAlunosProntos(){
+  if(!confirm(`Importar ${ALUNOS_PRONTOS.length} alunos da Turma 624? Todos entram com pontuação padrão de ${ALUNOS_PONTUACAO_PADRAO} (dá pra editar depois, um por um). Alunos com o mesmo nome já cadastrado serão pulados.`)) return;
+
+  const btn = document.getElementById('btn-importar-alunos');
+  const original = btn.textContent;
+  btn.disabled = true;
+
+  const existentes = await sb.select('alunos', '');
+  const nomesExistentes = new Set((Array.isArray(existentes)?existentes:[]).map(a=>a.nome_completo.trim().toLowerCase()));
+
+  let importados = 0, pulados = 0;
+  for(let i=0;i<ALUNOS_PRONTOS.length;i++){
+    const [nome, data] = ALUNOS_PRONTOS[i];
+    btn.textContent = `⏳ Importando ${i+1}/${ALUNOS_PRONTOS.length}...`;
+    if(nomesExistentes.has(nome.trim().toLowerCase())){ pulados++; continue; }
+    const res = await sb.insert('alunos', { nome_completo:nome, data_nascimento:data, pontuacao_total:ALUNOS_PONTUACAO_PADRAO });
+    if(res?.[0]) importados++;
+  }
+
+  btn.disabled = false;
+  btn.textContent = original;
+  alert(`✅ ${importados} aluno(s) importado(s)!${pulados?` (${pulados} já existiam e foram pulados)`:''}`);
+  carregarAdmin();
+}
+
 async function cadastrarAluno(){
   const n=document.getElementById('a-nome').value.trim();
   const d=document.getElementById('a-data').value;
