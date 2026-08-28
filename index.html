@@ -820,7 +820,8 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     <div class="admin-card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px">
         <h3 style="margin-bottom:0">➕ Cadastrar aluno</h3>
-        <button class="btn-secundario" id="btn-importar-alunos" onclick="importarAlunosProntos()">📥 Importar turma 624 (24 alunos)</button>
+        <button class="btn-secundario" id="btn-importar-alunos-624" onclick="importarAlunosProntos('624')">📥 Importar turma 624 (24 alunos)</button>
+        <button class="btn-secundario" id="btn-importar-alunos-627" onclick="importarAlunosProntos('627')">📥 Importar turma 627 (24 alunos)</button>
       </div>
       <div class="form-admin">
         <div class="campo"><label>Nome completo</label><input type="text" id="a-nome" placeholder="Nome completo"></div>
@@ -2948,11 +2949,12 @@ async function carregarAdmin(){
   }).join('');
 }
 // ═══════════════════════════════════════════════════════════════
-// ALUNOS PRONTOS — Turma 624/Tarde, E.M. Antônio Lopes da Fontoura
-// (excluídos transferidos/removidos da listagem original)
+// ALUNOS PRONTOS — E.M. Antônio Lopes da Fontoura
+// (excluídos transferidos/removidos das listagens originais)
 // ═══════════════════════════════════════════════════════════════
 const ALUNOS_PONTUACAO_PADRAO = 480;
-const ALUNOS_PRONTOS = [
+
+const ALUNOS_PRONTOS_624 = [
   ['Ana Clara Costa Fonseca Rodrigues', '2014-08-11'],
   ['Ana Luyza Pereira da Silva', '2015-01-05'],
   ['Enzo Samuel de Souza Monteiro', '2014-08-21'],
@@ -2979,10 +2981,40 @@ const ALUNOS_PRONTOS = [
   ['Ryan Silveira de Souza', '2014-03-13'],
 ];
 
-async function importarAlunosProntos(){
-  if(!confirm(`Importar ${ALUNOS_PRONTOS.length} alunos da Turma 624? Todos entram com pontuação padrão de ${ALUNOS_PONTUACAO_PADRAO} (dá pra editar depois, um por um). Alunos com o mesmo nome já cadastrado serão pulados.`)) return;
+const ALUNOS_PRONTOS_627 = [
+  ['Ágatha Guimarães Machado Pereira', '2015-10-19'],
+  ['Alisson Eduardo Paiva Alves', '2015-02-20'],
+  ['Ana Julia Bueno Legentil', '2013-05-10'],
+  ['Bryan Burnett Portela', '2015-03-21'],
+  ['Caio Luiz Veiga Ribeiro', '2014-09-23'],
+  ['Daniel Fernandez Garcia', '2009-03-30'],
+  ['Danillo Francisco da Silva', '2015-02-26'],
+  ['Derick de Oliveira Gomes da Silva', '2015-02-21'],
+  ['Filipe Bernardes Barros', '2015-12-15'],
+  ['Isadora da Silva de Araujo', '2015-08-11'],
+  ['Jheniffer Alves Roberto', '2014-10-29'],
+  ['João Vitor Marins Mira', '2015-01-02'],
+  ['José Miguel Coutinho Bittencourt Souza', '2015-07-03'],
+  ['Maria Luiza Gonzales da Silva', '2014-09-04'],
+  ['Matheus de Oliveira Duarte', '2014-10-14'],
+  ['Mikaelly de Sousa Pereira', '2014-05-22'],
+  ['Ruan Elizeu da Conceição Moraes Arruda', '2014-11-23'],
+  ['Thalles Davi Ramalho Belizario Aguiar', '2015-05-18'],
+  ['Thiego da Costa Rangel', '2014-07-25'],
+  ['Vitória Sousa Dutra', '2014-04-29'],
+  ['Wemerson da Silva Candeia', '2015-02-12'],
+  ['Yasmin Vilar de França', '2014-04-15'],
+  ['Yasmin Vitória de Souza Pardim', '2015-03-12'],
+  ['Yuri da Conceição Sobreiro', '2012-06-14'],
+];
 
-  const btn = document.getElementById('btn-importar-alunos');
+async function importarAlunosProntos(turma){
+  const lista = turma==='627' ? ALUNOS_PRONTOS_627 : ALUNOS_PRONTOS_624;
+  const btnId = turma==='627' ? 'btn-importar-alunos-627' : 'btn-importar-alunos-624';
+
+  if(!confirm(`Importar ${lista.length} alunos da Turma ${turma}? Todos entram com pontuação padrão de ${ALUNOS_PONTUACAO_PADRAO} (dá pra editar depois, um por um). Alunos com o mesmo nome já cadastrado serão pulados.`)) return;
+
+  const btn = document.getElementById(btnId);
   const original = btn.textContent;
   btn.disabled = true;
 
@@ -2990,9 +3022,9 @@ async function importarAlunosProntos(){
   const nomesExistentes = new Set((Array.isArray(existentes)?existentes:[]).map(a=>a.nome_completo.trim().toLowerCase()));
 
   let importados = 0, pulados = 0;
-  for(let i=0;i<ALUNOS_PRONTOS.length;i++){
-    const [nome, data] = ALUNOS_PRONTOS[i];
-    btn.textContent = `⏳ Importando ${i+1}/${ALUNOS_PRONTOS.length}...`;
+  for(let i=0;i<lista.length;i++){
+    const [nome, data] = lista[i];
+    btn.textContent = `⏳ Importando ${i+1}/${lista.length}...`;
     if(nomesExistentes.has(nome.trim().toLowerCase())){ pulados++; continue; }
     const res = await sb.insert('alunos', { nome_completo:nome, data_nascimento:data, pontuacao_total:ALUNOS_PONTUACAO_PADRAO });
     if(res?.[0]) importados++;
