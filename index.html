@@ -778,11 +778,11 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
   <div class="escolha-wrap" id="escolha-wrap">
     <div class="escolha-titulo">Qual atributo você quer jogar?</div>
     <div class="escolha-btns">
-      <button class="btn-attr-jogo" id="btn-attr-chute" onclick="jogar('chute')">⚽ Chute</button>
-      <button class="btn-attr-jogo" id="btn-attr-passe" onclick="jogar('passe')">🎯 Passe</button>
-      <button class="btn-attr-jogo" id="btn-attr-desarme" onclick="jogar('desarme')">🛡️ Desarme</button>
-      <button class="btn-attr-jogo" id="btn-attr-tecnica" onclick="jogar('tecnica')">✨ Técnica</button>
-      <button class="btn-attr-jogo" id="btn-attr-visao" onclick="jogar('visao')">👁️ Visão</button>
+      <button class="btn-attr-jogo" id="btn-attr-chute" onclick="escolherAtributo('chute')">⚽ Chute</button>
+      <button class="btn-attr-jogo" id="btn-attr-passe" onclick="escolherAtributo('passe')">🎯 Passe</button>
+      <button class="btn-attr-jogo" id="btn-attr-desarme" onclick="escolherAtributo('desarme')">🛡️ Desarme</button>
+      <button class="btn-attr-jogo" id="btn-attr-tecnica" onclick="escolherAtributo('tecnica')">✨ Técnica</button>
+      <button class="btn-attr-jogo" id="btn-attr-visao" onclick="escolherAtributo('visao')">👁️ Visão</button>
     </div>
   </div>
   <div class="escolha-wrap hidden" id="defesa-wrap"></div>
@@ -1593,6 +1593,7 @@ let G = {
     modoPendente:null, baralhoDisponiveis:[], selecaoBaralho:new Set(),
     copaAtual:null, copaId:null, copaFase:null,
     recordeAtual:0, recordeCartaJogador:null, recordePool:[],
+    baralhoAbsJ1:[], baralhoAbsJ2:[], registroOnlineAtual:null, aguardandoOnline:false,
   },
   adminAlunos: [],
   adminCartas: [],
@@ -2486,6 +2487,11 @@ function gerarCartaJogoCPU(){
   return div;
 }
 
+function escolherAtributo(attr){
+  if(G.jogo.modo==='online'){ jogarOnline(attr); }
+  else { jogar(attr); }
+}
+
 function jogar(attr){
   const r = G.jogo.rodada;
   const cartaDefensora = G.jogo.baralhoJ2[r];
@@ -2603,6 +2609,7 @@ function fimJogo(){
 }
 function sairJogo(){
   fecharModal('modal-sair-jogo');
+  if(G.jogo.ws){ try{G.jogo.ws.close();}catch(e){} G.jogo.ws=null; }
   if(G.jogo.contexto==='copa' && G.jogo.copaFase){
     registrarResultadoCopa('derrota');
   }
@@ -2882,13 +2889,193 @@ async function iniciarPartidaOnlineComRegistro(registro){
   const todasEnvolvidas = await buscarCartasPorIds([...(idsMeu||[]), ...(idsAdv||[])]);
   G.jogo.baralhoJ1 = ordenarPorIds(todasEnvolvidas, idsMeu);
   G.jogo.baralhoJ2 = ordenarPorIds(todasEnvolvidas, idsAdv);
+  // baralhos ABSOLUTOS (papel real na sala, não perspectiva) — usados na simulação sincronizada
+  G.jogo.baralhoAbsJ1 = ordenarPorIds(todasEnvolvidas, registro.baralho_j1);
+  G.jogo.baralhoAbsJ2 = ordenarPorIds(todasEnvolvidas, registro.baralho_j2);
   G.jogo.modo='online';
+  G.jogo.partidaId = G.jogo.partidaId || registro.id;
+  G.jogo.registroOnlineAtual = registro;
   document.getElementById('placar-n1').textContent=G.aluno.nome_completo.split(' ')[0];
   document.getElementById('placar-n2').textContent='Adversário';
 
   const euSouVencedor = (registro.sorteio_vencedor==='jogador1') === G.jogo.souJogador1;
   const atacanteLocal = euSouVencedor ? 'j1' : 'j2';
-  iniciarSorteio(atacanteLocal, (vencedor)=>iniciarPartidaFixa(vencedor));
+  iniciarSorteio(atacanteLocal, ()=>iniciarPartidaFixaOnline());
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MOTOR ONLINE — cada rodada só sincroniza o atributo escolhido;
+// o resto (placar, de quem é a vez) é recalculado igual nos dois
+// aparelhos a partir do histórico de escolhas (determinístico).
+// ═══════════════════════════════════════════════════════════════
+function simularPartidaOnline(baralhoAbsJ1, baralhoAbsJ2, escolhas, sorteioVencedorAbs){
+  let atacanteAbs = sorteioVencedorAbs || 'jogador1';
+  let vitAbs1 = 0, vitAbs2 = 0, atributoAnterior = null;
+  for(let r=0; r<escolhas.length; r++){
+    const attr = escolhas[r];
+    const c1 = baralhoAbsJ1[r], c2 = baralhoAbsJ2[r];
+    if(!c1 || !c2) break;
+    const v1 = c1[attr], v2 = c2[attr];
+    let vencedor = 'empate';
+    if(v1>v2){ vitAbs1++; vencedor='jogador1'; }
+    else if(v2>v1){ vitAbs2++; vencedor='jogador2'; }
+    if(vencedor!=='empate') atacanteAbs = vencedor;
+    atributoAnterior = attr;
+  }
+  return { rodada: escolhas.length, atacanteAbs, vitAbs1, vitAbs2, atributoAnterior };
+}
+
+function iniciarPartidaFixaOnline(){
+  const btnProx = document.getElementById('btn-proxima-rodada');
+  btnProx.onclick = ()=>mostrarRodadaAtualOnline();
+  btnProx.textContent = 'Próxima rodada →';
+  irPara('tela-jogo');
+  escutarPartidaOnlineContinua();
+  mostrarRodadaAtualOnline();
+}
+
+function escutarPartidaOnlineContinua(){
+  if(G.jogo.ws){ try{G.jogo.ws.close();}catch(e){} }
+  const wsUrl=SUPABASE_URL.replace('https','wss')+'/realtime/v1/websocket?apikey='+SUPABASE_KEY;
+  G.jogo.ws=new WebSocket(wsUrl);
+  G.jogo.ws.onopen=()=>G.jogo.ws.send(JSON.stringify({topic:`realtime:public:partidas:id=eq.${G.jogo.partidaId}`,event:'phx_join',payload:{},ref:'1'}));
+  G.jogo.ws.onmessage=async e=>{
+    const m=JSON.parse(e.data);
+    if(m.event==='UPDATE' && m.payload?.record?.id===G.jogo.partidaId){
+      const registroNovo = m.payload.record;
+      const escolhasNovas = registroNovo.estado_partida?.escolhas || [];
+      const escolhasAntigas = G.jogo.registroOnlineAtual?.estado_partida?.escolhas || [];
+      G.jogo.registroOnlineAtual = registroNovo;
+
+      if(escolhasNovas.length===escolhasAntigas.length+1 && G.jogo.aguardandoOnline){
+        // exatamente a rodada que eu estava esperando: mostra a animação de resultado
+        const idxRodada = escolhasAntigas.length;
+        G.jogo.rodada = idxRodada;
+        G.jogo.aguardandoOnline = false;
+        mostrarResultadoRodadaOnline(escolhasNovas[idxRodada]);
+      } else if(escolhasNovas.length > escolhasAntigas.length){
+        // o adversário avançou mais de uma rodada (ganhou seguido) ou eu não estava
+        // exatamente parado esperando — melhor não arriscar animação fora de sincronia,
+        // só recarrega o estado real direto
+        mostrarRodadaAtualOnline();
+      }
+    }
+  };
+}
+
+async function mostrarRodadaAtualOnline(){
+  const atual = await sb.select('partidas', `id=eq.${G.jogo.partidaId}`);
+  const registro = atual?.[0];
+  if(!registro){ return; }
+  G.jogo.registroOnlineAtual = registro;
+  const escolhas = registro.estado_partida?.escolhas || [];
+  const sim = simularPartidaOnline(G.jogo.baralhoAbsJ1, G.jogo.baralhoAbsJ2, escolhas, registro.sorteio_vencedor);
+
+  if(sim.rodada>=10 || sim.rodada>=G.jogo.baralhoAbsJ1.length){
+    finalizarPartidaOnline(sim, registro);
+    return;
+  }
+
+  const souEuJ1 = G.jogo.souJogador1;
+  const atacanteLocal = (sim.atacanteAbs==='jogador1')===souEuJ1 ? 'j1' : 'j2';
+  G.jogo.rodada = sim.rodada;
+  G.jogo.vitoriasJ1 = souEuJ1 ? sim.vitAbs1 : sim.vitAbs2;
+  G.jogo.vitoriasJ2 = souEuJ1 ? sim.vitAbs2 : sim.vitAbs1;
+  G.jogo.atacante = atacanteLocal;
+  G.jogo.atributoRodadaAnterior = sim.atributoAnterior;
+  G.jogo.atributoBloqueadoNestaRodada = null;
+
+  atualizarPlacarFixo();
+  document.getElementById('jogo-c1').innerHTML='';
+  document.getElementById('jogo-c2').innerHTML='';
+  document.getElementById('jogo-c1').appendChild(gerarCartaEl(G.jogo.baralhoJ1[sim.rodada],false));
+  document.getElementById('jogo-c2').appendChild(gerarCartaJogoCPU());
+  document.getElementById('resultado-wrap').classList.add('hidden');
+  document.getElementById('defesa-wrap').classList.add('hidden');
+
+  if(atacanteLocal==='j1'){
+    G.jogo.aguardandoOnline = false;
+    document.getElementById('jogo-status').textContent = `Rodada ${sim.rodada+1} de 10 — Escolha um atributo.`;
+    montarBotoesAtributo();
+    document.getElementById('escolha-wrap').classList.remove('hidden');
+  } else {
+    G.jogo.aguardandoOnline = true;
+    document.getElementById('escolha-wrap').classList.add('hidden');
+    document.getElementById('jogo-status').textContent = `Rodada ${sim.rodada+1} de 10 — Aguardando o adversário escolher...`;
+  }
+}
+
+async function jogarOnline(attr){
+  G.jogo.aguardandoOnline = false;
+  document.getElementById('escolha-wrap').classList.add('hidden');
+  ATTRS.forEach(a=>{ const b=document.getElementById('btn-attr-'+a.k); if(b) b.disabled=true; });
+
+  const registro = G.jogo.registroOnlineAtual;
+  const escolhasAtuais = registro?.estado_partida?.escolhas || [];
+  const novasEscolhas = [...escolhasAtuais, attr];
+  const res = await sb.update('partidas', { estado_partida: { escolhas: novasEscolhas } }, `id=eq.${G.jogo.partidaId}`);
+  if(res?.[0]) G.jogo.registroOnlineAtual = res[0];
+
+  mostrarResultadoRodadaOnline(attr);
+}
+
+function mostrarResultadoRodadaOnline(attr){
+  const r = G.jogo.rodada;
+  const c1 = G.jogo.baralhoJ1[r], c2 = G.jogo.baralhoJ2[r];
+  if(!c1 || !c2) return;
+  const v1 = c1[attr], v2 = c2[attr];
+  document.getElementById('jogo-c2').innerHTML='';
+  document.getElementById('jogo-c2').appendChild(gerarCartaEl(c2,false));
+  document.querySelectorAll(`[data-attr="${attr}"]`).forEach(el=>{
+    el.classList.add('destaque');
+    const isJ1=!!el.closest('#jogo-c1');
+    if((isJ1&&v1>v2)||(!isJ1&&v2>v1))el.classList.add('vencedor');
+  });
+  document.getElementById('escolha-wrap').classList.add('hidden');
+  document.getElementById('resultado-wrap').classList.remove('hidden');
+  const lbl = labelAttr(attr);
+  if(v1>v2){
+    document.getElementById('res-emoji').textContent='🏆';
+    document.getElementById('res-msg').textContent='Você ganhou essa rodada!';
+    document.getElementById('res-sub').textContent=`${lbl}: ${v1} vs ${v2}`;
+  } else if(v2>v1){
+    document.getElementById('res-emoji').textContent='😮';
+    document.getElementById('res-msg').textContent='Seu adversário ganhou essa rodada!';
+    document.getElementById('res-sub').textContent=`${lbl}: ${v2} vs ${v1}`;
+  } else {
+    document.getElementById('res-emoji').textContent='🤝';
+    document.getElementById('res-msg').textContent='Empate nessa rodada!';
+    document.getElementById('res-sub').textContent=`${lbl}: ${v1} = ${v2}`;
+  }
+  const btnProx = document.getElementById('btn-proxima-rodada');
+  btnProx.textContent = (G.jogo.rodada+1>=10) ? '🏁 Ver resultado final' : 'Próxima rodada →';
+}
+
+async function finalizarPartidaOnline(sim, registro){
+  if(G.jogo.ws){ try{G.jogo.ws.close();}catch(e){} G.jogo.ws=null; }
+  document.getElementById('escolha-wrap').classList.add('hidden');
+  document.getElementById('defesa-wrap').classList.add('hidden');
+  document.getElementById('resultado-wrap').classList.remove('hidden');
+
+  const souEuJ1 = G.jogo.souJogador1;
+  const v1 = souEuJ1 ? sim.vitAbs1 : sim.vitAbs2;
+  const v2 = souEuJ1 ? sim.vitAbs2 : sim.vitAbs1;
+  let emoji, msg;
+  if(v1>v2){ emoji='🏆'; msg='Você venceu a partida!'; }
+  else if(v2>v1){ emoji='😢'; msg='Seu adversário venceu a partida!'; }
+  else { emoji='🤝'; msg='A partida empatou!'; }
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-msg').textContent=msg;
+  document.getElementById('res-sub').textContent=`Placar final: ${v1} × ${v2} (10 rodadas)`;
+
+  if(registro.status!=='finalizada'){
+    const vencedorId = sim.vitAbs1>sim.vitAbs2 ? registro.jogador1_id : (sim.vitAbs2>sim.vitAbs1 ? registro.jogador2_id : null);
+    await sb.update('partidas', {status:'finalizada', vencedor_id:vencedorId}, `id=eq.${G.jogo.partidaId}`);
+  }
+
+  const btn=document.querySelector('#resultado-wrap .btn-primario');
+  btn.textContent='← Voltar ao menu';
+  btn.onclick=()=>irPara('tela-menu');
 }
 
 function cancelarSala(){
