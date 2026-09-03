@@ -1594,6 +1594,7 @@ let G = {
     copaAtual:null, copaId:null, copaFase:null,
     recordeAtual:0, recordeCartaJogador:null, recordePool:[],
     baralhoAbsJ1:[], baralhoAbsJ2:[], registroOnlineAtual:null, aguardandoOnline:false,
+    pollingSala:null, pollingPartida:null,
   },
   adminAlunos: [],
   adminCartas: [],
@@ -2610,6 +2611,7 @@ function fimJogo(){
 function sairJogo(){
   fecharModal('modal-sair-jogo');
   if(G.jogo.ws){ try{G.jogo.ws.close();}catch(e){} G.jogo.ws=null; }
+  pararPollingSala(); pararPollingPartida();
   if(G.jogo.contexto==='copa' && G.jogo.copaFase){
     registrarResultadoCopa('derrota');
   }
@@ -2883,9 +2885,28 @@ function escutarSalaRealtime(){
   G.jogo.ws.onmessage=async e=>{
     const m=JSON.parse(e.data);
     if((m.event==='UPDATE'||m.event==='INSERT')&&m.payload?.record?.status==='em_andamento'){
+      pararPollingSala();
       await iniciarPartidaOnlineComRegistro(m.payload.record);
     }
   };
+  iniciarPollingSala();
+}
+
+// Rede de segurança: verifica sozinho a cada 3s, independente do WebSocket funcionar
+function iniciarPollingSala(){
+  pararPollingSala();
+  G.jogo.pollingSala = setInterval(async ()=>{
+    if(!G.jogo.partidaId) return;
+    const atual = await sb.select('partidas', `id=eq.${G.jogo.partidaId}`);
+    const registro = Array.isArray(atual) ? atual[0] : null;
+    if(registro && registro.status==='em_andamento'){
+      pararPollingSala();
+      await iniciarPartidaOnlineComRegistro(registro);
+    }
+  }, 3000);
+}
+function pararPollingSala(){
+  if(G.jogo.pollingSala){ clearInterval(G.jogo.pollingSala); G.jogo.pollingSala=null; }
 }
 
 async function buscarCartasPorIds(ids){
@@ -2976,6 +2997,20 @@ function escutarPartidaOnlineContinua(){
       }
     }
   };
+  iniciarPollingPartida();
+}
+
+// Rede de segurança: enquanto estou esperando o adversário, confere sozinho a cada 3s
+function iniciarPollingPartida(){
+  pararPollingPartida();
+  G.jogo.pollingPartida = setInterval(()=>{
+    if(G.jogo.modo==='online' && G.jogo.aguardandoOnline){
+      mostrarRodadaAtualOnline();
+    }
+  }, 3000);
+}
+function pararPollingPartida(){
+  if(G.jogo.pollingPartida){ clearInterval(G.jogo.pollingPartida); G.jogo.pollingPartida=null; }
 }
 
 async function mostrarRodadaAtualOnline(){
@@ -3068,6 +3103,7 @@ function mostrarResultadoRodadaOnline(attr){
 
 async function finalizarPartidaOnline(sim, registro){
   if(G.jogo.ws){ try{G.jogo.ws.close();}catch(e){} G.jogo.ws=null; }
+  pararPollingPartida();
   document.getElementById('escolha-wrap').classList.add('hidden');
   document.getElementById('defesa-wrap').classList.add('hidden');
   document.getElementById('resultado-wrap').classList.remove('hidden');
@@ -3095,6 +3131,7 @@ async function finalizarPartidaOnline(sim, registro){
 
 function cancelarSala(){
   if(G.jogo.ws){ try{G.jogo.ws.close();}catch(e){} G.jogo.ws=null; }
+  pararPollingSala(); pararPollingPartida();
   if(G.jogo.partidaId) sb.delete('partidas',`id=eq.${G.jogo.partidaId}`);
   document.getElementById('sala-codigo-bloco').style.display='block';
   irPara('tela-online');
