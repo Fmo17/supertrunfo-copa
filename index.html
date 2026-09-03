@@ -2823,9 +2823,14 @@ async function entrarSala(){
   const cod=document.getElementById('codigo-sala-input').value.trim().toUpperCase();
   if(cod.length<3){alert('Digite o código!');return}
   if(!G.aluno.carta_criada){alert('Crie sua carta antes!');return}
-  const ps=await sb.select('partidas',`codigo_sala=eq.${cod}&status=eq.aguardando`);
-  if(!ps?.length){alert('Sala não encontrada ou já em andamento.');return}
-  await sb.update('partidas',{jogador2_id:G.aluno.id},`id=eq.${ps[0].id}`);
+  const ps=await sb.select('partidas',`codigo_sala=eq.${cod}&status=eq.aguardando&order=created_at.desc&limit=1`);
+  if(!Array.isArray(ps) || !ps.length){alert('Sala não encontrada ou já em andamento.');return}
+  const res = await sb.update('partidas',{jogador2_id:G.aluno.id},`id=eq.${ps[0].id}`);
+  if(!Array.isArray(res) || !res[0]){
+    console.error('Falha ao entrar na sala:', res);
+    alert('Não consegui entrar na sala. Confira sua internet e tente de novo. Se persistir, pode ser um problema de permissão no banco (RLS) na tabela "partidas".');
+    return;
+  }
   G.jogo.partidaId=ps[0].id;
   G.jogo.codigoSala=cod;
   G.jogo.souJogador1=false;
@@ -2839,7 +2844,12 @@ async function enviarBaralhoOnline(){
   const campoPronto  = souJ1 ? 'pronto_j1' : 'pronto_j2';
 
   const atual = await sb.select('partidas',`id=eq.${G.jogo.partidaId}`);
-  const registro = atual?.[0] || {};
+  if(!Array.isArray(atual) || !atual[0]){
+    console.error('Falha ao ler a sala:', atual);
+    alert('Não consegui ler os dados da sala. Confira sua internet e tente de novo. Se persistir, pode ser um problema de permissão no banco (RLS) na tabela "partidas".');
+    return;
+  }
+  const registro = atual[0];
   const outroPronto = souJ1 ? registro.pronto_j2 : registro.pronto_j1;
 
   const payload = { [campoBaralho]: idsBaralho, [campoPronto]: true };
@@ -2847,10 +2857,15 @@ async function enviarBaralhoOnline(){
     payload.status = 'em_andamento';
     payload.sorteio_vencedor = Math.random()<0.5 ? 'jogador1' : 'jogador2';
   }
-  await sb.update('partidas', payload, `id=eq.${G.jogo.partidaId}`);
+  const res = await sb.update('partidas', payload, `id=eq.${G.jogo.partidaId}`);
+  if(!Array.isArray(res) || !res[0]){
+    console.error('Falha ao salvar o baralho na sala:', res);
+    alert('Não consegui salvar seu baralho na sala. Confira sua internet e tente de novo. Se persistir, pode ser um problema de permissão no banco (RLS) na tabela "partidas".');
+    return;
+  }
 
   if(outroPronto){
-    await iniciarPartidaOnlineComRegistro({ ...registro, ...payload });
+    await iniciarPartidaOnlineComRegistro(res[0]);
   } else {
     document.getElementById('sala-codigo-bloco').style.display = souJ1 ? 'block' : 'none';
     document.getElementById('sala-codigo-display').textContent = G.jogo.codigoSala || '—';
