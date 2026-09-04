@@ -330,7 +330,7 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
   background:
     linear-gradient(180deg, rgba(6,10,20,.6) 0%, rgba(6,10,20,.8) 55%, rgba(10,17,32,.96) 100%),
     url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/torcida-estadio.jpg');
-  background-size:cover;background-position:center;background-attachment:fixed;
+  background-size:cover;background-position:center;background-attachment:scroll;
 }
 .jogo-placar{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(10px)}
 .jqtd{text-shadow:0 0 14px rgba(255,255,255,.35)}
@@ -339,7 +339,7 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
   background:
     linear-gradient(180deg, rgba(6,10,20,.65) 0%, rgba(6,10,20,.82) 55%, rgba(10,17,32,.97) 100%),
     url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/campo-equipe.jpg');
-  background-size:cover;background-position:center;background-attachment:fixed;
+  background-size:cover;background-position:center;background-attachment:scroll;
 }
 #tela-admin .admin-header,#tela-admin .admin-nav-btn{backdrop-filter:blur(10px)}
 
@@ -350,7 +350,7 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/campo-treino.jpg');
   background-size:cover;
   background-position:center;
-  background-attachment:fixed;
+  background-attachment:scroll;
   padding-left:16px;padding-right:16px;
 }
 #tela-menu .header-aluno{
@@ -362,37 +362,37 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
   background:
     linear-gradient(180deg, rgba(6,10,20,.6) 0%, rgba(6,10,20,.78) 50%, rgba(10,17,32,.95) 100%),
     url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/sala-quadros.jpg');
-  background-size:cover;background-position:center;background-attachment:fixed;
+  background-size:cover;background-position:center;background-attachment:scroll;
 }
 #tela-quiz,#tela-sala{
   background:
     linear-gradient(180deg, rgba(6,10,20,.6) 0%, rgba(6,10,20,.78) 50%, rgba(10,17,32,.95) 100%),
     url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/sala-trofeu.jpg');
-  background-size:cover;background-position:center;background-attachment:fixed;
+  background-size:cover;background-position:center;background-attachment:scroll;
 }
 #tela-jogar-menu{
   background:
     linear-gradient(180deg, rgba(6,10,20,.55) 0%, rgba(6,10,20,.75) 50%, rgba(10,17,32,.95) 100%),
     url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/torcida-estadio.jpg');
-  background-size:cover;background-position:center;background-attachment:fixed;
+  background-size:cover;background-position:center;background-attachment:scroll;
 }
 #tela-baralho{
   background:
     linear-gradient(180deg, rgba(6,10,20,.6) 0%, rgba(6,10,20,.78) 50%, rgba(10,17,32,.95) 100%),
     url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/campo-equipe.jpg');
-  background-size:cover;background-position:center;background-attachment:fixed;
+  background-size:cover;background-position:center;background-attachment:scroll;
 }
 #tela-criar,#tela-avatar,#tela-atributos{
   background:
     linear-gradient(180deg, rgba(6,10,20,.6) 0%, rgba(6,10,20,.78) 50%, rgba(10,17,32,.95) 100%),
     url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/campo-treino.jpg');
-  background-size:cover;background-position:center;background-attachment:fixed;
+  background-size:cover;background-position:center;background-attachment:scroll;
 }
 #tela-modo-amistoso,#tela-recorde-intro,#tela-recorde-ranking,#tela-montar-baralho,#tela-copa-bracket,#tela-sorteio{
   background:
     linear-gradient(180deg, rgba(6,10,20,.55) 0%, rgba(6,10,20,.75) 50%, rgba(10,17,32,.95) 100%),
     url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/torcida-estadio.jpg');
-  background-size:cover;background-position:center;background-attachment:fixed;
+  background-size:cover;background-position:center;background-attachment:scroll;
 }
 #tela-minha-carta .header-aluno,#tela-quiz .header-aluno,#tela-jogar-menu .header-aluno,#tela-baralho .header-aluno,
 #tela-criar .header-aluno,#tela-avatar .header-aluno,#tela-atributos .header-aluno,
@@ -1551,7 +1551,12 @@ function loadImg(url) {
 }
 
 // Compõe avatar + camisa em canvas e retorna dataURL
+const CACHE_COMPOSTAR = new Map(); // evita remontar avatar+país repetidas vezes na mesma sessão
+
 async function compostar(avatarId, paisNome) {
+  const chaveCache = `${avatarId}|${paisNome}`;
+  if (CACHE_COMPOSTAR.has(chaveCache)) return CACHE_COMPOSTAR.get(chaveCache);
+
   const avatarInfo = AVATARES[avatarId] || AVATARES_CRAQUES[avatarId];
   if (!avatarInfo) throw new Error('Avatar não encontrado: ' + avatarId);
 
@@ -1573,7 +1578,9 @@ async function compostar(avatarId, paisNome) {
   ctx.drawImage(avatarImg, 0, 0, TAM, TAM);
   ctx.drawImage(camisaImg, avatarInfo.shiftX * escala, avatarInfo.shiftY * escala, TAM, TAM);
 
-  return canvas.toDataURL('image/png');
+  const dataUrl = canvas.toDataURL('image/png');
+  CACHE_COMPOSTAR.set(chaveCache, dataUrl);
+  return dataUrl;
 }
 
 
@@ -2094,15 +2101,32 @@ function gerarCartaEl(carta, grande=false){
       </div>
     </div>`;
 
-  // Carrega avatar async após inserir no DOM
+  // Carrega avatar só quando a carta realmente aparece na tela (rolando a página) —
+  // evita montar 40+ avatares de uma vez em telas como Baralho/Admin
   const wrap = div.querySelector('.carta-avatar-wrap');
-  compostar(cfg.avatarId||'menino1', pais.arq).then(url=>{
-    wrap.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;object-position:top">`;
-  }).catch(()=>{
-    wrap.innerHTML='<div style="font-size:32px;opacity:0.5">⚽</div>';
-  });
+  wrap.dataset.avatarId = cfg.avatarId||'menino1';
+  wrap.dataset.paisArq = pais.arq;
+  getObservadorCartas().observe(wrap);
 
   return div;
+}
+
+let _observadorCartas = null;
+function getObservadorCartas(){
+  if(_observadorCartas) return _observadorCartas;
+  _observadorCartas = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting) return;
+      const wrap = entry.target;
+      _observadorCartas.unobserve(wrap);
+      compostar(wrap.dataset.avatarId, wrap.dataset.paisArq).then(url=>{
+        wrap.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;object-position:top">`;
+      }).catch(()=>{
+        wrap.innerHTML='<div style="font-size:32px;opacity:0.5">⚽</div>';
+      });
+    });
+  }, { rootMargin: '300px' }); // começa a carregar um pouco antes de entrar na tela, pra não "piscar"
+  return _observadorCartas;
 }
 
 // ═══════════════════════════════════════════════════════════════
