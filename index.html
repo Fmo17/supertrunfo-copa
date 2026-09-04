@@ -451,6 +451,7 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
   .menu-item-foto{aspect-ratio:3/3.6;min-height:190px}
   .menu-foto-overlay .titulo{font-size:15px}
   #tela-jogar-menu .menu-foto-overlay .titulo{font-size:19px}
+  #copa-bracket-lista{grid-template-columns:1fr 1fr!important}
 }
 </style>
 </head>
@@ -496,8 +497,8 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     <div class="menu-item-foto" onclick="verMinhaCarta()"
       style="background-image:url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/vestiario.jpg')">
       <div class="menu-foto-overlay menu-foto-overlay--roxo">
-        <div class="titulo">Minha Carta</div>
-        <div class="desc">Ver a carta que criei</div>
+        <div class="titulo">Meu Time</div>
+        <div class="desc">Sua carta e seu baralho salvo</div>
       </div>
     </div>
     <div class="menu-item-foto" onclick="irPara('tela-baralho')"
@@ -600,7 +601,7 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
 <div id="tela-minha-carta" class="tela">
   <div class="header-aluno">
     <button class="btn-secundario" onclick="irPara('tela-menu')">← Voltar</button>
-    <div class="nome-usuario">Minha Carta</div><div></div></div>
+    <div class="nome-usuario">Meu Time</div><div></div></div>
   <div id="minha-carta-wrap" style="width:100%;max-width:720px;display:flex;flex-direction:column;align-items:center;gap:20px"></div>
 </div>
 
@@ -663,7 +664,7 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     <button class="btn-secundario" onclick="irPara('tela-jogar-menu')">← Voltar</button>
     <div class="nome-usuario">Modo Copa</div><div></div></div>
   <div class="secao-titulo"><h2>🏆 Sua Copa</h2><p id="copa-bracket-resumo">Carregando...</p></div>
-  <div id="copa-bracket-lista" class="menu-grid" style="max-width:600px;grid-template-columns:1fr 1fr"></div>
+  <div id="copa-bracket-lista" class="menu-grid" style="max-width:780px;grid-template-columns:1fr 1fr 1fr"></div>
   <div id="copa-nova-wrap" class="hidden" style="margin-top:16px">
     <button class="btn-primario" style="width:auto;padding:12px 28px" onclick="novaCopa()">🔄 Iniciar nova Copa</button>
   </div>
@@ -2162,6 +2163,45 @@ async function verMinhaCarta(){
     G.bonusQuiz = { carta: cartas[0], pontosRestantes: pontosDisponiveis, extras: {chute:0,passe:0,desarme:0,tecnica:0,visao:0} };
     renderBonusQuizMinhaCarta();
   }
+
+  await renderBaralhoSalvoMinhaCarta();
+}
+
+async function renderBaralhoSalvoMinhaCarta(){
+  const wrap = document.getElementById('minha-carta-wrap');
+  const bloco = document.createElement('div');
+  bloco.className='card-criador';
+  bloco.style.maxWidth='720px';
+  bloco.id='meu-time-baralho';
+  wrap.appendChild(bloco);
+
+  const salvo = Array.isArray(G.aluno.baralho_salvo) ? G.aluno.baralho_salvo : [];
+  if(!salvo.length){
+    bloco.innerHTML = `
+      <h3 style="margin-bottom:8px">🎴 Seu baralho</h3>
+      <p style="color:var(--cinza4);font-size:13px;margin-bottom:16px">Você ainda não montou seu time fixo. Monte uma vez e ele fica salvo pras próximas partidas — sem precisar escolher de novo toda hora.</p>
+      <button class="btn-primario" style="width:auto;padding:12px 24px" onclick="editarBaralhoSalvo()">🎴 Montar meu time</button>
+    `;
+    return;
+  }
+
+  bloco.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:10px">
+      <h3 style="margin-bottom:0">🎴 Seu baralho (${salvo.length}/9 + sua carta)</h3>
+      <button class="btn-secundario" onclick="editarBaralhoSalvo()">✏️ Editar baralho</button>
+    </div>
+    <div id="meu-time-lista" class="cartas-grid" style="max-height:460px;overflow-y:auto">Carregando...</div>
+  `;
+
+  const cartasBaralho = await buscarCartasPorIds(salvo);
+  const lista = document.getElementById('meu-time-lista');
+  if(!lista) return;
+  if(!cartasBaralho.length){
+    lista.innerHTML = '<p style="color:var(--cinza4);font-size:13px">Nenhuma carta encontrada — pode ser que alguma tenha sido removida. Edite o baralho pra ajustar.</p>';
+    return;
+  }
+  lista.innerHTML='';
+  cartasBaralho.forEach(c=>lista.appendChild(gerarCartaEl(c,false)));
 }
 
 function renderBonusQuizMinhaCarta(){
@@ -2258,7 +2298,38 @@ async function abrirMontagemBaralho(modo){
 
   G.jogo.modoPendente = modo;
   G.jogo.baralhoDisponiveis = todas;
+
+  // Se já existe um time salvo e ainda válido (todas as cartas continuam ativas),
+  // usa direto sem pedir pra escolher de novo
+  const salvo = Array.isArray(G.aluno.baralho_salvo) ? G.aluno.baralho_salvo : [];
+  const salvoValido = salvo.filter(id => todas.some(c=>c.id===id));
+  if(salvoValido.length===9){
+    G.jogo.selecaoBaralho = new Set([minhaCarta.id, ...salvoValido]);
+    await confirmarBaralho();
+    return;
+  }
+
   G.jogo.selecaoBaralho = new Set([minhaCarta.id]);
+  document.getElementById('baralho-busca').value='';
+  renderGradeBaralho('');
+  atualizarContadorBaralho();
+  irPara('tela-montar-baralho');
+}
+
+async function editarBaralhoSalvo(){
+  const todas = await sb.select('cartas','ativa=eq.true');
+  if(!todas || todas.length<10){
+    alert(`É necessário pelo menos 10 cartas ativas no sistema para montar um baralho (hoje há ${todas?.length||0}). Peça para o professor criar mais cartas.`);
+    return;
+  }
+  const minhaCarta = todas.find(c=>c.aluno_id===G.aluno.id);
+  if(!minhaCarta){alert('Não encontramos sua carta ativa. Fale com o professor.');return}
+
+  G.jogo.modoPendente = 'editar';
+  G.jogo.baralhoDisponiveis = todas;
+  const salvo = Array.isArray(G.aluno.baralho_salvo) ? G.aluno.baralho_salvo : [];
+  const salvoValido = salvo.filter(id => todas.some(c=>c.id===id));
+  G.jogo.selecaoBaralho = new Set([minhaCarta.id, ...salvoValido]);
   document.getElementById('baralho-busca').value='';
   renderGradeBaralho('');
   atualizarContadorBaralho();
@@ -2321,13 +2392,29 @@ function cancelarMontagemBaralho(){
     }
     G.jogo.partidaId=null;
   }
+  const voltarPara = G.jogo.modoPendente==='editar' ? 'tela-minha-carta' : 'tela-jogar-menu';
   G.jogo.modoPendente=null;
-  irPara('tela-jogar-menu');
+  irPara(voltarPara);
 }
 
 async function confirmarBaralho(){
   if(G.jogo.selecaoBaralho.size!==10) return;
   const escolhidas = G.jogo.baralhoDisponiveis.filter(c=>G.jogo.selecaoBaralho.has(c.id));
+
+  // salva o time (todas as 9 cartas escolhidas, exceto a própria) pra reutilizar nas próximas partidas
+  const idsParaSalvar = escolhidas.filter(c=>c.aluno_id!==G.aluno.id).map(c=>c.id);
+  if(idsParaSalvar.length===9){
+    const res = await sb.update('alunos', {baralho_salvo: idsParaSalvar}, `id=eq.${G.aluno.id}`);
+    if(res?.[0]) G.aluno = {...G.aluno, ...res[0]};
+  }
+
+  if(G.jogo.modoPendente==='editar'){
+    G.jogo.modoPendente = null;
+    alert('✅ Time salvo!');
+    verMinhaCarta();
+    return;
+  }
+
   G.jogo.baralhoJ1 = [...escolhidas].sort(()=>Math.random()-0.5);
 
   if(G.jogo.modoPendente==='cpu' || G.jogo.modoPendente==='copa'){
@@ -2668,6 +2755,8 @@ function sairJogo(){
 // MODO COPA — 4 fases eliminatórias vs CPU, progresso salvo
 // ═══════════════════════════════════════════════════════════════
 const FASES_COPA = [
+  {k:'32avos',  label:'32avos de Final'},
+  {k:'16avos',  label:'16avos de Final'},
   {k:'oitavas', label:'Oitavas de Final'},
   {k:'quartas', label:'Quartas de Final'},
   {k:'semi',    label:'Semifinal'},
@@ -2685,7 +2774,7 @@ async function abrirModoCopa(){
     }
     let copa = copas[0];
     if(!copa){
-      const res = await sb.insert('copas', { aluno_id:G.aluno.id, fase_atual:'oitavas' });
+      const res = await sb.insert('copas', { aluno_id:G.aluno.id, fase_atual:'32avos' });
       if(!Array.isArray(res) || !res[0]){
         console.error('Falha ao criar copa:', res);
         alert('Não consegui criar sua Copa. Verifique se a tabela "copas" existe no Supabase (peça ao professor pra rodar o SQL de configuração).');
@@ -2738,7 +2827,7 @@ async function iniciarFaseCopa(fase){
 }
 
 async function novaCopa(){
-  const res = await sb.insert('copas', { aluno_id:G.aluno.id, fase_atual:'oitavas' });
+  const res = await sb.insert('copas', { aluno_id:G.aluno.id, fase_atual:'32avos' });
   G.jogo.copaAtual = res?.[0];
   renderBracketCopa();
 }
@@ -2755,7 +2844,7 @@ async function registrarResultadoCopa(resultado){
   } else {
     const ordem = FASES_COPA.map(f=>f.k);
     const idx = ordem.indexOf(fase);
-    if(idx===3){ payload.concluida = true; payload.campeao = true; }
+    if(idx===ordem.length-1){ payload.concluida = true; payload.campeao = true; }
     else { payload.fase_atual = ordem[idx+1]; }
   }
   const res = await sb.update('copas', payload, `id=eq.${copaId}`);
