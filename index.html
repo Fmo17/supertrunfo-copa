@@ -410,6 +410,7 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
   width:100%;max-width:1180px;display:grid;
   grid-template-columns:repeat(4,1fr);gap:16px;margin-top:8px;
 }
+.menu-grid-jogar{max-width:900px;grid-template-columns:repeat(3,1fr)}
 .menu-item-foto{
   position:relative;aspect-ratio:3/4.4;min-height:260px;border-radius:18px;overflow:hidden;
   background-size:cover;background-position:center;cursor:pointer;
@@ -618,7 +619,7 @@ input,select,textarea{color:var(--preto);font-family:var(--font)}
     <button class="btn-secundario" onclick="irPara('tela-menu')">← Voltar</button>
     <div class="nome-usuario">Jogar</div><div></div></div>
   <div class="secao-titulo"><h2>Escolha o modo de jogo</h2></div>
-  <div class="menu-grid-fotos" style="max-width:900px;grid-template-columns:repeat(3,1fr)">
+  <div class="menu-grid-fotos menu-grid-jogar">
     <div class="menu-item-foto" onclick="irPara('tela-modo-amistoso')"
       style="background-image:url('https://raw.githubusercontent.com/Fmo17/supertrunfo-copa/main/assets/marca/amistoso.jpg')">
       <div class="menu-foto-overlay menu-foto-overlay--ciano">
