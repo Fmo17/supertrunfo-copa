@@ -2967,12 +2967,19 @@ async function iniciarPartidaOnlineComRegistro(registro){
 // (placar, de quem é a vez, cooldowns) é recalculado igual nos dois
 // aparelhos a partir do histórico (determinístico).
 // ═══════════════════════════════════════════════════════════════
-function simularPartidaOnline(baralhoAbsJ1, baralhoAbsJ2, escolhas, sorteioVencedorAbs){
+function normalizarEscolhaOnline(e){
+  // proteção: se alguma rodada tiver sido salva no formato antigo (string simples,
+  // de antes do bloqueio/pular existir), trata como uma escolha normal em vez de quebrar
+  if(typeof e === 'string') return {atributo:e, pulou:false, bloqueou:false};
+  return e || {atributo:null, pulou:false, bloqueou:false};
+}
+
+function simularPartidaOnline(baralhoAbsJ1, baralhoAbsJ2, escolhasBrutas, sorteioVencedorAbs){
   let atacanteAbs = sorteioVencedorAbs || 'jogador1';
   let vitAbs1 = 0, vitAbs2 = 0, multiplicador = 1, atributoAnterior = null;
   let ultimaHabJogador1 = -99, ultimaHabJogador2 = -99;
-  for(let r=0; r<escolhas.length; r++){
-    const e = escolhas[r];
+  for(let r=0; r<escolhasBrutas.length; r++){
+    const e = normalizarEscolhaOnline(escolhasBrutas[r]);
     const defensorDesta = atacanteAbs==='jogador1' ? 'jogador2' : 'jogador1';
     if(e.bloqueou || e.pulou){
       if(defensorDesta==='jogador1') ultimaHabJogador1=r; else ultimaHabJogador2=r;
@@ -3016,7 +3023,7 @@ async function processarAtualizacaoOnline(registroNovo){
   if(escolhasNovas.length===escolhasAntigas.length+1 && G.jogo.aguardandoOnline && !registroNovo.estado_partida?.pendente){
     // exatamente a rodada que eu estava esperando, já concluída: mostra a animação de resultado
     const idxRodada = escolhasAntigas.length;
-    const entry = escolhasNovas[idxRodada];
+    const entry = normalizarEscolhaOnline(escolhasNovas[idxRodada]);
     G.jogo.rodada = idxRodada;
     G.jogo.aguardandoOnline = false;
     mostrarResultadoRodadaOnline(entry.atributo, entry.pulou);
