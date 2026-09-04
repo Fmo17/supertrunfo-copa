@@ -2999,7 +2999,7 @@ function simularPartidaOnline(baralhoAbsJ1, baralhoAbsJ2, escolhasBrutas, sortei
     atributoAnterior = e.atributo;
     if(vencedor!=='empate') atacanteAbs = vencedor;
   }
-  return { rodada: escolhas.length, atacanteAbs, vitAbs1, vitAbs2, atributoAnterior, multiplicador, ultimaHabJogador1, ultimaHabJogador2 };
+  return { rodada: escolhasBrutas.length, atacanteAbs, vitAbs1, vitAbs2, atributoAnterior, multiplicador, ultimaHabJogador1, ultimaHabJogador2 };
 }
 
 function iniciarPartidaFixaOnline(){
