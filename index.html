@@ -214,6 +214,7 @@ input,select{font-family:var(--font)}
 .baralho-card-select.selecionado{border-color:var(--verde);background:#e8f7ee}
 .baralho-card-select.travada{cursor:default;border-color:var(--amarelo)}
 .baralho-badge-sua{position:absolute;top:8px;left:8px;z-index:5;background:var(--amarelo);color:var(--preto);font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px}
+.baralho-badge-craque{position:absolute;top:8px;right:8px;z-index:5;background:linear-gradient(135deg,#ffc53d,#ff8a00);color:var(--preto);font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px;box-shadow:0 0 10px rgba(255,197,61,.5)}
 .modal h3{font-size:18px;font-weight:800;margin-bottom:8px}
 .modal p{font-size:14px;color:var(--cinza5);margin-bottom:20px}
 .modal-btns{display:flex;gap:10px;justify-content:center}
@@ -2299,11 +2300,12 @@ async function abrirMontagemBaralho(modo){
   G.jogo.modoPendente = modo;
   G.jogo.baralhoDisponiveis = todas;
 
-  // Se já existe um time salvo e ainda válido (todas as cartas continuam ativas),
-  // usa direto sem pedir pra escolher de novo
+  // Se já existe um time salvo, ainda válido (cartas continuam ativas) e dentro do limite
+  // de craques, usa direto sem pedir pra escolher de novo
   const salvo = Array.isArray(G.aluno.baralho_salvo) ? G.aluno.baralho_salvo : [];
   const salvoValido = salvo.filter(id => todas.some(c=>c.id===id));
-  if(salvoValido.length===9){
+  const craquesNoSalvo = salvoValido.filter(id=>ehCartaCraque(todas.find(c=>c.id===id))).length;
+  if(salvoValido.length===9 && craquesNoSalvo<=LIMITE_CRAQUES_BARALHO){
     G.jogo.selecaoBaralho = new Set([minhaCarta.id, ...salvoValido]);
     await confirmarBaralho();
     return;
@@ -2340,6 +2342,9 @@ function filtrarCartasBaralho(){
   renderGradeBaralho(document.getElementById('baralho-busca').value);
 }
 
+const LIMITE_CRAQUES_BARALHO = 3;
+function ehCartaCraque(carta){ return !carta.aluno_id; }
+
 function renderGradeBaralho(filtro=''){
   const minhaCarta = G.jogo.baralhoDisponiveis.find(c=>c.aluno_id===G.aluno.id);
   const minhaId = minhaCarta?.id;
@@ -2359,10 +2364,23 @@ function renderGradeBaralho(filtro=''){
       badge.textContent='SUA CARTA';
       cardWrap.appendChild(badge);
     } else {
+      if(ehCartaCraque(c)){
+        const badgeCraque=document.createElement('div');
+        badgeCraque.className='baralho-badge-craque';
+        badgeCraque.textContent='⭐ CRAQUE';
+        cardWrap.appendChild(badgeCraque);
+      }
       cardWrap.onclick=()=>toggleCartaBaralho(c.id);
     }
     g.appendChild(cardWrap);
   });
+}
+
+function contarCraquesSelecionados(){
+  return [...G.jogo.selecaoBaralho].filter(id=>{
+    const c = G.jogo.baralhoDisponiveis.find(x=>x.id===id);
+    return c && ehCartaCraque(c);
+  }).length;
 }
 
 function toggleCartaBaralho(id){
@@ -2370,6 +2388,11 @@ function toggleCartaBaralho(id){
     G.jogo.selecaoBaralho.delete(id);
   } else {
     if(G.jogo.selecaoBaralho.size>=10){ alert('Seu baralho já tem 10 cartas! Remova alguma antes de adicionar outra.'); return; }
+    const carta = G.jogo.baralhoDisponiveis.find(c=>c.id===id);
+    if(carta && ehCartaCraque(carta) && contarCraquesSelecionados()>=LIMITE_CRAQUES_BARALHO){
+      alert(`Você já tem ${LIMITE_CRAQUES_BARALHO} cartas de craques no baralho — esse é o limite! Escolha uma carta de colega pra completar.`);
+      return;
+    }
     G.jogo.selecaoBaralho.add(id);
   }
   renderGradeBaralho(document.getElementById('baralho-busca').value);
@@ -2378,7 +2401,8 @@ function toggleCartaBaralho(id){
 
 function atualizarContadorBaralho(){
   const n = G.jogo.selecaoBaralho.size;
-  document.getElementById('baralho-contador').textContent = `${n}/10 selecionadas`;
+  const craques = contarCraquesSelecionados();
+  document.getElementById('baralho-contador').textContent = `${n}/10 selecionadas · ⭐ ${craques}/${LIMITE_CRAQUES_BARALHO} craques`;
   document.getElementById('baralho-faltam').textContent = Math.max(0,10-n);
   document.getElementById('btn-confirmar-baralho').disabled = n!==10;
 }
@@ -2885,9 +2909,19 @@ async function iniciarModoRecorde(){
   proximoDueloRecorde();
 }
 
+function chanceCraqueRecorde(streak){
+  const nivel = Math.floor(streak/3); // sobe de nível a cada 3 vitórias seguidas
+  return Math.min(0.75, 0.15 + nivel*0.15); // começa em 15%, sobe 15% por nível, até 75%
+}
+
 function proximoDueloRecorde(){
   const pool = G.jogo.recordePool;
-  const adversario = pool[Math.floor(Math.random()*pool.length)];
+  const craques = pool.filter(ehCartaCraque);
+  const normais = pool.filter(c=>!ehCartaCraque(c));
+  const chance = chanceCraqueRecorde(G.jogo.recordeAtual);
+  let poolEscolhido = (Math.random()<chance && craques.length) ? craques : normais;
+  if(!poolEscolhido.length) poolEscolhido = pool; // segurança, caso um dos grupos esteja vazio
+  const adversario = poolEscolhido[Math.floor(Math.random()*poolEscolhido.length)];
   G.jogo.baralhoJ1 = [G.jogo.recordeCartaJogador];
   G.jogo.baralhoJ2 = [adversario];
   G.jogo.rodada = 0;
